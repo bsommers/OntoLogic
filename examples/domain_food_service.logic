@@ -1,0 +1,176 @@
+; =====================================================================
+; Domain: Food Service
+; Models restaurant menu items, ingredients, allergens, orders, kitchen
+; stations and HACCP food-safety temperature rules on a condensed BFO upper
+; level.
+; Axioms enforce: HACCP limits (cold holding at or below 5 C, hot holding
+; at or above 60 C, poultry cook core temperature at least 74 C),
+; allergen labelling rules, kitchen cross-contact separation and order
+; integrity.
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- People ---
+(def-concept Person Agent)
+(def-concept Guest Person)
+(def-concept KitchenStaff Person)
+(def-concept Chef KitchenStaff)
+(def-concept SousChef Chef)
+(def-concept LineCook KitchenStaff)
+(def-concept Dishwasher KitchenStaff)
+(def-concept FrontOfHouseStaff Person)
+(def-concept Server FrontOfHouseStaff)
+(def-concept Host FrontOfHouseStaff)
+(def-concept Manager FrontOfHouseStaff)
+(def-concept FoodSafetyOfficer Role)
+
+; --- Premises and Stations ---
+(def-concept Restaurant Site)
+(def-concept DiningRoom Site)
+(def-concept Kitchen Site)
+(def-concept Station Site)
+(def-concept GrillStation Station)
+(def-concept FryStation Station)
+(def-concept SaladStation Station)
+(def-concept PastryStation Station)
+(def-concept AllergenFreeStation Station)
+(def-concept ColdStorage Site)
+(def-concept WalkInFridge ColdStorage)
+(def-concept Freezer ColdStorage)
+(def-concept DryStorage Site)
+(def-concept HotHoldingUnit Object)
+
+; --- Ingredients and Allergens ---
+(def-concept Ingredient MaterialEntity)
+(def-concept Meat Ingredient)
+(def-concept Poultry Meat)
+(def-concept Seafood Ingredient)
+(def-concept Produce Ingredient)
+(def-concept Dairy Ingredient)
+(def-concept Grain Ingredient)
+(def-concept Egg Ingredient)
+(def-concept Nut Ingredient)
+(def-concept Spice Ingredient)
+(def-concept Allergen Quality)
+(def-concept PeanutAllergen Allergen)
+(def-concept GlutenAllergen Allergen)
+(def-concept MilkAllergen Allergen)
+(def-concept ShellfishAllergen Allergen)
+(def-concept EggAllergen Allergen)
+(def-concept SesameAllergen Allergen)
+
+; --- Menu ---
+(def-concept MenuItem InformationContentEntity)
+(def-concept Appetizer MenuItem)
+(def-concept MainCourse MenuItem)
+(def-concept Dessert MenuItem)
+(def-concept Beverage MenuItem)
+(def-concept VegetarianItem MenuItem)
+(def-concept VeganItem VegetarianItem)
+(def-concept Menu InformationContentEntity)
+(def-concept Recipe InformationContentEntity)
+(def-concept AllergenLabel InformationContentEntity)
+
+; --- Orders ---
+(def-concept Order InformationContentEntity)
+(def-concept DineInOrder Order)
+(def-concept TakeawayOrder Order)
+(def-concept DeliveryOrder Order)
+(def-concept OrderLine InformationContentEntity)
+(def-concept AllergyNote InformationContentEntity)
+(def-concept KitchenTicket InformationContentEntity)
+(def-concept Payment Process)
+
+; --- Food Preparation and Safety Processes ---
+(def-concept PreparationProcess Process)
+(def-concept Cooking PreparationProcess)
+(def-concept Chilling PreparationProcess)
+(def-concept HotHolding PreparationProcess)
+(def-concept Reheating PreparationProcess)
+(def-concept Thawing PreparationProcess)
+(def-concept Plating PreparationProcess)
+(def-concept FoodBatch MaterialEntity)
+(def-concept TemperatureLog InformationContentEntity)
+(def-concept CriticalControlPoint InformationContentEntity)
+(def-concept CorrectiveAction Process)
+(def-concept HealthInspection Process)
+
+; --- Properties ---
+(def-property price_cents MenuItem Integer)
+(def-property calories MenuItem Integer)
+(def-property is_available MenuItem Boolean)
+(def-property contains_allergen_declared MenuItem Boolean)
+(def-property cold_holding_temp_c ColdStorage Integer)
+(def-property freezer_temp_c Freezer Integer)
+(def-property hot_holding_temp_c HotHoldingUnit Integer)
+(def-property core_cook_temp_c Cooking Integer)
+(def-property reheat_temp_c Reheating Integer)
+(def-property poultry_core_temp_c Poultry Integer)
+(def-property hours_in_danger_zone FoodBatch Integer)
+(def-property is_discarded FoodBatch Boolean)
+(def-property shelf_life_days Ingredient Integer)
+(def-property table_number DineInOrder Integer)
+(def-property party_size DineInOrder Integer)
+(def-property has_allergy_flag Order Boolean)
+(def-property is_allergen_free_prepared Order Boolean)
+(def-property station_capacity Station Integer)
+(def-property food_handler_certified KitchenStaff Boolean)
+
+; --- Relations ---
+(def-relation contains MenuItem Ingredient :cardinality 1..*)
+(def-relation has_allergen Ingredient Allergen :cardinality 0..*)
+(def-relation lists_allergen AllergenLabel Allergen)
+(def-relation labels AllergenLabel MenuItem)
+(def-relation appears_on MenuItem Menu)
+(def-relation prepared_by MenuItem Station)
+(def-relation has_line Order OrderLine :cardinality 1..*)
+(def-relation orders OrderLine MenuItem)
+(def-relation placed_by Order Guest)
+(def-relation served_by Order Server)
+(def-relation works_at KitchenStaff Station)
+(def-relation stored_in FoodBatch ColdStorage)
+(def-relation batch_of FoodBatch Ingredient)
+(def-relation records TemperatureLog FoodBatch)
+(def-relation monitors CriticalControlPoint Station)
+(def-relation triggers CriticalControlPoint CorrectiveAction)
+(def-relation follows MenuItem Recipe)
+
+; --- Axioms ---
+; 1. Integrity: guests are never kitchen staff
+(forall (x) (not (and (Guest x) (KitchenStaff x))))
+; 2. Integrity: an ingredient is never an allergen declaration
+(forall (x) (not (and (Ingredient x) (Allergen x))))
+; 3. Integrity: dessert and main course are distinct menu categories
+(forall (x) (not (and (Dessert x) (MainCourse x))))
+; 4. HACCP: cold storage holds food at 5 C or below
+(forall (c) (implies (WalkInFridge c) (lte cold_holding_temp_c 5)))
+; 5. HACCP: freezers hold at minus 18 C or below
+(forall (f) (implies (Freezer f) (lte freezer_temp_c -18)))
+; 6. HACCP: hot holding at 60 C or above
+(forall (h) (implies (HotHoldingUnit h) (gte hot_holding_temp_c 60)))
+; 7. HACCP: poultry must reach a 74 C core temperature
+(forall (p) (implies (Poultry p) (gte poultry_core_temp_c 74)))
+; 8. HACCP: reheated food reaches 74 C
+(forall (r) (implies (Reheating r) (gte reheat_temp_c 74)))
+; 9. HACCP: food kept more than 4 hours in the danger zone must be discarded
+(forall (b) (implies (and (FoodBatch b) (gt hours_in_danger_zone 4)) (eq is_discarded True)))
+; 10. Allergens: orders with an allergy flag must be prepared allergen-free
+(forall (o) (implies (and (Order o) (eq has_allergy_flag True)) (eq is_allergen_free_prepared True)))
+; 11. Allergens: every menu item on offer has its allergens declared
+(forall (m) (implies (and (MenuItem m) (eq is_available True)) (eq contains_allergen_declared True)))
+; 12. Staff: kitchen staff must hold food-handler certification
+(forall (k) (implies (KitchenStaff k) (eq food_handler_certified True)))

@@ -1,0 +1,184 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Patient["Patient"]
+    class PediatricPatient["PediatricPatient"]
+    class GeriatricPatient["GeriatricPatient"]
+    class PregnantPatient["PregnantPatient"]
+    class Clinician["Clinician"]
+    class Physician["Physician"]
+    class Surgeon["Surgeon"]
+    class Nurse["Nurse"]
+    class Pharmacist["Pharmacist"]
+    class Therapist["Therapist"]
+    class PrescriberRole["PrescriberRole"]
+    class AttendingRole["AttendingRole"]
+    class CareTeam["CareTeam"]
+    class Facility["Facility"]
+    class Hospital["Hospital"]
+    class Clinic["Clinic"]
+    class Ward["Ward"]
+    class IntensiveCareUnit["IntensiveCareUnit"]
+    class OperatingTheatre["OperatingTheatre"]
+    class Pharmacy["Pharmacy"]
+    class Encounter["Encounter"]
+    class InpatientAdmission["InpatientAdmission"]
+    class OutpatientVisit["OutpatientVisit"]
+    class EmergencyVisit["EmergencyVisit"]
+    class TelehealthVisit["TelehealthVisit"]
+    class Procedure["Procedure"]
+    class SurgicalProcedure["SurgicalProcedure"]
+    class Administration["Administration"]
+    class Discharge["Discharge"]
+    class Condition["Condition"]
+    class Diagnosis["Diagnosis"]
+    class ChronicCondition["ChronicCondition"]
+    class AcuteCondition["AcuteCondition"]
+    class Allergy["Allergy"]
+    class DrugAllergy["DrugAllergy"]
+    class FoodAllergy["FoodAllergy"]
+    class Contraindication["Contraindication"]
+    class VitalSign["VitalSign"]
+    class Observation["Observation"]
+    class LabResult["LabResult"]
+    class ImagingResult["ImagingResult"]
+    class DischargeSummary["DischargeSummary"]
+    class ClinicalNote["ClinicalNote"]
+    class EscalationRecord["EscalationRecord"]
+    class ClinicalOrder["ClinicalOrder"]
+    class MedicationOrder["MedicationOrder"]
+    class ControlledSubstanceOrder["ControlledSubstanceOrder"]
+    class LabOrder["LabOrder"]
+    class ImagingOrder["ImagingOrder"]
+    class ReferralOrder["ReferralOrder"]
+    class Medication["Medication"]
+    class Antibiotic["Antibiotic"]
+    class PenicillinAntibiotic["PenicillinAntibiotic"]
+    class Anticoagulant["Anticoagulant"]
+    class Analgesic["Analgesic"]
+    class Opioid["Opioid"]
+    class NSAID["NSAID"]
+    class ACEInhibitor["ACEInhibitor"]
+    class ActiveIngredient["ActiveIngredient"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Person
+    Person <|-- Patient
+    Patient <|-- PediatricPatient
+    Patient <|-- GeriatricPatient
+    Patient <|-- PregnantPatient
+    Person <|-- Clinician
+    Clinician <|-- Physician
+    Physician <|-- Surgeon
+    Clinician <|-- Nurse
+    Clinician <|-- Pharmacist
+    Clinician <|-- Therapist
+    Role <|-- PrescriberRole
+    Role <|-- AttendingRole
+    Object <|-- CareTeam
+    Site <|-- Facility
+    Facility <|-- Hospital
+    Facility <|-- Clinic
+    Facility <|-- Ward
+    Ward <|-- IntensiveCareUnit
+    Facility <|-- OperatingTheatre
+    Facility <|-- Pharmacy
+    Process <|-- Encounter
+    Encounter <|-- InpatientAdmission
+    Encounter <|-- OutpatientVisit
+    Encounter <|-- EmergencyVisit
+    Encounter <|-- TelehealthVisit
+    Process <|-- Procedure
+    Procedure <|-- SurgicalProcedure
+    Process <|-- Administration
+    Process <|-- Discharge
+    Quality <|-- Condition
+    Condition <|-- Diagnosis
+    Diagnosis <|-- ChronicCondition
+    Diagnosis <|-- AcuteCondition
+    Condition <|-- Allergy
+    Allergy <|-- DrugAllergy
+    Allergy <|-- FoodAllergy
+    Condition <|-- Contraindication
+    Quality <|-- VitalSign
+    InformationContentEntity <|-- Observation
+    Observation <|-- LabResult
+    Observation <|-- ImagingResult
+    InformationContentEntity <|-- DischargeSummary
+    InformationContentEntity <|-- ClinicalNote
+    InformationContentEntity <|-- EscalationRecord
+    InformationContentEntity <|-- ClinicalOrder
+    ClinicalOrder <|-- MedicationOrder
+    MedicationOrder <|-- ControlledSubstanceOrder
+    ClinicalOrder <|-- LabOrder
+    ClinicalOrder <|-- ImagingOrder
+    ClinicalOrder <|-- ReferralOrder
+    MaterialEntity <|-- Medication
+    Medication <|-- Antibiotic
+    Antibiotic <|-- PenicillinAntibiotic
+    Medication <|-- Anticoagulant
+    Medication <|-- Analgesic
+    Analgesic <|-- Opioid
+    Analgesic <|-- NSAID
+    Medication <|-- ACEInhibitor
+    MaterialEntity <|-- ActiveIngredient
+    Patient : +Integer patient_age
+    Patient : +Float weight_kg
+    Patient : +Integer heart_rate
+    Patient : +Integer systolic_bp
+    Patient : +Integer oxygen_saturation
+    Patient : +Float body_temperature
+    Patient : +String medical_record_number
+    Clinician : +String license_number
+    Clinician : +Boolean is_licensed_prescriber
+    MedicationOrder : +Integer dose_mg
+    Medication : +Integer max_daily_dose_mg
+    ClinicalOrder : +Boolean is_signed
+    InpatientAdmission : +Integer length_of_stay_days
+    Ward : +Integer bed_count
+    EmergencyVisit : +Integer triage_level
+    LabResult : +Boolean is_critical
+    Discharge : +Boolean has_summary
+    Patient --> Clinician : treated_by
+    Clinician --> Encounter : attends
+    Patient --> Encounter : subject_of
+    Patient --> Diagnosis : diagnosed_with
+    Patient --> Allergy : has_allergy
+    Clinician --> MedicationOrder : prescribes
+    MedicationOrder --> Medication : orders_medication
+    MedicationOrder --> Patient : received_by
+    Contraindication --> Medication : contraindicates
+    Allergy --> Medication : triggers_allergy
+    Medication --> ActiveIngredient : has_ingredient
+    Clinician --> CareTeam : member_of
+    Encounter --> Facility : located_in
+    LabResult --> LabOrder : results_from
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not Patient(x) and Clinician(x))
+%%   forall x (not ClinicalOrder(x) and Observation(x))
+%%   forall x (not Medication(x) and ActiveIngredient(x))
+%%   forall p (forall a (forall m (forall o (has_allergy(p, a) and triggers_allergy(a, m) and orders_medication(o, m) implies not received_by(o, p)))))
+%%   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists e (EscalationRecord(e)))

@@ -1,0 +1,202 @@
+; --- Industrial IoT (IIoT) ---
+; Models edge gateways, MQTT / OPC UA telemetry, asset condition monitoring and
+; predictive maintenance. Vendor-neutral: protocols and roles only.
+; Axioms enforce: telemetry quality and bounds, secure transport, alarm and
+; work-order duties, remaining-useful-life sanity, and gateway buffering.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Physical Assets ---
+(def-concept Asset Object)
+(def-concept RotatingAsset Asset)
+(def-concept Motor RotatingAsset)
+(def-concept Pump RotatingAsset)
+(def-concept Compressor RotatingAsset)
+(def-concept Fan RotatingAsset)
+(def-concept Gearbox RotatingAsset)
+(def-concept StaticAsset Asset)
+(def-concept HeatExchanger StaticAsset)
+(def-concept Tank StaticAsset)
+(def-concept Pipeline StaticAsset)
+(def-concept Component Object)
+(def-concept Bearing Component)
+(def-concept Seal Component)
+(def-concept Impeller Component)
+
+; --- Sensing ---
+(def-concept Sensor Object)
+(def-concept VibrationSensor Sensor)
+(def-concept TemperatureSensor Sensor)
+(def-concept PressureSensor Sensor)
+(def-concept CurrentSensor Sensor)
+(def-concept AcousticSensor Sensor)
+(def-concept OilQualitySensor Sensor)
+
+; --- Edge and Network Infrastructure ---
+(def-concept EdgeGateway Object)
+(def-concept ProtocolBridge EdgeGateway)
+(def-concept EdgeAnalyticsNode EdgeGateway)
+(def-concept PlcController Object)
+(def-concept MessageBroker Object)
+(def-concept MqttBroker MessageBroker)
+(def-concept OpcUaServer Object)
+(def-concept CloudPlatform Object)
+(def-concept TimeSeriesStore Object)
+(def-concept NetworkLink Object)
+(def-concept CellularLink NetworkLink)
+(def-concept EthernetLink NetworkLink)
+(def-concept WirelessMeshLink NetworkLink)
+
+; --- Telemetry and Information ---
+(def-concept TelemetryMessage InformationContentEntity)
+(def-concept MqttMessage TelemetryMessage)
+(def-concept OpcUaDataChange TelemetryMessage)
+(def-concept Topic InformationContentEntity)
+(def-concept NodeId InformationContentEntity)
+(def-concept PayloadSchema InformationContentEntity)
+(def-concept Measurement InformationContentEntity)
+(def-concept Waveform Measurement)
+(def-concept ScalarReading Measurement)
+(def-concept HealthIndicator InformationContentEntity)
+(def-concept FeatureVector InformationContentEntity)
+(def-concept AnomalyModel InformationContentEntity)
+(def-concept RemainingUsefulLifeEstimate InformationContentEntity)
+(def-concept Alert InformationContentEntity)
+(def-concept ConditionAlert Alert)
+(def-concept ConnectivityAlert Alert)
+(def-concept WorkOrder InformationContentEntity)
+(def-concept PredictiveWorkOrder WorkOrder)
+(def-concept CorrectiveWorkOrder WorkOrder)
+(def-concept Certificate InformationContentEntity)
+
+; --- Processes ---
+(def-concept Telemetry Process)
+(def-concept Sampling Telemetry)
+(def-concept Publication Telemetry)
+(def-concept StoreAndForward Process)
+(def-concept InferenceRun Process)
+(def-concept Degradation Process)
+(def-concept MaintenanceActivity Process)
+(def-concept InspectionActivity MaintenanceActivity)
+(def-concept RepairActivity MaintenanceActivity)
+
+; --- Roles ---
+(def-concept ReliabilityEngineerRole Role)
+(def-concept MaintenanceTechnicianRole Role)
+(def-concept DataEngineerRole Role)
+
+; --- Relations ---
+(def-relation monitors Sensor Asset :cardinality 1..*)
+(def-relation attached_to Sensor Component)
+(def-relation part_of Component Asset)
+(def-relation collects_from EdgeGateway Sensor :cardinality 0..*)
+(def-relation publishes_to EdgeGateway MessageBroker :cardinality 0..*)
+(def-relation exposes OpcUaServer Asset :cardinality 0..*)
+(def-relation reports_to MessageBroker CloudPlatform)
+(def-relation emitted_by TelemetryMessage Sensor)
+(def-relation published_on TelemetryMessage Topic)
+(def-relation conforms_to TelemetryMessage PayloadSchema)
+(def-relation derived_from FeatureVector Measurement :cardinality 1..*)
+(def-relation scores HealthIndicator Asset)
+(def-relation predicts RemainingUsefulLifeEstimate Asset)
+(def-relation triggers Alert WorkOrder :cardinality 0..*)
+(def-relation raised_for Alert Asset)
+(def-relation assigned_to WorkOrder MaintenanceTechnicianRole)
+(def-relation authenticated_with EdgeGateway Certificate :cardinality 1..*)
+(def-relation uplink EdgeGateway NetworkLink :cardinality 1..*)
+
+; --- Properties ---
+(def-property asset_tag Asset String :cardinality 1..1)
+(def-property criticality_rank Asset Integer)
+(def-property sampling_rate_hz Sensor Integer)
+(def-property reading_value ScalarReading Integer)
+(def-property quality_code Measurement Integer)
+(def-property qos_level MqttMessage Integer)
+(def-property is_retained MqttMessage Boolean)
+(def-property is_encrypted_in_transit TelemetryMessage Boolean)
+(def-property topic_depth Topic Integer)
+(def-property buffer_capacity_msgs EdgeGateway Integer)
+(def-property buffered_msgs EdgeGateway Integer)
+(def-property is_online EdgeGateway Boolean)
+(def-property firmware_version EdgeGateway String)
+(def-property vibration_rms_mm_s VibrationSensor Integer)
+(def-property bearing_temp_c Bearing Integer)
+(def-property health_score HealthIndicator Integer)
+(def-property rul_hours RemainingUsefulLifeEstimate Integer)
+(def-property confidence_pct RemainingUsefulLifeEstimate Integer)
+(def-property alert_severity Alert Integer)
+(def-property is_acknowledged Alert Boolean)
+(def-property is_false_positive Alert Boolean)
+(def-property is_expired Certificate Boolean)
+(def-property clock_skew_ms TelemetryMessage Integer)
+
+; --- Axioms ---
+
+; 1. Health indicators are normalised percentages
+(forall (h)
+    (implies (HealthIndicator h)
+             (and (gte health_score 0) (lte health_score 100))))
+
+; 2. MQTT quality of service levels are 0, 1 or 2 only
+(forall (m)
+    (implies (MqttMessage m)
+             (and (gte qos_level 0) (lte qos_level 2))))
+
+; 3. All telemetry travels encrypted in transit
+(forall (m)
+    (implies (TelemetryMessage m) (eq is_encrypted_in_transit True)))
+
+; 4. Gateways cannot buffer more messages than their store-and-forward capacity
+(forall (g)
+    (implies (EdgeGateway g)
+             (and (gte buffered_msgs 0) (lte buffered_msgs 1000000))))
+
+; 5. Remaining useful life is non-negative and confidence is a percentage
+(forall (r)
+    (implies (RemainingUsefulLifeEstimate r)
+             (and (gte rul_hours 0) (gte confidence_pct 0) (lte confidence_pct 100))))
+
+; 6. A condition alert must be raised against some asset
+(forall (a)
+    (implies (ConditionAlert a)
+             (exists (x) (and (Asset x) (raised_for a x)))))
+
+; 7. A predictive work order must originate from an alert
+(forall (w)
+    (implies (PredictiveWorkOrder w)
+             (exists (a) (and (Alert a) (triggers a w)))))
+
+; 8. Gateways must hold a credential so they can authenticate to the broker
+(forall (g)
+    (implies (EdgeGateway g)
+             (exists (c) (and (Certificate c) (authenticated_with g c)))))
+
+; 9. Severity is ranked 1 (info) to 5 (critical)
+(forall (a)
+    (implies (Alert a)
+             (and (gte alert_severity 1) (lte alert_severity 5))))
+
+; 10. Gateways and sensors are physically distinct kinds of device
+(forall (g)
+    (implies (EdgeGateway g) (not (Sensor g))))
+
+; 11. A sensor must sample at a positive rate
+(forall (s)
+    (implies (Sensor s) (gt sampling_rate_hz 0)))
+
+; 12. Measurement quality codes are 0 (bad) to 3 (good)
+(forall (m)
+    (implies (Measurement m)
+             (and (gte quality_code 0) (lte quality_code 3))))

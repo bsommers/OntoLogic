@@ -1,0 +1,184 @@
+; =====================================================================
+; Domain: Logistics and Supply Chain
+; Models shipments, warehouses, carriers, inventory, transport assets and
+; cold-chain monitoring on a condensed BFO upper level.
+; Axioms enforce: cold-chain temperature limits, hazmat segregation,
+; vehicle weight limits, shipment documentation and inventory integrity
+; (stock quantities never negative).
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Organisations ---
+(def-concept Organization Agent)
+(def-concept Shipper Organization)
+(def-concept Consignee Organization)
+(def-concept Carrier Organization)
+(def-concept RoadCarrier Carrier)
+(def-concept AirCarrier Carrier)
+(def-concept OceanCarrier Carrier)
+(def-concept RailCarrier Carrier)
+(def-concept Supplier Organization)
+(def-concept CustomsBroker Organization)
+(def-concept ThirdPartyLogisticsProvider Organization)
+
+; --- Facilities ---
+(def-concept Facility Site)
+(def-concept Warehouse Facility)
+(def-concept DistributionCenter Warehouse)
+(def-concept CrossDock Warehouse)
+(def-concept ColdStore Warehouse)
+(def-concept HazmatStore Warehouse)
+(def-concept Port Facility)
+(def-concept Airport Facility)
+(def-concept RailTerminal Facility)
+(def-concept StorageZone Site)
+(def-concept DockDoor Site)
+(def-concept StorageLocation Site)
+
+; --- Transport Assets ---
+(def-concept TransportAsset Object)
+(def-concept Vehicle TransportAsset)
+(def-concept Truck Vehicle)
+(def-concept ReeferTruck Truck)
+(def-concept Van Vehicle)
+(def-concept Aircraft TransportAsset)
+(def-concept Vessel TransportAsset)
+(def-concept Container TransportAsset)
+(def-concept ReeferContainer Container)
+(def-concept Pallet TransportAsset)
+(def-concept Person Agent)
+(def-concept Driver Person)
+
+; --- Goods ---
+(def-concept Goods MaterialEntity)
+(def-concept GeneralCargo Goods)
+(def-concept PerishableGoods Goods)
+(def-concept FrozenGoods PerishableGoods)
+(def-concept ChilledGoods PerishableGoods)
+(def-concept Pharmaceuticals Goods)
+(def-concept DangerousGoods Goods)
+(def-concept FlammableGoods DangerousGoods)
+(def-concept CorrosiveGoods DangerousGoods)
+(def-concept OversizedGoods Goods)
+(def-concept StockKeepingUnit InformationContentEntity)
+(def-concept InventoryRecord InformationContentEntity)
+(def-concept Lot InformationContentEntity)
+
+; --- Shipments and Orders ---
+(def-concept Order InformationContentEntity)
+(def-concept PurchaseOrder Order)
+(def-concept SalesOrder Order)
+(def-concept TransferOrder Order)
+(def-concept Shipment Process)
+(def-concept InboundShipment Shipment)
+(def-concept OutboundShipment Shipment)
+(def-concept ColdChainShipment Shipment)
+(def-concept InternationalShipment Shipment)
+(def-concept Leg Process)
+(def-concept Pickup Process)
+(def-concept Delivery Process)
+(def-concept Receiving Process)
+(def-concept PutAway Process)
+(def-concept Picking Process)
+(def-concept Packing Process)
+(def-concept CustomsClearance Process)
+(def-concept Exception Process)
+(def-concept DelayException Exception)
+(def-concept TemperatureExcursion Exception)
+
+; --- Documents ---
+(def-concept ShippingDocument InformationContentEntity)
+(def-concept BillOfLading ShippingDocument)
+(def-concept CommercialInvoice ShippingDocument)
+(def-concept PackingList ShippingDocument)
+(def-concept CustomsDeclaration ShippingDocument)
+(def-concept ProofOfDelivery ShippingDocument)
+(def-concept TemperatureLog InformationContentEntity)
+
+; --- Properties ---
+(def-property tracking_number Shipment String :cardinality 1..1)
+(def-property gross_weight_kg Shipment Integer)
+(def-property transit_hours Shipment Integer)
+(def-property is_delivered Shipment Boolean)
+(def-property has_proof_of_delivery Shipment Boolean)
+(def-property has_customs_declaration Shipment Boolean)
+(def-property payload_capacity_kg Vehicle Integer)
+(def-property loaded_weight_kg Vehicle Integer)
+(def-property reefer_set_point_c ReeferContainer Integer)
+(def-property cold_store_temp_c ColdStore Integer)
+(def-property frozen_goods_temp_c FrozenGoods Integer)
+(def-property chilled_goods_temp_c ChilledGoods Integer)
+(def-property pharma_temp_c Pharmaceuticals Integer)
+(def-property on_hand_quantity InventoryRecord Integer)
+(def-property reserved_quantity InventoryRecord Integer)
+(def-property reorder_point InventoryRecord Integer)
+(def-property shelf_life_days Lot Integer)
+(def-property storage_capacity_pallets Warehouse Integer)
+(def-property driving_hours_today Driver Integer)
+(def-property un_number DangerousGoods String)
+
+; --- Relations ---
+(def-relation shipped_by Shipment Shipper)
+(def-relation consigned_to Shipment Consignee)
+(def-relation carried_by Shipment Carrier :cardinality 1..*)
+(def-relation transports Shipment Goods :cardinality 1..*)
+(def-relation has_leg Shipment Leg :cardinality 1..*)
+(def-relation leg_uses Leg TransportAsset)
+(def-relation originates_at Shipment Facility)
+(def-relation destined_for Shipment Facility)
+(def-relation stored_in InventoryRecord StorageLocation)
+(def-relation tracks InventoryRecord StockKeepingUnit)
+(def-relation located_in StorageLocation Warehouse)
+(def-relation zone_of StorageZone Warehouse)
+(def-relation fulfils Shipment Order)
+(def-relation documented_by Shipment ShippingDocument)
+(def-relation monitored_by ColdChainShipment TemperatureLog)
+(def-relation operated_by Vehicle Carrier)
+(def-relation driven_by Truck Driver)
+(def-relation cleared_by CustomsClearance CustomsBroker)
+(def-relation stored_with Goods Warehouse)
+(def-relation segregated_from DangerousGoods Goods)
+
+; --- Axioms ---
+; 1. Integrity: shippers and carriers are distinct organisation roles
+(forall (x) (not (and (Shipper x) (Carrier x))))
+; 2. Integrity: dangerous goods are never general cargo
+(forall (x) (not (and (DangerousGoods x) (GeneralCargo x))))
+; 3. Integrity: inbound and outbound shipments are distinct
+(forall (x) (not (and (InboundShipment x) (OutboundShipment x))))
+; 4. Integrity: frozen and chilled goods use different temperature regimes
+(forall (x) (not (and (FrozenGoods x) (ChilledGoods x))))
+; 5. Integrity: dangerous goods are only kept in hazmat stores, never cold stores
+(forall (x) (not (and (HazmatStore x) (ColdStore x))))
+; 6. Cold chain: frozen goods are kept at minus 18 C or below
+(forall (g) (implies (FrozenGoods g) (lte frozen_goods_temp_c -18)))
+; 7. Cold chain: chilled goods are kept between 2 C and 8 C
+(forall (g) (implies (ChilledGoods g) (and (gte chilled_goods_temp_c 2) (lte chilled_goods_temp_c 8))))
+; 8. Cold chain: pharmaceuticals are kept between 2 C and 8 C
+(forall (g) (implies (Pharmaceuticals g) (and (gte pharma_temp_c 2) (lte pharma_temp_c 8))))
+; 9. Cold chain: cold stores operate at 8 C or below
+(forall (w) (implies (ColdStore w) (lte cold_store_temp_c 8)))
+; 10. Safety: no road vehicle may be loaded above the 44000 kg legal gross limit
+(forall (v) (implies (Vehicle v) (and (gte loaded_weight_kg 0) (lte loaded_weight_kg 44000))))
+; 11. Safety: driver hours are capped at 9 per day
+(forall (d) (implies (Driver d) (lte driving_hours_today 9)))
+; 12. Integrity: on-hand and reserved inventory quantities are never negative
+(forall (r) (implies (InventoryRecord r) (and (gte on_hand_quantity 0) (gte reserved_quantity 0))))
+; 13. Documentation: delivered shipments need proof of delivery
+(forall (s) (implies (and (Shipment s) (eq is_delivered True)) (eq has_proof_of_delivery True)))
+; 14. Documentation: international shipments need a customs declaration
+(forall (s) (implies (InternationalShipment s) (eq has_customs_declaration True)))

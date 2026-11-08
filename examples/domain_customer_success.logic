@@ -1,0 +1,163 @@
+; =====================================================================
+; Domain: Customer Success
+; Models customer accounts, onboarding, health scores, renewals, churn
+; risk, success managers and business reviews on a condensed BFO upper
+; level.
+; Axioms enforce: health-score bounds and risk classification, renewal and
+; onboarding business rules (at-risk accounts need a plan, enterprise
+; accounts need an executive sponsor), and disjointness of account tiers
+; and lifecycle stages.
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Organisations and People ---
+(def-concept Organization Agent)
+(def-concept Account Organization)
+(def-concept EnterpriseAccount Account)
+(def-concept MidMarketAccount Account)
+(def-concept SmallBusinessAccount Account)
+(def-concept Person Agent)
+(def-concept CustomerContact Person)
+(def-concept ExecutiveSponsor CustomerContact)
+(def-concept Champion CustomerContact)
+(def-concept Administrator CustomerContact)
+(def-concept EndUser CustomerContact)
+(def-concept Detractor CustomerContact)
+(def-concept VendorStaff Person)
+(def-concept CustomerSuccessManager VendorStaff)
+(def-concept SolutionsEngineer VendorStaff)
+(def-concept AccountExecutive VendorStaff)
+(def-concept SupportLiaison VendorStaff)
+(def-concept SuccessTeam Object)
+
+; --- Lifecycle ---
+(def-concept LifecycleStage Quality)
+(def-concept ProspectStage LifecycleStage)
+(def-concept OnboardingStage LifecycleStage)
+(def-concept AdoptionStage LifecycleStage)
+(def-concept ExpansionStage LifecycleStage)
+(def-concept RenewalStage LifecycleStage)
+(def-concept ChurnedStage LifecycleStage)
+
+; --- Onboarding ---
+(def-concept OnboardingProcess Process)
+(def-concept Kickoff OnboardingProcess)
+(def-concept DataMigration OnboardingProcess)
+(def-concept IntegrationSetup OnboardingProcess)
+(def-concept UserTraining OnboardingProcess)
+(def-concept GoLive OnboardingProcess)
+(def-concept OnboardingPlan InformationContentEntity)
+(def-concept Milestone InformationContentEntity)
+(def-concept SuccessPlan InformationContentEntity)
+(def-concept SuccessGoal InformationContentEntity)
+
+; --- Health and Risk ---
+(def-concept HealthScore Quality)
+(def-concept HealthyScore HealthScore)
+(def-concept NeutralScore HealthScore)
+(def-concept AtRiskScore HealthScore)
+(def-concept HealthSignal InformationContentEntity)
+(def-concept UsageSignal HealthSignal)
+(def-concept SupportSignal HealthSignal)
+(def-concept SentimentSignal HealthSignal)
+(def-concept FinancialSignal HealthSignal)
+(def-concept ChurnRisk Quality)
+(def-concept HighChurnRisk ChurnRisk)
+(def-concept LowChurnRisk ChurnRisk)
+(def-concept RiskAlert InformationContentEntity)
+(def-concept SaveCampaign Process)
+
+; --- Commercial ---
+(def-concept Contract InformationContentEntity)
+(def-concept Subscription Contract)
+(def-concept Renewal Process)
+(def-concept AutoRenewal Renewal)
+(def-concept NegotiatedRenewal Renewal)
+(def-concept Expansion Process)
+(def-concept Upsell Expansion)
+(def-concept CrossSell Expansion)
+(def-concept Churn Process)
+(def-concept VoluntaryChurn Churn)
+(def-concept InvoluntaryChurn Churn)
+(def-concept Invoice InformationContentEntity)
+
+; --- Reviews ---
+(def-concept BusinessReview Process)
+(def-concept ExecutiveBusinessReview BusinessReview)
+(def-concept QuarterlyBusinessReview BusinessReview)
+(def-concept ReviewDeck InformationContentEntity)
+(def-concept ActionItem InformationContentEntity)
+(def-concept NPSSurvey InformationContentEntity)
+
+; --- Properties ---
+(def-property account_name Account String :cardinality 1..1)
+(def-property annual_recurring_revenue Account Integer)
+(def-property seat_count Account Integer)
+(def-property active_seat_count Account Integer)
+(def-property health_score Account Integer)
+(def-property days_to_renewal Account Integer)
+(def-property onboarding_days Account Integer)
+(def-property is_at_risk Account Boolean)
+(def-property has_success_plan Account Boolean)
+(def-property has_executive_sponsor Account Boolean)
+(def-property login_count_30d Account Integer)
+(def-property nps_score NPSSurvey Integer)
+(def-property discount_percent Renewal Integer)
+(def-property is_completed Milestone Boolean)
+(def-property portfolio_size CustomerSuccessManager Integer)
+
+; --- Relations ---
+(def-relation managed_by Account CustomerSuccessManager :cardinality 1..1)
+(def-relation has_contact Account CustomerContact :cardinality 1..*)
+(def-relation sponsored_by Account ExecutiveSponsor :cardinality 0..1)
+(def-relation in_stage Account LifecycleStage :cardinality 1..1)
+(def-relation holds_contract Account Contract)
+(def-relation renews Renewal Contract)
+(def-relation onboarded_via Account OnboardingPlan)
+(def-relation contains_milestone OnboardingPlan Milestone :cardinality 1..*)
+(def-relation scored_as Account HealthScore)
+(def-relation derived_from HealthScore HealthSignal :cardinality 1..*)
+(def-relation raises RiskAlert Account)
+(def-relation reviewed_in Account BusinessReview)
+(def-relation produces BusinessReview ActionItem)
+(def-relation targets SaveCampaign Account)
+(def-relation member_of CustomerSuccessManager SuccessTeam)
+(def-relation expands Expansion Account)
+
+; --- Axioms ---
+; 1. Integrity: customer contacts are never vendor staff
+(forall (x) (not (and (CustomerContact x) (VendorStaff x))))
+; 2. Integrity: an account cannot be both enterprise and small-business tier
+(forall (x) (not (and (EnterpriseAccount x) (SmallBusinessAccount x))))
+; 3. Integrity: churned and healthy are mutually exclusive classifications
+(forall (x) (not (and (HealthyScore x) (AtRiskScore x))))
+; 4. Integrity: churned stage and renewal stage are distinct lifecycle states
+(forall (x) (not (and (ChurnedStage x) (RenewalStage x))))
+; 5. Integrity: voluntary and involuntary churn are distinct causes
+(forall (x) (not (and (VoluntaryChurn x) (InvoluntaryChurn x))))
+; 6. Health: the health score is a 0-100 index
+(forall (a) (implies (Account a) (and (gte health_score 0) (lte health_score 100))))
+; 7. Health: NPS survey responses are scored 0 to 10
+(forall (n) (implies (NPSSurvey n) (and (gte nps_score 0) (lte nps_score 10))))
+; 8. Risk: an account scoring below 40 is flagged at risk
+(forall (a) (implies (and (Account a) (lt health_score 40)) (eq is_at_risk True)))
+; 9. Risk: an at-risk account must have a documented success plan
+(forall (a) (implies (and (Account a) (eq is_at_risk True)) (eq has_success_plan True)))
+; 10. Business: enterprise accounts must have an executive sponsor
+(forall (a) (implies (EnterpriseAccount a) (eq has_executive_sponsor True)))
+; 11. Business: renewal discounts are capped at 30 percent
+(forall (r) (implies (Renewal r) (and (gte discount_percent 0) (lte discount_percent 30))))
+; 12. Business: a customer success manager carries at most 60 accounts
+(forall (m) (implies (CustomerSuccessManager m) (lte portfolio_size 60)))

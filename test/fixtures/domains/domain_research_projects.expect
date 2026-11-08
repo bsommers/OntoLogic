@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Grant
+concept HumanSubjectsStudy
+concept EthicsApproval
+concept Dataset
+concept Publication
+relation led_by
+relation approved_by_ethics
+relation reports_on
+property award_amount
+property is_preregistered
+property data_is_public

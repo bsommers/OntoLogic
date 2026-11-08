@@ -1,0 +1,196 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Organization["Organization"]
+    class Account["Account"]
+    class EnterpriseAccount["EnterpriseAccount"]
+    class MidMarketAccount["MidMarketAccount"]
+    class SmallBusinessAccount["SmallBusinessAccount"]
+    class Person["Person"]
+    class CustomerContact["CustomerContact"]
+    class ExecutiveSponsor["ExecutiveSponsor"]
+    class Champion["Champion"]
+    class Administrator["Administrator"]
+    class EndUser["EndUser"]
+    class Detractor["Detractor"]
+    class VendorStaff["VendorStaff"]
+    class CustomerSuccessManager["CustomerSuccessManager"]
+    class SolutionsEngineer["SolutionsEngineer"]
+    class AccountExecutive["AccountExecutive"]
+    class SupportLiaison["SupportLiaison"]
+    class SuccessTeam["SuccessTeam"]
+    class LifecycleStage["LifecycleStage"]
+    class ProspectStage["ProspectStage"]
+    class OnboardingStage["OnboardingStage"]
+    class AdoptionStage["AdoptionStage"]
+    class ExpansionStage["ExpansionStage"]
+    class RenewalStage["RenewalStage"]
+    class ChurnedStage["ChurnedStage"]
+    class OnboardingProcess["OnboardingProcess"]
+    class Kickoff["Kickoff"]
+    class DataMigration["DataMigration"]
+    class IntegrationSetup["IntegrationSetup"]
+    class UserTraining["UserTraining"]
+    class GoLive["GoLive"]
+    class OnboardingPlan["OnboardingPlan"]
+    class Milestone["Milestone"]
+    class SuccessPlan["SuccessPlan"]
+    class SuccessGoal["SuccessGoal"]
+    class HealthScore["HealthScore"]
+    class HealthyScore["HealthyScore"]
+    class NeutralScore["NeutralScore"]
+    class AtRiskScore["AtRiskScore"]
+    class HealthSignal["HealthSignal"]
+    class UsageSignal["UsageSignal"]
+    class SupportSignal["SupportSignal"]
+    class SentimentSignal["SentimentSignal"]
+    class FinancialSignal["FinancialSignal"]
+    class ChurnRisk["ChurnRisk"]
+    class HighChurnRisk["HighChurnRisk"]
+    class LowChurnRisk["LowChurnRisk"]
+    class RiskAlert["RiskAlert"]
+    class SaveCampaign["SaveCampaign"]
+    class Contract["Contract"]
+    class Subscription["Subscription"]
+    class Renewal["Renewal"]
+    class AutoRenewal["AutoRenewal"]
+    class NegotiatedRenewal["NegotiatedRenewal"]
+    class Expansion["Expansion"]
+    class Upsell["Upsell"]
+    class CrossSell["CrossSell"]
+    class Churn["Churn"]
+    class VoluntaryChurn["VoluntaryChurn"]
+    class InvoluntaryChurn["InvoluntaryChurn"]
+    class Invoice["Invoice"]
+    class BusinessReview["BusinessReview"]
+    class ExecutiveBusinessReview["ExecutiveBusinessReview"]
+    class QuarterlyBusinessReview["QuarterlyBusinessReview"]
+    class ReviewDeck["ReviewDeck"]
+    class ActionItem["ActionItem"]
+    class NPSSurvey["NPSSurvey"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Organization
+    Organization <|-- Account
+    Account <|-- EnterpriseAccount
+    Account <|-- MidMarketAccount
+    Account <|-- SmallBusinessAccount
+    Agent <|-- Person
+    Person <|-- CustomerContact
+    CustomerContact <|-- ExecutiveSponsor
+    CustomerContact <|-- Champion
+    CustomerContact <|-- Administrator
+    CustomerContact <|-- EndUser
+    CustomerContact <|-- Detractor
+    Person <|-- VendorStaff
+    VendorStaff <|-- CustomerSuccessManager
+    VendorStaff <|-- SolutionsEngineer
+    VendorStaff <|-- AccountExecutive
+    VendorStaff <|-- SupportLiaison
+    Object <|-- SuccessTeam
+    Quality <|-- LifecycleStage
+    LifecycleStage <|-- ProspectStage
+    LifecycleStage <|-- OnboardingStage
+    LifecycleStage <|-- AdoptionStage
+    LifecycleStage <|-- ExpansionStage
+    LifecycleStage <|-- RenewalStage
+    LifecycleStage <|-- ChurnedStage
+    Process <|-- OnboardingProcess
+    OnboardingProcess <|-- Kickoff
+    OnboardingProcess <|-- DataMigration
+    OnboardingProcess <|-- IntegrationSetup
+    OnboardingProcess <|-- UserTraining
+    OnboardingProcess <|-- GoLive
+    InformationContentEntity <|-- OnboardingPlan
+    InformationContentEntity <|-- Milestone
+    InformationContentEntity <|-- SuccessPlan
+    InformationContentEntity <|-- SuccessGoal
+    Quality <|-- HealthScore
+    HealthScore <|-- HealthyScore
+    HealthScore <|-- NeutralScore
+    HealthScore <|-- AtRiskScore
+    InformationContentEntity <|-- HealthSignal
+    HealthSignal <|-- UsageSignal
+    HealthSignal <|-- SupportSignal
+    HealthSignal <|-- SentimentSignal
+    HealthSignal <|-- FinancialSignal
+    Quality <|-- ChurnRisk
+    ChurnRisk <|-- HighChurnRisk
+    ChurnRisk <|-- LowChurnRisk
+    InformationContentEntity <|-- RiskAlert
+    Process <|-- SaveCampaign
+    InformationContentEntity <|-- Contract
+    Contract <|-- Subscription
+    Process <|-- Renewal
+    Renewal <|-- AutoRenewal
+    Renewal <|-- NegotiatedRenewal
+    Process <|-- Expansion
+    Expansion <|-- Upsell
+    Expansion <|-- CrossSell
+    Process <|-- Churn
+    Churn <|-- VoluntaryChurn
+    Churn <|-- InvoluntaryChurn
+    InformationContentEntity <|-- Invoice
+    Process <|-- BusinessReview
+    BusinessReview <|-- ExecutiveBusinessReview
+    BusinessReview <|-- QuarterlyBusinessReview
+    InformationContentEntity <|-- ReviewDeck
+    InformationContentEntity <|-- ActionItem
+    InformationContentEntity <|-- NPSSurvey
+    Account : +String account_name
+    Account : +Integer annual_recurring_revenue
+    Account : +Integer seat_count
+    Account : +Integer active_seat_count
+    Account : +Integer health_score
+    Account : +Integer days_to_renewal
+    Account : +Integer onboarding_days
+    Account : +Boolean is_at_risk
+    Account : +Boolean has_success_plan
+    Account : +Boolean has_executive_sponsor
+    Account : +Integer login_count_30d
+    NPSSurvey : +Integer nps_score
+    Renewal : +Integer discount_percent
+    Milestone : +Boolean is_completed
+    CustomerSuccessManager : +Integer portfolio_size
+    Account --> CustomerSuccessManager : managed_by
+    Account --> CustomerContact : has_contact
+    Account --> ExecutiveSponsor : sponsored_by
+    Account --> LifecycleStage : in_stage
+    Account --> Contract : holds_contract
+    Renewal --> Contract : renews
+    Account --> OnboardingPlan : onboarded_via
+    OnboardingPlan --> Milestone : contains_milestone
+    Account --> HealthScore : scored_as
+    HealthScore --> HealthSignal : derived_from
+    RiskAlert --> Account : raises
+    Account --> BusinessReview : reviewed_in
+    BusinessReview --> ActionItem : produces
+    SaveCampaign --> Account : targets
+    CustomerSuccessManager --> SuccessTeam : member_of
+    Expansion --> Account : expands
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not CustomerContact(x) and VendorStaff(x))
+%%   forall x (not EnterpriseAccount(x) and SmallBusinessAccount(x))
+%%   forall x (not HealthyScore(x) and AtRiskScore(x))
+%%   forall x (not ChurnedStage(x) and RenewalStage(x))
+%%   forall x (not VoluntaryChurn(x) and InvoluntaryChurn(x))
+%%   forall a (Account(a) and lt(health_score, 40) implies is_at_risk = True)
+%%   forall a (Account(a) and is_at_risk = True implies has_success_plan = True)

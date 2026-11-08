@@ -26,3 +26,4 @@ models-java/src/generated/
 .agents/
 agy-evaluation/
 .claude/worktrees/
+site/assets/diagrams/

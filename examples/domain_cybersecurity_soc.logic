@@ -1,0 +1,220 @@
+; --- Cybersecurity Operations (SOC) ---
+; Models assets, vulnerabilities, detections, alerts, incidents, analysts,
+; playbooks, and severity / SLA rules.
+; Axioms enforce: severity-to-SLA timing, escalation of critical incidents,
+; containment approvals, evidence handling and analyst tier separation.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Assets ---
+(def-concept Asset Object)
+(def-concept Endpoint Asset)
+(def-concept Workstation Endpoint)
+(def-concept Server Endpoint)
+(def-concept DomainController Server)
+(def-concept DatabaseServer Server)
+(def-concept MobileDevice Endpoint)
+(def-concept NetworkDevice Asset)
+(def-concept Firewall NetworkDevice)
+(def-concept Router NetworkDevice)
+(def-concept CloudWorkload Asset)
+(def-concept Application Asset)
+(def-concept UserAccount Asset)
+(def-concept ServiceAccount UserAccount)
+(def-concept PrivilegedAccount UserAccount)
+(def-concept DataStore Asset)
+(def-concept BusinessUnit Agent)
+
+; --- Vulnerabilities and Threats ---
+(def-concept Vulnerability InformationContentEntity)
+(def-concept KnownExploitedVulnerability Vulnerability)
+(def-concept Weakness InformationContentEntity)
+(def-concept Misconfiguration Weakness)
+(def-concept Patch InformationContentEntity)
+(def-concept ThreatActor Agent)
+(def-concept CriminalGroup ThreatActor)
+(def-concept StateSponsoredGroup ThreatActor)
+(def-concept Insider ThreatActor)
+(def-concept Technique InformationContentEntity)
+(def-concept Tactic InformationContentEntity)
+(def-concept Malware InformationContentEntity)
+(def-concept Ransomware Malware)
+(def-concept ThreatIntelFeed InformationContentEntity)
+(def-concept Indicator InformationContentEntity)
+(def-concept IpIndicator Indicator)
+(def-concept DomainIndicator Indicator)
+(def-concept HashIndicator Indicator)
+
+; --- Detection and Alerting ---
+(def-concept Sensor Object)
+(def-concept EdrAgent Sensor)
+(def-concept NetworkSensor Sensor)
+(def-concept LogCollector Sensor)
+(def-concept SiemPlatform Object)
+(def-concept DetectionRule InformationContentEntity)
+(def-concept Alert InformationContentEntity)
+(def-concept FalsePositiveAlert Alert)
+(def-concept TruePositiveAlert Alert)
+(def-concept LogEvent InformationContentEntity)
+(def-concept Evidence InformationContentEntity)
+(def-concept MemoryImage Evidence)
+(def-concept PacketCapture Evidence)
+(def-concept DiskImage Evidence)
+
+; --- Incident Management ---
+(def-concept Incident InformationContentEntity)
+(def-concept PhishingIncident Incident)
+(def-concept MalwareIncident Incident)
+(def-concept DataBreachIncident Incident)
+(def-concept DenialOfServiceIncident Incident)
+(def-concept Severity Quality)
+(def-concept ServiceLevelAgreement InformationContentEntity)
+(def-concept Playbook InformationContentEntity)
+(def-concept PlaybookStep InformationContentEntity)
+(def-concept ContainmentAction Process)
+(def-concept IsolateHost ContainmentAction)
+(def-concept DisableAccount ContainmentAction)
+(def-concept BlockIndicator ContainmentAction)
+(def-concept Triage Process)
+(def-concept Investigation Process)
+(def-concept Eradication Process)
+(def-concept Recovery Process)
+(def-concept PostIncidentReview Process)
+(def-concept Escalation Process)
+
+; --- People and Roles ---
+(def-concept Analyst Agent)
+(def-concept Tier1Analyst Analyst)
+(def-concept Tier2Analyst Analyst)
+(def-concept Tier3Analyst Analyst)
+(def-concept IncidentCommander Analyst)
+(def-concept ThreatHunter Analyst)
+(def-concept SocManager Agent)
+(def-concept OnCallRole Role)
+(def-concept ApproverRole Role)
+
+; --- Relations ---
+(def-relation runs_on Application Asset)
+(def-relation owned_by Asset BusinessUnit)
+(def-relation affected_by Asset Vulnerability :cardinality 0..*)
+(def-relation remediated_by Vulnerability Patch :cardinality 0..*)
+(def-relation exploits Technique Vulnerability :cardinality 0..*)
+(def-relation uses_technique ThreatActor Technique :cardinality 0..*)
+(def-relation deploys ThreatActor Malware :cardinality 0..*)
+(def-relation generates Sensor LogEvent :cardinality 0..*)
+(def-relation collected_by LogEvent SiemPlatform)
+(def-relation fires DetectionRule Alert :cardinality 0..*)
+(def-relation concerns_asset Alert Asset :cardinality 1..*)
+(def-relation matches Alert Indicator :cardinality 0..*)
+(def-relation escalates_to Alert Incident)
+(def-relation involves Incident Asset :cardinality 1..*)
+(def-relation attributed_to Incident ThreatActor :cardinality 0..1)
+(def-relation assigned_to Incident Analyst :cardinality 1..1)
+(def-relation handled_by_playbook Incident Playbook)
+(def-relation has_step Playbook PlaybookStep :cardinality 1..*)
+(def-relation contains Incident ContainmentAction :cardinality 0..*)
+(def-relation approved_by ContainmentAction Analyst)
+(def-relation supported_by Incident Evidence :cardinality 0..*)
+(def-relation bound_by Incident ServiceLevelAgreement :cardinality 1..1)
+(def-relation reports_to Analyst SocManager)
+
+; --- Properties ---
+(def-property hostname Asset String)
+(def-property criticality Asset Integer)
+(def-property is_internet_facing Asset Boolean)
+(def-property is_crown_jewel Asset Boolean)
+(def-property cvss_score Vulnerability Integer)
+(def-property epss_percent Vulnerability Integer)
+(def-property is_patched Vulnerability Boolean)
+(def-property days_open Vulnerability Integer)
+(def-property alert_confidence Alert Integer)
+(def-property alert_severity Alert Integer)
+(def-property incident_severity Incident Integer)
+(def-property is_escalated Incident Boolean)
+(def-property is_contained Incident Boolean)
+(def-property minutes_to_acknowledge Incident Integer)
+(def-property minutes_to_contain Incident Integer)
+(def-property is_closed Incident Boolean)
+(def-property has_post_incident_review Incident Boolean)
+(def-property sla_ack_minutes ServiceLevelAgreement Integer)
+(def-property sla_contain_minutes ServiceLevelAgreement Integer)
+(def-property requires_approval ContainmentAction Boolean)
+(def-property is_approved ContainmentAction Boolean)
+(def-property chain_of_custody_intact Evidence Boolean)
+(def-property is_mfa_enabled UserAccount Boolean)
+(def-property is_legal_hold DataStore Boolean)
+
+; --- Axioms ---
+
+; 1. CVSS scores are scaled 0..100 (score x 10)
+(forall (v)
+    (implies (Vulnerability v)
+             (and (gte cvss_score 0) (lte cvss_score 100))))
+
+; 2. Incident severity scale is 1 (informational) to 4 (critical)
+(forall (i)
+    (implies (Incident i)
+             (and (gte incident_severity 1) (lte incident_severity 4))))
+
+; 3. Alert confidence is a percentage
+(forall (a)
+    (implies (Alert a)
+             (and (gte alert_confidence 0) (lte alert_confidence 100))))
+
+; 4. Critical incidents (severity 4) are always escalated
+(forall (i)
+    (implies (and (Incident i) (eq incident_severity 4))
+             (eq is_escalated True)))
+
+; 5. Acknowledgement SLA: an incident is acknowledged within 240 minutes
+(forall (i)
+    (implies (Incident i)
+             (lte minutes_to_acknowledge 240)))
+
+; 6. Privileged accounts must have MFA enabled
+(forall (a)
+    (implies (PrivilegedAccount a) (eq is_mfa_enabled True)))
+
+; 7. Disabling an account requires a named approver
+(forall (c)
+    (implies (DisableAccount c)
+             (exists (a) (and (Analyst a) (approved_by c a)))))
+
+; 8. Host isolation also requires a named approver
+(forall (c)
+    (implies (IsolateHost c)
+             (exists (a) (and (Analyst a) (approved_by c a)))))
+
+; 9. Evidence must keep an intact chain of custody
+(forall (e)
+    (implies (Evidence e) (eq chain_of_custody_intact True)))
+
+; 10. Every incident has a playbook to follow
+(forall (i)
+    (implies (Incident i)
+             (exists (p) (and (Playbook p) (handled_by_playbook i p)))))
+
+; 11. Closed incidents must have completed a post-incident review
+(forall (i)
+    (implies (and (Incident i) (eq is_closed True))
+             (eq has_post_incident_review True)))
+
+; 12. A false positive alert is never a true positive alert
+(forall (a)
+    (implies (FalsePositiveAlert a) (not (TruePositiveAlert a))))
+
+; 13. Tier 1 and Tier 3 analyst roles are distinct positions
+(forall (a)
+    (implies (Tier1Analyst a) (not (Tier3Analyst a))))

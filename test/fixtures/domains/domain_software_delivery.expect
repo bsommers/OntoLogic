@@ -1,0 +1,13 @@
+# Key names asserted to exist in the parsed registry
+concept PullRequest
+concept Commit
+concept Release
+concept ProductionDeployment
+concept Incident
+concept Build
+relation reviewed_by
+relation deploys
+relation builds_from
+property approval_count
+property is_signed_off
+property incident_severity

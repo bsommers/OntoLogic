@@ -1,0 +1,234 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Asset["Asset"]
+    class Endpoint["Endpoint"]
+    class Workstation["Workstation"]
+    class Server["Server"]
+    class DomainController["DomainController"]
+    class DatabaseServer["DatabaseServer"]
+    class MobileDevice["MobileDevice"]
+    class NetworkDevice["NetworkDevice"]
+    class Firewall["Firewall"]
+    class Router["Router"]
+    class CloudWorkload["CloudWorkload"]
+    class Application["Application"]
+    class UserAccount["UserAccount"]
+    class ServiceAccount["ServiceAccount"]
+    class PrivilegedAccount["PrivilegedAccount"]
+    class DataStore["DataStore"]
+    class BusinessUnit["BusinessUnit"]
+    class Vulnerability["Vulnerability"]
+    class KnownExploitedVulnerability["KnownExploitedVulnerability"]
+    class Weakness["Weakness"]
+    class Misconfiguration["Misconfiguration"]
+    class Patch["Patch"]
+    class ThreatActor["ThreatActor"]
+    class CriminalGroup["CriminalGroup"]
+    class StateSponsoredGroup["StateSponsoredGroup"]
+    class Insider["Insider"]
+    class Technique["Technique"]
+    class Tactic["Tactic"]
+    class Malware["Malware"]
+    class Ransomware["Ransomware"]
+    class ThreatIntelFeed["ThreatIntelFeed"]
+    class Indicator["Indicator"]
+    class IpIndicator["IpIndicator"]
+    class DomainIndicator["DomainIndicator"]
+    class HashIndicator["HashIndicator"]
+    class Sensor["Sensor"]
+    class EdrAgent["EdrAgent"]
+    class NetworkSensor["NetworkSensor"]
+    class LogCollector["LogCollector"]
+    class SiemPlatform["SiemPlatform"]
+    class DetectionRule["DetectionRule"]
+    class Alert["Alert"]
+    class FalsePositiveAlert["FalsePositiveAlert"]
+    class TruePositiveAlert["TruePositiveAlert"]
+    class LogEvent["LogEvent"]
+    class Evidence["Evidence"]
+    class MemoryImage["MemoryImage"]
+    class PacketCapture["PacketCapture"]
+    class DiskImage["DiskImage"]
+    class Incident["Incident"]
+    class PhishingIncident["PhishingIncident"]
+    class MalwareIncident["MalwareIncident"]
+    class DataBreachIncident["DataBreachIncident"]
+    class DenialOfServiceIncident["DenialOfServiceIncident"]
+    class Severity["Severity"]
+    class ServiceLevelAgreement["ServiceLevelAgreement"]
+    class Playbook["Playbook"]
+    class PlaybookStep["PlaybookStep"]
+    class ContainmentAction["ContainmentAction"]
+    class IsolateHost["IsolateHost"]
+    class DisableAccount["DisableAccount"]
+    class BlockIndicator["BlockIndicator"]
+    class Triage["Triage"]
+    class Investigation["Investigation"]
+    class Eradication["Eradication"]
+    class Recovery["Recovery"]
+    class PostIncidentReview["PostIncidentReview"]
+    class Escalation["Escalation"]
+    class Analyst["Analyst"]
+    class Tier1Analyst["Tier1Analyst"]
+    class Tier2Analyst["Tier2Analyst"]
+    class Tier3Analyst["Tier3Analyst"]
+    class IncidentCommander["IncidentCommander"]
+    class ThreatHunter["ThreatHunter"]
+    class SocManager["SocManager"]
+    class OnCallRole["OnCallRole"]
+    class ApproverRole["ApproverRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    MaterialEntity <|-- Agent
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Object <|-- Asset
+    Asset <|-- Endpoint
+    Endpoint <|-- Workstation
+    Endpoint <|-- Server
+    Server <|-- DomainController
+    Server <|-- DatabaseServer
+    Endpoint <|-- MobileDevice
+    Asset <|-- NetworkDevice
+    NetworkDevice <|-- Firewall
+    NetworkDevice <|-- Router
+    Asset <|-- CloudWorkload
+    Asset <|-- Application
+    Asset <|-- UserAccount
+    UserAccount <|-- ServiceAccount
+    UserAccount <|-- PrivilegedAccount
+    Asset <|-- DataStore
+    Agent <|-- BusinessUnit
+    InformationContentEntity <|-- Vulnerability
+    Vulnerability <|-- KnownExploitedVulnerability
+    InformationContentEntity <|-- Weakness
+    Weakness <|-- Misconfiguration
+    InformationContentEntity <|-- Patch
+    Agent <|-- ThreatActor
+    ThreatActor <|-- CriminalGroup
+    ThreatActor <|-- StateSponsoredGroup
+    ThreatActor <|-- Insider
+    InformationContentEntity <|-- Technique
+    InformationContentEntity <|-- Tactic
+    InformationContentEntity <|-- Malware
+    Malware <|-- Ransomware
+    InformationContentEntity <|-- ThreatIntelFeed
+    InformationContentEntity <|-- Indicator
+    Indicator <|-- IpIndicator
+    Indicator <|-- DomainIndicator
+    Indicator <|-- HashIndicator
+    Object <|-- Sensor
+    Sensor <|-- EdrAgent
+    Sensor <|-- NetworkSensor
+    Sensor <|-- LogCollector
+    Object <|-- SiemPlatform
+    InformationContentEntity <|-- DetectionRule
+    InformationContentEntity <|-- Alert
+    Alert <|-- FalsePositiveAlert
+    Alert <|-- TruePositiveAlert
+    InformationContentEntity <|-- LogEvent
+    InformationContentEntity <|-- Evidence
+    Evidence <|-- MemoryImage
+    Evidence <|-- PacketCapture
+    Evidence <|-- DiskImage
+    InformationContentEntity <|-- Incident
+    Incident <|-- PhishingIncident
+    Incident <|-- MalwareIncident
+    Incident <|-- DataBreachIncident
+    Incident <|-- DenialOfServiceIncident
+    Quality <|-- Severity
+    InformationContentEntity <|-- ServiceLevelAgreement
+    InformationContentEntity <|-- Playbook
+    InformationContentEntity <|-- PlaybookStep
+    Process <|-- ContainmentAction
+    ContainmentAction <|-- IsolateHost
+    ContainmentAction <|-- DisableAccount
+    ContainmentAction <|-- BlockIndicator
+    Process <|-- Triage
+    Process <|-- Investigation
+    Process <|-- Eradication
+    Process <|-- Recovery
+    Process <|-- PostIncidentReview
+    Process <|-- Escalation
+    Agent <|-- Analyst
+    Analyst <|-- Tier1Analyst
+    Analyst <|-- Tier2Analyst
+    Analyst <|-- Tier3Analyst
+    Analyst <|-- IncidentCommander
+    Analyst <|-- ThreatHunter
+    Agent <|-- SocManager
+    Role <|-- OnCallRole
+    Role <|-- ApproverRole
+    Asset : +String hostname
+    Asset : +Integer criticality
+    Asset : +Boolean is_internet_facing
+    Asset : +Boolean is_crown_jewel
+    Vulnerability : +Integer cvss_score
+    Vulnerability : +Integer epss_percent
+    Vulnerability : +Boolean is_patched
+    Vulnerability : +Integer days_open
+    Alert : +Integer alert_confidence
+    Alert : +Integer alert_severity
+    Incident : +Integer incident_severity
+    Incident : +Boolean is_escalated
+    Incident : +Boolean is_contained
+    Incident : +Integer minutes_to_acknowledge
+    Incident : +Integer minutes_to_contain
+    Incident : +Boolean is_closed
+    Incident : +Boolean has_post_incident_review
+    ServiceLevelAgreement : +Integer sla_ack_minutes
+    ServiceLevelAgreement : +Integer sla_contain_minutes
+    ContainmentAction : +Boolean requires_approval
+    ContainmentAction : +Boolean is_approved
+    Evidence : +Boolean chain_of_custody_intact
+    UserAccount : +Boolean is_mfa_enabled
+    DataStore : +Boolean is_legal_hold
+    Application --> Asset : runs_on
+    Asset --> BusinessUnit : owned_by
+    Asset --> Vulnerability : affected_by
+    Vulnerability --> Patch : remediated_by
+    Technique --> Vulnerability : exploits
+    ThreatActor --> Technique : uses_technique
+    ThreatActor --> Malware : deploys
+    Sensor --> LogEvent : generates
+    LogEvent --> SiemPlatform : collected_by
+    DetectionRule --> Alert : fires
+    Alert --> Asset : concerns_asset
+    Alert --> Indicator : matches
+    Alert --> Incident : escalates_to
+    Incident --> Asset : involves
+    Incident --> ThreatActor : attributed_to
+    Incident --> Analyst : assigned_to
+    Incident --> Playbook : handled_by_playbook
+    Playbook --> PlaybookStep : has_step
+    Incident --> ContainmentAction : contains
+    ContainmentAction --> Analyst : approved_by
+    Incident --> Evidence : supported_by
+    Incident --> ServiceLevelAgreement : bound_by
+    Analyst --> SocManager : reports_to
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall i (Incident(i) and incident_severity = 4 implies is_escalated = True)
+%%   forall c (DisableAccount(c) implies exists a (Analyst(a) and approved_by(c, a)))
+%%   forall c (IsolateHost(c) implies exists a (Analyst(a) and approved_by(c, a)))
+%%   forall i (Incident(i) implies exists p (Playbook(p) and handled_by_playbook(i, p)))
+%%   forall i (Incident(i) and is_closed = True implies has_post_incident_review = True)
+%%   forall a (FalsePositiveAlert(a) implies not TruePositiveAlert(a))
+%%   forall a (Tier1Analyst(a) implies not Tier3Analyst(a))

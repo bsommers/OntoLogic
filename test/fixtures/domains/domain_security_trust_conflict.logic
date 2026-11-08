@@ -1,0 +1,4 @@
+(import "../../../examples/domain_security_trust.logic")
+(forall (k)
+    (implies (PrivateKey k)
+             (and (gt key_length 4096) (lt key_length 1024))))

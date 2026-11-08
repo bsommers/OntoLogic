@@ -1,0 +1,6 @@
+; Conflict fixture: asserts an aircraft that is airworthy but whose last check
+; is overdue (600+ hours), violating the maintenance-interval axiom.
+(import "../../../examples/domain_aerospace.logic")
+
+(exists (a)
+    (and (Aircraft a) (eq is_airworthy True) (gt hours_since_check 700)))

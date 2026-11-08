@@ -1,0 +1,8 @@
+; Conflict fixture: violates the false-positive / true-positive exclusivity
+; of domain_cybersecurity_soc. An alert is classified as both.
+(import "../../../examples/domain_cybersecurity_soc.logic")
+
+(def-concept ContradictoryVerdictAlert FalsePositiveAlert)
+(forall (x)
+    (implies (ContradictoryVerdictAlert x) (TruePositiveAlert x)))
+(exists (u) (ContradictoryVerdictAlert u))

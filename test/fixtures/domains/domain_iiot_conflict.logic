@@ -1,0 +1,8 @@
+; Conflict fixture: violates the "gateways are not sensors" axiom of domain_iiot.
+; A combined sensing gateway is declared as both an EdgeGateway and a Sensor.
+(import "../../../examples/domain_iiot.logic")
+
+(def-concept SensingGateway EdgeGateway)
+(forall (x)
+    (implies (SensingGateway x) (Sensor x)))
+(exists (u) (SensingGateway u))

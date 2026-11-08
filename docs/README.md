@@ -1,35 +1,55 @@
-# OntoLogic: Documentation Index
+# OntoLogic Documentation
 
-Welcome to the OntoLogic documentation folder. This directory contains detailed descriptions of the compiler's purpose, design, pipeline internals, and user guides.
+OntoLogic is a Haskell First-Order Logic ontology DSL and toolchain: write a
+domain once in a `.logic` file, verify it, and compile it to code, schemas,
+proofs and diagrams. Start with the [project README](../README.md), then pick a
+path below.
 
----
+## Learn and use
 
-## 📚 Documents
+| Document | Read it to |
+| :--- | :--- |
+| [User guide](user-guide/README.md) | Learn the language and tools in depth |
+| [Installation](user-guide/installation.md) | Build or install OntoLogic |
+| [Quickstart](user-guide/quickstart.md) | Go from zero to generated output in minutes |
+| [Using OntoLogic](using.md) | Follow task-oriented recipes |
+| [Language reference](user-guide/language-reference.md) | Look up syntax |
+| [Axioms and reasoning](user-guide/axioms-and-reasoning.md) | Write axioms and use the provers |
+| [CLI reference](user-guide/cli-reference.md) | Look up every flag and exit code |
+| [Targets and emitters](user-guide/targets-and-emitters.md) | See what each of the 18 targets produces |
+| [Visualization](user-guide/visualization.md) | Render Mermaid and D2 diagrams |
+| [REPL](user-guide/repl.md) | Explore interactively |
+| [Editor and LSP](user-guide/editor-and-lsp.md) | Set up VS Code, Neovim and other editors |
+| [Troubleshooting](user-guide/troubleshooting.md), [FAQ](user-guide/faq.md) | Fix problems |
 
-1.  **[Why OntoLogic? Strategic & Architectural Rationale](WHY_ONTOLOGIC.md)**: The foundational executive and technical manifesto for OntoLogic. Analyzes the 5 fatal anti-patterns of modern polyglot architectures (Distributed Logic Drift, Property Graph Sloppiness Tax, LLM Hallucination Wall, Academic OWL Trap, Data vs. Logic Contracts) and demonstrates how Logic-as-Code, FOL theorem proving, and universal compilation solve them.
-2.  **[Purpose & Motivation](purpose_and_motivation.md)**: Explains the operational problem of distributed logic drift in IoT fleets and how OntoLogic's "Logic-as-Code" provides a single source of truth.
-3.  **[Compiler Architecture](architecture.md)**: Details the parser frontend, FOL intermediate representation (AST), validation linter, and multi-target compilation emitters.
-4.  **[Comprehensive User Guide](user-guide/README.md)**: In-depth user manual, step-by-step tutorial, S-expression syntax specifications, CLI workflows, and troubleshooting.
-5.  **[User Guide & CLI Reference](using.md)**: Quick reference manual, CLI flags, build configurations, and diagram rendering instructions.
-6.  **[Suggested Improvements](SUGGESTED_IMPROVEMENTS.md)**: Critical architectural review, bug audits, semantic gaps, and prioritized modernization roadmap.
-7.  **[Gemini 3.7 Architectural Review & Strategic Recommendations](GEMINI_3_7_REVIEW.md)**: Comprehensive codebase security audit, semantic gap analysis, and phased roadmap by Gemini 3.7 Flash (Medium Reasoning).
-8.  **[Replay Playbook & Learnings](superpowers/REPLAY_PLAYBOOK.md)**: Complete central manual of architecture learnings, edge cases, and runbook to replay and rebuild the entire compiler and test suite cleanly from scratch.
-9.  **[Superpowers Plans](superpowers/plans/)**: Formal implementation plans for Milestone 1 (Core Improvements), Milestone 2 (Robust Testing Suite), and Milestone 3 (Security Hardening, Error Handling & CI).
-10. **[BFO Critique & Recommendations](AI_BFO_Review.md)**: Formal review of ecosystem ontology against Basic Formal Ontology (BFO) principles (AI-generated).
-11. **[Strategic Value of Ontology](ONTOLOGY_VALUE.md)**: Distinguishing taxonomy from ontology, solving IIoT data context issues, and grounding AI.
-12. **[Role-Based Organizational Value](COMPANY_ROLES.md)**: Why every role in the organization benefits from formal ontology.
-13. **[Case for Rigorous Ontology](RATIONALE.md)**: Technical rationale for BFO, First-Order Logic (FOL), and Haskell in industrial AI systems.
+## Understand
 
----
+| Document | Read it to |
+| :--- | :--- |
+| [Purpose](purpose.md) | Know why OntoLogic exists |
+| [Architecture](architecture.md) | See how the pipeline, solvers and tooling fit together |
 
-## ⚡ Quick Start
+## Reuse and examples
 
-To parse and validate a logic schema, run:
+| Document | Read it to |
+| :--- | :--- |
+| [Standard library](standard-library.md) | Find and import ready-made ontologies (BFO, CCO, ATT&CK, NIST, ...) |
+| [Domain examples gallery](domains/README.md) | Browse runnable models by sector |
+
+## Develop and track
+
+| Document | Read it to |
+| :--- | :--- |
+| [Developer notes](dev/README.md) | Find plans, reviews, design notes, benchmarks and the coverage audit |
+| [Changelog](../CHANGELOG.md) | See what changed in each release |
+| [Contributor guide](../AGENTS.md) | Learn the workflow and pre-push gates |
+
+## Quick start
+
 ```bash
-stack exec ontologic-exe -- -i logic/fleet.logic -t lint -o .
+ontologic -i examples/smart_factory.logic -t lint          # validate
+ontologic -i examples/smart_factory.logic --solve          # prove consistency
+ontologic -i examples/smart_factory.logic -t python -o out # generate
 ```
 
-To transpile a logic schema into Python Pydantic models, run:
-```bash
-stack exec ontologic-exe -- -i logic/fleet.logic -t python -o generated/
-```
+From a source checkout, replace `ontologic` with `stack exec ontologic-exe --`.

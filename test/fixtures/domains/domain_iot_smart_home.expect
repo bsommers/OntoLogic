@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Hub
+concept Camera
+concept ConsentGrant
+concept FirmwareUpdate
+concept Automation
+relation paired_with
+relation covers
+relation installs
+property is_signed
+property retention_days
+property target_temp_c

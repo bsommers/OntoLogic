@@ -1,0 +1,254 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Facility": { shape: class }
+"Cleanroom": { shape: class }
+"Bay": { shape: class }
+"LithographyBay": { shape: class }
+"EtchBay": { shape: class }
+"DiffusionBay": { shape: class }
+"ThinFilmBay": { shape: class }
+"MetrologyBay": { shape: class }
+"ChemicalMechanicalPolishBay": { shape: class }
+"ISOClass": { shape: class }
+"ISOClass3": { shape: class }
+"ISOClass5": { shape: class }
+"ISOClass7": { shape: class }
+"Wafer": { shape: class }
+"ProductWafer": { shape: class }
+"MonitorWafer": { shape: class }
+"DummyWafer": { shape: class }
+"Lot": { shape: class }
+"ProductionLot": { shape: class }
+"EngineeringLot": { shape: class }
+"HotLot": { shape: class }
+"Foup": { shape: class }
+"Reticle": { shape: class }
+"Die": { shape: class }
+"GoodDie": { shape: class }
+"ScrapDie": { shape: class }
+"ProcessChemical": { shape: class }
+"Photoresist": { shape: class }
+"ProcessGas": { shape: class }
+"Slurry": { shape: class }
+"Tool": { shape: class }
+"ProcessTool": { shape: class }
+"Stepper": { shape: class }
+"Scanner": { shape: class }
+"CoaterDeveloper": { shape: class }
+"PlasmaEtcher": { shape: class }
+"DiffusionFurnace": { shape: class }
+"CvdChamber": { shape: class }
+"PvdChamber": { shape: class }
+"IonImplanter": { shape: class }
+"CmpPolisher": { shape: class }
+"WetBench": { shape: class }
+"MetrologyTool": { shape: class }
+"CriticalDimensionSem": { shape: class }
+"OpticalOverlayTool": { shape: class }
+"FilmThicknessGauge": { shape: class }
+"InspectionTool": { shape: class }
+"BrightFieldInspector": { shape: class }
+"DarkFieldInspector": { shape: class }
+"DefectReviewSem": { shape: class }
+"WaferProber": { shape: class }
+"AutomatedMaterialHandling": { shape: class }
+"ProcessStep": { shape: class }
+"Photolithography": { shape: class }
+"Etch": { shape: class }
+"Deposition": { shape: class }
+"Implantation": { shape: class }
+"Diffusion": { shape: class }
+"Planarization": { shape: class }
+"WetClean": { shape: class }
+"MetrologyStep": { shape: class }
+"InspectionStep": { shape: class }
+"ElectricalTest": { shape: class }
+"Rework": { shape: class }
+"ProcessFlow": { shape: class }
+"Layer": { shape: class }
+"Recipe": { shape: class }
+"QualifiedRecipe": { shape: class }
+"RecipeParameter": { shape: class }
+"ControlPlan": { shape: class }
+"Measurement": { shape: class }
+"CriticalDimensionMeasurement": { shape: class }
+"OverlayMeasurement": { shape: class }
+"ThicknessMeasurement": { shape: class }
+"Defect": { shape: class }
+"ParticleDefect": { shape: class }
+"ScratchDefect": { shape: class }
+"PatternDefect": { shape: class }
+"KillerDefect": { shape: class }
+"WaferMap": { shape: class }
+"YieldReport": { shape: class }
+"SpcChart": { shape: class }
+"OutOfControlEvent": { shape: class }
+"HoldOrder": { shape: class }
+"ProcessEngineerRole": { shape: class }
+"EquipmentTechnicianRole": { shape: class }
+"YieldEngineerRole": { shape: class }
+"OperatorRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Facility" -> "Site"
+"Cleanroom" -> "Site"
+"Bay" -> "Cleanroom"
+"LithographyBay" -> "Bay"
+"EtchBay" -> "Bay"
+"DiffusionBay" -> "Bay"
+"ThinFilmBay" -> "Bay"
+"MetrologyBay" -> "Bay"
+"ChemicalMechanicalPolishBay" -> "Bay"
+"ISOClass" -> "Quality"
+"ISOClass3" -> "ISOClass"
+"ISOClass5" -> "ISOClass"
+"ISOClass7" -> "ISOClass"
+"Wafer" -> "Object"
+"ProductWafer" -> "Wafer"
+"MonitorWafer" -> "Wafer"
+"DummyWafer" -> "Wafer"
+"Lot" -> "Object"
+"ProductionLot" -> "Lot"
+"EngineeringLot" -> "Lot"
+"HotLot" -> "ProductionLot"
+"Foup" -> "Object"
+"Reticle" -> "Object"
+"Die" -> "Object"
+"GoodDie" -> "Die"
+"ScrapDie" -> "Die"
+"ProcessChemical" -> "Object"
+"Photoresist" -> "ProcessChemical"
+"ProcessGas" -> "ProcessChemical"
+"Slurry" -> "ProcessChemical"
+"Tool" -> "Object"
+"ProcessTool" -> "Tool"
+"Stepper" -> "ProcessTool"
+"Scanner" -> "ProcessTool"
+"CoaterDeveloper" -> "ProcessTool"
+"PlasmaEtcher" -> "ProcessTool"
+"DiffusionFurnace" -> "ProcessTool"
+"CvdChamber" -> "ProcessTool"
+"PvdChamber" -> "ProcessTool"
+"IonImplanter" -> "ProcessTool"
+"CmpPolisher" -> "ProcessTool"
+"WetBench" -> "ProcessTool"
+"MetrologyTool" -> "Tool"
+"CriticalDimensionSem" -> "MetrologyTool"
+"OpticalOverlayTool" -> "MetrologyTool"
+"FilmThicknessGauge" -> "MetrologyTool"
+"InspectionTool" -> "Tool"
+"BrightFieldInspector" -> "InspectionTool"
+"DarkFieldInspector" -> "InspectionTool"
+"DefectReviewSem" -> "InspectionTool"
+"WaferProber" -> "Tool"
+"AutomatedMaterialHandling" -> "Tool"
+"ProcessStep" -> "Process"
+"Photolithography" -> "ProcessStep"
+"Etch" -> "ProcessStep"
+"Deposition" -> "ProcessStep"
+"Implantation" -> "ProcessStep"
+"Diffusion" -> "ProcessStep"
+"Planarization" -> "ProcessStep"
+"WetClean" -> "ProcessStep"
+"MetrologyStep" -> "Process"
+"InspectionStep" -> "Process"
+"ElectricalTest" -> "Process"
+"Rework" -> "Process"
+"ProcessFlow" -> "InformationContentEntity"
+"Layer" -> "InformationContentEntity"
+"Recipe" -> "InformationContentEntity"
+"QualifiedRecipe" -> "Recipe"
+"RecipeParameter" -> "InformationContentEntity"
+"ControlPlan" -> "InformationContentEntity"
+"Measurement" -> "InformationContentEntity"
+"CriticalDimensionMeasurement" -> "Measurement"
+"OverlayMeasurement" -> "Measurement"
+"ThicknessMeasurement" -> "Measurement"
+"Defect" -> "InformationContentEntity"
+"ParticleDefect" -> "Defect"
+"ScratchDefect" -> "Defect"
+"PatternDefect" -> "Defect"
+"KillerDefect" -> "Defect"
+"WaferMap" -> "InformationContentEntity"
+"YieldReport" -> "InformationContentEntity"
+"SpcChart" -> "InformationContentEntity"
+"OutOfControlEvent" -> "InformationContentEntity"
+"HoldOrder" -> "InformationContentEntity"
+"ProcessEngineerRole" -> "Role"
+"EquipmentTechnicianRole" -> "Role"
+"YieldEngineerRole" -> "Role"
+"OperatorRole" -> "Role"
+"Lot"."lot_id": String
+"Lot"."wafer_count": Integer
+"Wafer"."wafer_diameter_mm": Integer
+"Wafer"."wafer_thickness_um": Integer
+"Lot"."lot_priority": Integer
+"Lot"."is_on_hold": Boolean
+"Tool"."tool_state": String
+"Tool"."is_qualified": Boolean
+"Tool"."is_in_maintenance": Boolean
+"ProcessTool"."chamber_pressure_mtorr": Integer
+"ProcessTool"."process_temp_c": Integer
+"Cleanroom"."iso_class_number": Integer
+"Cleanroom"."particle_count_per_m3": Integer
+"Recipe"."is_released": Boolean
+"Recipe"."is_golden": Boolean
+"CriticalDimensionMeasurement"."cd_nm": Integer
+"CriticalDimensionMeasurement"."cd_target_nm": Integer
+"OverlayMeasurement"."overlay_nm": Integer
+"ThicknessMeasurement"."film_thickness_nm": Integer
+"Wafer"."defect_density_per_cm2": Integer
+"Defect"."defect_size_nm": Integer
+"Defect"."is_killer": Boolean
+"Wafer"."die_yield_pct": Integer
+"YieldReport"."line_yield_pct": Integer
+"Lot"."rework_count": Integer
+"Wafer"."is_cross_contaminated": Boolean
+"Lot" -> "Wafer": contains_wafer
+"Lot" -> "Foup": carried_in
+"Tool" -> "Bay": located_in
+"ProcessStep" -> "Lot": processes_lot
+"ProcessStep" -> "Tool": performed_on
+"ProcessStep" -> "Recipe": uses_recipe
+"Recipe" -> "RecipeParameter": has_parameter
+"Photolithography" -> "Reticle": uses_reticle
+"ProcessStep" -> "Layer": forms_layer
+"ProcessStep" -> "ProcessStep": follows
+"ProcessStep" -> "ProcessFlow": part_of_flow
+"MetrologyStep" -> "Lot": measures
+"MetrologyStep" -> "MetrologyTool": measured_on
+"MetrologyStep" -> "Measurement": produces
+"InspectionStep" -> "Wafer": inspects
+"InspectionStep" -> "Defect": detects
+"Defect" -> "Wafer": found_on
+"HoldOrder" -> "Lot": hold_for
+"HoldOrder" -> "OutOfControlEvent": triggered_by
+"YieldReport" -> "Lot": summarises
+"WaferMap" -> "Wafer": maps
+"ProcessStep" -> "ControlPlan": governed_by
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall s (ProcessStep(s) implies exists r (Recipe(r) and uses_recipe(s, r)))
+#   forall p (Photolithography(p) implies exists r (Reticle(r) and uses_reticle(p, r)))
+#   forall h (HoldOrder(h) implies exists l (Lot(l) and hold_for(h, l)))
+#   forall w (ProductWafer(w) implies not DummyWafer(w))
+#   forall t (ProcessTool(t) implies not MetrologyTool(t))

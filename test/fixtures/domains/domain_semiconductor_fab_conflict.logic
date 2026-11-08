@@ -1,0 +1,8 @@
+; Conflict fixture: violates the product/dummy wafer exclusivity of
+; domain_semiconductor_fab. A wafer is declared to be both.
+(import "../../../examples/domain_semiconductor_fab.logic")
+
+(def-concept RecycledWafer ProductWafer)
+(forall (x)
+    (implies (RecycledWafer x) (DummyWafer x)))
+(exists (u) (RecycledWafer u))

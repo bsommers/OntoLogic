@@ -1,0 +1,237 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Farm": { shape: class }
+"Field": { shape: class }
+"ArableField": { shape: class }
+"Pasture": { shape: class }
+"Orchard": { shape: class }
+"Greenhouse": { shape: class }
+"Paddock": { shape: class }
+"Barn": { shape: class }
+"MilkingParlour": { shape: class }
+"GrainSilo": { shape: class }
+"WaterSource": { shape: class }
+"Borehole": { shape: class }
+"Reservoir": { shape: class }
+"Person": { shape: class }
+"Farmer": { shape: class }
+"FarmHand": { shape: class }
+"Agronomist": { shape: class }
+"Veterinarian": { shape: class }
+"Inspector": { shape: class }
+"Plant": { shape: class }
+"Crop": { shape: class }
+"CerealCrop": { shape: class }
+"Wheat": { shape: class }
+"Maize": { shape: class }
+"Barley": { shape: class }
+"LegumeCrop": { shape: class }
+"Soybean": { shape: class }
+"VegetableCrop": { shape: class }
+"Tomato": { shape: class }
+"FruitCrop": { shape: class }
+"Apple": { shape: class }
+"CoverCrop": { shape: class }
+"Weed": { shape: class }
+"Pest": { shape: class }
+"CropDisease": { shape: class }
+"Animal": { shape: class }
+"Livestock": { shape: class }
+"Cattle": { shape: class }
+"DairyCow": { shape: class }
+"BeefCattle": { shape: class }
+"Sheep": { shape: class }
+"Pig": { shape: class }
+"Poultry": { shape: class }
+"Herd": { shape: class }
+"Flock": { shape: class }
+"Feed": { shape: class }
+"VeterinaryTreatment": { shape: class }
+"Vaccination": { shape: class }
+"AntibioticTreatment": { shape: class }
+"Quarantine": { shape: class }
+"IrrigationSystem": { shape: class }
+"DripIrrigation": { shape: class }
+"PivotIrrigation": { shape: class }
+"Sprinkler": { shape: class }
+"Pump": { shape: class }
+"Valve": { shape: class }
+"Sensor": { shape: class }
+"SoilSensor": { shape: class }
+"MoistureSensor": { shape: class }
+"PhSensor": { shape: class }
+"NitrogenSensor": { shape: class }
+"WeatherStation": { shape: class }
+"SensorReading": { shape: class }
+"Soil": { shape: class }
+"Fertilizer": { shape: class }
+"Pesticide": { shape: class }
+"FarmOperation": { shape: class }
+"Planting": { shape: class }
+"Irrigating": { shape: class }
+"Fertilizing": { shape: class }
+"Spraying": { shape: class }
+"Harvesting": { shape: class }
+"Milking": { shape: class }
+"Grazing": { shape: class }
+"Harvest": { shape: class }
+"GrainHarvest": { shape: class }
+"FruitHarvest": { shape: class }
+"HarvestLot": { shape: class }
+"FieldRecord": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Farm" -> "Site"
+"Field" -> "Site"
+"ArableField" -> "Field"
+"Pasture" -> "Field"
+"Orchard" -> "Field"
+"Greenhouse" -> "Field"
+"Paddock" -> "Field"
+"Barn" -> "Site"
+"MilkingParlour" -> "Site"
+"GrainSilo" -> "Site"
+"WaterSource" -> "Site"
+"Borehole" -> "WaterSource"
+"Reservoir" -> "WaterSource"
+"Person" -> "Agent"
+"Farmer" -> "Person"
+"FarmHand" -> "Person"
+"Agronomist" -> "Person"
+"Veterinarian" -> "Person"
+"Inspector" -> "Person"
+"Plant" -> "MaterialEntity"
+"Crop" -> "Plant"
+"CerealCrop" -> "Crop"
+"Wheat" -> "CerealCrop"
+"Maize" -> "CerealCrop"
+"Barley" -> "CerealCrop"
+"LegumeCrop" -> "Crop"
+"Soybean" -> "LegumeCrop"
+"VegetableCrop" -> "Crop"
+"Tomato" -> "VegetableCrop"
+"FruitCrop" -> "Crop"
+"Apple" -> "FruitCrop"
+"CoverCrop" -> "Crop"
+"Weed" -> "Plant"
+"Pest" -> "Object"
+"CropDisease" -> "Quality"
+"Animal" -> "MaterialEntity"
+"Livestock" -> "Animal"
+"Cattle" -> "Livestock"
+"DairyCow" -> "Cattle"
+"BeefCattle" -> "Cattle"
+"Sheep" -> "Livestock"
+"Pig" -> "Livestock"
+"Poultry" -> "Livestock"
+"Herd" -> "Object"
+"Flock" -> "Object"
+"Feed" -> "MaterialEntity"
+"VeterinaryTreatment" -> "Process"
+"Vaccination" -> "VeterinaryTreatment"
+"AntibioticTreatment" -> "VeterinaryTreatment"
+"Quarantine" -> "Process"
+"IrrigationSystem" -> "Object"
+"DripIrrigation" -> "IrrigationSystem"
+"PivotIrrigation" -> "IrrigationSystem"
+"Sprinkler" -> "IrrigationSystem"
+"Pump" -> "Object"
+"Valve" -> "Object"
+"Sensor" -> "Object"
+"SoilSensor" -> "Sensor"
+"MoistureSensor" -> "SoilSensor"
+"PhSensor" -> "SoilSensor"
+"NitrogenSensor" -> "SoilSensor"
+"WeatherStation" -> "Sensor"
+"SensorReading" -> "InformationContentEntity"
+"Soil" -> "MaterialEntity"
+"Fertilizer" -> "MaterialEntity"
+"Pesticide" -> "MaterialEntity"
+"FarmOperation" -> "Process"
+"Planting" -> "FarmOperation"
+"Irrigating" -> "FarmOperation"
+"Fertilizing" -> "FarmOperation"
+"Spraying" -> "FarmOperation"
+"Harvesting" -> "FarmOperation"
+"Milking" -> "FarmOperation"
+"Grazing" -> "FarmOperation"
+"Harvest" -> "InformationContentEntity"
+"GrainHarvest" -> "Harvest"
+"FruitHarvest" -> "Harvest"
+"HarvestLot" -> "InformationContentEntity"
+"FieldRecord" -> "InformationContentEntity"
+"Field"."area_hectares": Float
+"SoilSensor"."soil_ph": Float
+"MoistureSensor"."soil_moisture_percent": Integer
+"NitrogenSensor"."soil_nitrogen_ppm": Integer
+"Field"."needs_irrigation": Boolean
+"IrrigationSystem"."irrigation_active": Boolean
+"Pump"."flow_rate_lpm": Integer
+"Reservoir"."tank_level_percent": Integer
+"WeatherStation"."air_temperature_c": Integer
+"Crop"."crop_variety": String
+"Crop"."days_to_maturity": Integer
+"Harvest"."expected_yield_tonnes": Float
+"Harvest"."moisture_at_harvest": Integer
+"HarvestLot"."has_traceability_lot": Boolean
+"Herd"."animal_count": Integer
+"Paddock"."stocking_density": Integer
+"Livestock"."ear_tag": String
+"Livestock"."body_weight_kg": Integer
+"AntibioticTreatment"."withdrawal_days": Integer
+"Livestock"."days_since_treatment": Integer
+"Livestock"."in_quarantine": Boolean
+"Livestock"."sold_for_slaughter": Boolean
+"Spraying"."pesticide_applied": Boolean
+"Spraying"."days_before_harvest": Integer
+"Farmer" -> "Farm": owns
+"Field" -> "Farm": part_of
+"Field" -> "Crop": planted_with
+"IrrigationSystem" -> "Field": irrigates
+"IrrigationSystem" -> "WaterSource": supplied_by
+"IrrigationSystem" -> "Pump": powered_by
+"Valve" -> "IrrigationSystem": controls
+"SoilSensor" -> "Field": installed_in
+"SensorReading" -> "SoilSensor": measures
+"Herd" -> "Paddock": grazes
+"Livestock" -> "Herd": member_of
+"Livestock" -> "Feed": fed_with
+"Livestock" -> "VeterinaryTreatment": treated_with
+"VeterinaryTreatment" -> "Veterinarian": administered_by
+"Harvest" -> "Field": harvested_from
+"Harvest" -> "HarvestLot": yields
+"Field" -> "Agronomist": advised_by
+"Pest" -> "Crop": threatens
+"CropDisease" -> "Crop": affects
+"Fertilizer" -> "Field": applied_to
+"Livestock" -> "Barn": housed_in
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not Crop(x) and Livestock(x))
+#   forall x (not Crop(x) and Weed(x))
+#   forall x (not Fertilizer(x) and Pesticide(x))
+#   forall x (not Farmer(x) and Inspector(x))
+#   forall s (MoistureSensor(s) and lt(soil_moisture_percent, 20) implies exists i (IrrigationSystem(i)))
+#   forall a (Livestock(a) and in_quarantine = True implies sold_for_slaughter = False)
+#   forall s (Spraying(s) and pesticide_applied = True implies gte(days_before_harvest, 14))

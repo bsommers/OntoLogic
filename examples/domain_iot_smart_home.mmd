@@ -1,0 +1,211 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Site["Site"]
+    class Agent["Agent"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Household["Household"]
+    class Resident["Resident"]
+    class Guest["Guest"]
+    class Child["Child"]
+    class Home["Home"]
+    class Room["Room"]
+    class Bedroom["Bedroom"]
+    class Kitchen["Kitchen"]
+    class LivingRoom["LivingRoom"]
+    class Bathroom["Bathroom"]
+    class Garage["Garage"]
+    class SmartDevice["SmartDevice"]
+    class Hub["Hub"]
+    class ThreadBorderRouter["ThreadBorderRouter"]
+    class ZigbeeCoordinator["ZigbeeCoordinator"]
+    class Light["Light"]
+    class Thermostat["Thermostat"]
+    class SmartPlug["SmartPlug"]
+    class DoorLock["DoorLock"]
+    class Camera["Camera"]
+    class DoorbellCamera["DoorbellCamera"]
+    class SmartSpeaker["SmartSpeaker"]
+    class MotionSensor["MotionSensor"]
+    class ContactSensor["ContactSensor"]
+    class SmokeDetector["SmokeDetector"]
+    class LeakSensor["LeakSensor"]
+    class Oven["Oven"]
+    class RobotVacuum["RobotVacuum"]
+    class GarageDoorOpener["GarageDoorOpener"]
+    class Radio["Radio"]
+    class WifiRadio["WifiRadio"]
+    class ThreadRadio["ThreadRadio"]
+    class ZigbeeRadio["ZigbeeRadio"]
+    class BluetoothRadio["BluetoothRadio"]
+    class CloudService["CloudService"]
+    class MobileApp["MobileApp"]
+    class Automation["Automation"]
+    class Trigger["Trigger"]
+    class TimeTrigger["TimeTrigger"]
+    class PresenceTrigger["PresenceTrigger"]
+    class SensorTrigger["SensorTrigger"]
+    class VoiceTrigger["VoiceTrigger"]
+    class Condition["Condition"]
+    class Action["Action"]
+    class Scene["Scene"]
+    class AutomationRun["AutomationRun"]
+    class FirmwareImage["FirmwareImage"]
+    class SecurityPatch["SecurityPatch"]
+    class FeatureRelease["FeatureRelease"]
+    class FirmwareUpdate["FirmwareUpdate"]
+    class RollbackEvent["RollbackEvent"]
+    class PersonalData["PersonalData"]
+    class VideoRecording["VideoRecording"]
+    class AudioRecording["AudioRecording"]
+    class PresenceHistory["PresenceHistory"]
+    class DeviceUsageLog["DeviceUsageLog"]
+    class Consent["Consent"]
+    class ConsentGrant["ConsentGrant"]
+    class ConsentWithdrawal["ConsentWithdrawal"]
+    class PrivacyPolicy["PrivacyPolicy"]
+    class DataSharingAgreement["DataSharingAgreement"]
+    class DataSubjectRequest["DataSubjectRequest"]
+    class DeletionRequest["DeletionRequest"]
+    class ExportRequest["ExportRequest"]
+    class OwnerRole["OwnerRole"]
+    class AdminRole["AdminRole"]
+    class MemberRole["MemberRole"]
+    class GuestAccessRole["GuestAccessRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    IndependentContinuant <|-- Site
+    MaterialEntity <|-- Agent
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Person
+    InformationContentEntity <|-- Household
+    Person <|-- Resident
+    Person <|-- Guest
+    Resident <|-- Child
+    Site <|-- Home
+    Site <|-- Room
+    Room <|-- Bedroom
+    Room <|-- Kitchen
+    Room <|-- LivingRoom
+    Room <|-- Bathroom
+    Room <|-- Garage
+    Object <|-- SmartDevice
+    SmartDevice <|-- Hub
+    Hub <|-- ThreadBorderRouter
+    Hub <|-- ZigbeeCoordinator
+    SmartDevice <|-- Light
+    SmartDevice <|-- Thermostat
+    SmartDevice <|-- SmartPlug
+    SmartDevice <|-- DoorLock
+    SmartDevice <|-- Camera
+    Camera <|-- DoorbellCamera
+    SmartDevice <|-- SmartSpeaker
+    SmartDevice <|-- MotionSensor
+    SmartDevice <|-- ContactSensor
+    SmartDevice <|-- SmokeDetector
+    SmartDevice <|-- LeakSensor
+    SmartDevice <|-- Oven
+    SmartDevice <|-- RobotVacuum
+    SmartDevice <|-- GarageDoorOpener
+    Object <|-- Radio
+    Radio <|-- WifiRadio
+    Radio <|-- ThreadRadio
+    Radio <|-- ZigbeeRadio
+    Radio <|-- BluetoothRadio
+    Object <|-- CloudService
+    Object <|-- MobileApp
+    InformationContentEntity <|-- Automation
+    InformationContentEntity <|-- Trigger
+    Trigger <|-- TimeTrigger
+    Trigger <|-- PresenceTrigger
+    Trigger <|-- SensorTrigger
+    Trigger <|-- VoiceTrigger
+    InformationContentEntity <|-- Condition
+    InformationContentEntity <|-- Action
+    InformationContentEntity <|-- Scene
+    Process <|-- AutomationRun
+    InformationContentEntity <|-- FirmwareImage
+    FirmwareImage <|-- SecurityPatch
+    FirmwareImage <|-- FeatureRelease
+    Process <|-- FirmwareUpdate
+    Process <|-- RollbackEvent
+    InformationContentEntity <|-- PersonalData
+    PersonalData <|-- VideoRecording
+    PersonalData <|-- AudioRecording
+    PersonalData <|-- PresenceHistory
+    PersonalData <|-- DeviceUsageLog
+    InformationContentEntity <|-- Consent
+    Consent <|-- ConsentGrant
+    Consent <|-- ConsentWithdrawal
+    InformationContentEntity <|-- PrivacyPolicy
+    InformationContentEntity <|-- DataSharingAgreement
+    Process <|-- DataSubjectRequest
+    DataSubjectRequest <|-- DeletionRequest
+    DataSubjectRequest <|-- ExportRequest
+    Role <|-- OwnerRole
+    Role <|-- AdminRole
+    Role <|-- MemberRole
+    Role <|-- GuestAccessRole
+    SmartDevice : +String device_name
+    SmartDevice : +String firmware_version
+    SmartDevice : +Integer battery_pct
+    SmartDevice : +Boolean is_online
+    Camera : +Boolean is_recording
+    SmartSpeaker : +Boolean is_listening
+    SmartSpeaker : +Boolean has_hardware_mute
+    Oven : +Boolean is_on
+    Thermostat : +Integer target_temp_c
+    DoorLock : +Boolean is_locked
+    GarageDoorOpener : +Boolean is_door_open
+    FirmwareImage : +Boolean is_signed
+    FirmwareUpdate : +Integer rollout_pct
+    FirmwareImage : +Boolean is_security_critical
+    Person : +Integer age_years
+    Home : +Boolean is_home_occupied
+    PersonalData : +Integer retention_days
+    Consent : +Boolean is_active
+    PersonalData : +Boolean is_shared_with_third_party
+    VideoRecording : +Boolean is_end_to_end_encrypted
+    SmartDevice : +Boolean default_password_changed
+    Automation : +Boolean runs_unattended
+    SmartDevice --> Hub : paired_with
+    SmartDevice --> Room : located_in
+    Room --> Home : part_of_home
+    SmartDevice --> Radio : uses_radio
+    Hub --> CloudService : syncs_with
+    MobileApp --> Hub : controls_via
+    Resident --> SmartDevice : owns
+    Resident --> Household : member_of
+    Trigger --> Automation : triggers_automation
+    Automation --> Action : performs
+    Action --> SmartDevice : targets
+    FirmwareUpdate --> SmartDevice : applies_to
+    FirmwareUpdate --> FirmwareImage : installs
+    PersonalData --> SmartDevice : captured_by
+    PersonalData --> Person : concerns
+    Consent --> Person : granted_by
+    Consent --> PersonalData : covers
+    SmartDevice --> PrivacyPolicy : governed_by
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall p (PersonalData(p) and is_shared_with_third_party = True implies exists c (Consent(c) and covers(c, p)))
+%%   forall v (VideoRecording(v) implies exists c (ConsentGrant(c) and covers(c, v)))
+%%   forall s (SmartSpeaker(s) and is_listening = True implies has_hardware_mute = True)
+%%   forall c (Camera(c) implies not SmartSpeaker(c))
+%%   forall c (ConsentGrant(c) implies not ConsentWithdrawal(c))

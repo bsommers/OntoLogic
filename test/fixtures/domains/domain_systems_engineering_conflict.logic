@@ -1,0 +1,6 @@
+; Conflict fixture: asserts an approved requirement that is not allocated to any
+; element, violating the allocation-completeness axiom.
+(import "../../../examples/domain_systems_engineering.logic")
+
+(exists (r)
+    (and (Requirement r) (eq is_approved True) (eq is_allocated False)))

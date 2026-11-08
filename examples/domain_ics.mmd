@@ -1,0 +1,194 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class PurdueLevel["PurdueLevel"]
+    class Level0Process["Level0Process"]
+    class Level1BasicControl["Level1BasicControl"]
+    class Level2Supervisory["Level2Supervisory"]
+    class Level3SiteOperations["Level3SiteOperations"]
+    class Level35Dmz["Level35Dmz"]
+    class Level4Enterprise["Level4Enterprise"]
+    class PlantArea["PlantArea"]
+    class ProcessUnit["ProcessUnit"]
+    class ControlZone["ControlZone"]
+    class SafetyZone["SafetyZone"]
+    class FieldDevice["FieldDevice"]
+    class Sensor["Sensor"]
+    class PressureTransmitter["PressureTransmitter"]
+    class TemperatureTransmitter["TemperatureTransmitter"]
+    class LevelTransmitter["LevelTransmitter"]
+    class FlowTransmitter["FlowTransmitter"]
+    class GasDetector["GasDetector"]
+    class Actuator["Actuator"]
+    class ControlValve["ControlValve"]
+    class ShutdownValve["ShutdownValve"]
+    class MotorStarter["MotorStarter"]
+    class VariableFrequencyDrive["VariableFrequencyDrive"]
+    class EmergencyStopButton["EmergencyStopButton"]
+    class Controller["Controller"]
+    class Plc["Plc"]
+    class Rtu["Rtu"]
+    class Dcs["Dcs"]
+    class SafetyController["SafetyController"]
+    class IoModule["IoModule"]
+    class IndustrialNetwork["IndustrialNetwork"]
+    class FieldbusSegment["FieldbusSegment"]
+    class ControlNetwork["ControlNetwork"]
+    class FirewallConduit["FirewallConduit"]
+    class Workstation["Workstation"]
+    class ScadaServer["ScadaServer"]
+    class HmiStation["HmiStation"]
+    class EngineeringWorkstation["EngineeringWorkstation"]
+    class Historian["Historian"]
+    class ControlProgram["ControlProgram"]
+    class LadderLogicProgram["LadderLogicProgram"]
+    class SafetyProgram["SafetyProgram"]
+    class ControlLoop["ControlLoop"]
+    class PidLoop["PidLoop"]
+    class SafetyInstrumentedFunction["SafetyInstrumentedFunction"]
+    class Interlock["Interlock"]
+    class PermissiveInterlock["PermissiveInterlock"]
+    class ProtectiveInterlock["ProtectiveInterlock"]
+    class EmergencyShutdown["EmergencyShutdown"]
+    class SafetyInstrumentedSystem["SafetyInstrumentedSystem"]
+    class Setpoint["Setpoint"]
+    class ProcessVariable["ProcessVariable"]
+    class AlarmLimit["AlarmLimit"]
+    class Alarm["Alarm"]
+    class AdvisoryAlarm["AdvisoryAlarm"]
+    class StandardAlarm["StandardAlarm"]
+    class CriticalAlarm["CriticalAlarm"]
+    class Bypass["Bypass"]
+    class ScanCycle["ScanCycle"]
+    class ProcessTrip["ProcessTrip"]
+    class ProofTest["ProofTest"]
+    class FirmwareChange["FirmwareChange"]
+    class OperatorRole["OperatorRole"]
+    class ShiftSupervisorRole["ShiftSupervisorRole"]
+    class ControlsEngineerRole["ControlsEngineerRole"]
+    class SafetyAuthorityRole["SafetyAuthorityRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    InformationContentEntity <|-- PurdueLevel
+    PurdueLevel <|-- Level0Process
+    PurdueLevel <|-- Level1BasicControl
+    PurdueLevel <|-- Level2Supervisory
+    PurdueLevel <|-- Level3SiteOperations
+    PurdueLevel <|-- Level35Dmz
+    PurdueLevel <|-- Level4Enterprise
+    Site <|-- PlantArea
+    Site <|-- ProcessUnit
+    Site <|-- ControlZone
+    ControlZone <|-- SafetyZone
+    Object <|-- FieldDevice
+    FieldDevice <|-- Sensor
+    Sensor <|-- PressureTransmitter
+    Sensor <|-- TemperatureTransmitter
+    Sensor <|-- LevelTransmitter
+    Sensor <|-- FlowTransmitter
+    Sensor <|-- GasDetector
+    FieldDevice <|-- Actuator
+    Actuator <|-- ControlValve
+    Actuator <|-- ShutdownValve
+    Actuator <|-- MotorStarter
+    Actuator <|-- VariableFrequencyDrive
+    FieldDevice <|-- EmergencyStopButton
+    Object <|-- Controller
+    Controller <|-- Plc
+    Controller <|-- Rtu
+    Controller <|-- Dcs
+    Controller <|-- SafetyController
+    Object <|-- IoModule
+    Object <|-- IndustrialNetwork
+    IndustrialNetwork <|-- FieldbusSegment
+    IndustrialNetwork <|-- ControlNetwork
+    IndustrialNetwork <|-- FirewallConduit
+    Object <|-- Workstation
+    Workstation <|-- ScadaServer
+    Workstation <|-- HmiStation
+    Workstation <|-- EngineeringWorkstation
+    Workstation <|-- Historian
+    InformationContentEntity <|-- ControlProgram
+    ControlProgram <|-- LadderLogicProgram
+    ControlProgram <|-- SafetyProgram
+    Function <|-- ControlLoop
+    ControlLoop <|-- PidLoop
+    Function <|-- SafetyInstrumentedFunction
+    SafetyInstrumentedFunction <|-- Interlock
+    Interlock <|-- PermissiveInterlock
+    Interlock <|-- ProtectiveInterlock
+    SafetyInstrumentedFunction <|-- EmergencyShutdown
+    InformationContentEntity <|-- SafetyInstrumentedSystem
+    Quality <|-- Setpoint
+    Quality <|-- ProcessVariable
+    Quality <|-- AlarmLimit
+    InformationContentEntity <|-- Alarm
+    Alarm <|-- AdvisoryAlarm
+    Alarm <|-- StandardAlarm
+    Alarm <|-- CriticalAlarm
+    InformationContentEntity <|-- Bypass
+    Process <|-- ScanCycle
+    Process <|-- ProcessTrip
+    Process <|-- ProofTest
+    Process <|-- FirmwareChange
+    Role <|-- OperatorRole
+    Role <|-- ShiftSupervisorRole
+    Role <|-- ControlsEngineerRole
+    Role <|-- SafetyAuthorityRole
+    FieldDevice : +String tag_name
+    Plc : +Integer scan_time_ms
+    Setpoint : +Integer setpoint_value
+    Setpoint : +Integer setpoint_low_limit
+    Setpoint : +Integer setpoint_high_limit
+    ProcessVariable : +Integer process_value
+    AlarmLimit : +Integer high_high_limit
+    Alarm : +Integer alarm_priority
+    Alarm : +Boolean requires_acknowledgement
+    SafetyInstrumentedFunction : +Integer sil_level
+    SafetyInstrumentedFunction : +Integer proof_test_interval_months
+    ProcessTrip : +Boolean is_tripped
+    Interlock : +Boolean is_bypassed
+    Bypass : +Integer bypass_duration_hours
+    Controller : +Boolean is_remote_access_enabled
+    Controller : +Boolean is_internet_facing
+    Plc : +Boolean key_switch_in_run
+    FirmwareChange : +Boolean firmware_signed
+    Controller --> FieldDevice : controls
+    Controller --> Sensor : reads_from
+    ScadaServer --> Controller : supervises
+    HmiStation --> ScadaServer : displays_on
+    Controller --> PurdueLevel : resides_at_level
+    Controller --> IndustrialNetwork : connected_to
+    ShutdownValve --> ProcessUnit : protects
+    Interlock --> ProcessTrip : initiates
+    Sensor --> Alarm : raises
+    Alarm --> OperatorRole : acknowledged_by
+    Bypass --> Interlock : bypasses
+    Bypass --> SafetyAuthorityRole : authorised_by
+    Plc --> ControlProgram : executes
+    FieldDevice --> ProcessUnit : located_in
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall c (SafetyController(c) implies not Plc(c))
+%%   forall b (Bypass(b) implies exists r (SafetyAuthorityRole(r) and authorised_by(b, r)))
+%%   forall t (ProcessTrip(t) and is_tripped = True implies exists i (Interlock(i) and initiates(i, t)))
+%%   forall x (Alarm(x) implies not Interlock(x))

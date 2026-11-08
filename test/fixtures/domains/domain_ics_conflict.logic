@@ -1,0 +1,8 @@
+; Conflict fixture: violates the SIS independence axiom of domain_ics.
+; A SafetyController must never be a basic-process Plc, yet this unit is both.
+(import "../../../examples/domain_ics.logic")
+
+(def-concept HybridSafetyPlc SafetyController)
+(forall (x)
+    (implies (HybridSafetyPlc x) (Plc x)))
+(exists (u) (HybridSafetyPlc u))

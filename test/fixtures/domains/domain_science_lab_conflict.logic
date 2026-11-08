@@ -1,0 +1,6 @@
+; Conflict fixture: asserts an instrument that is 400 days past calibration yet
+; still flagged calibration-valid, violating the calibration-interval axiom.
+(import "../../../examples/domain_science_lab.logic")
+
+(exists (i)
+    (and (Instrument i) (gt days_since_calibration 400) (eq calibration_valid True)))

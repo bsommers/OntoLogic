@@ -1,0 +1,7 @@
+concept ComputeNode
+concept PhysicalServer
+concept VirtualMachine
+concept Container
+property cpu_usage
+property memory_usage
+property replica_count

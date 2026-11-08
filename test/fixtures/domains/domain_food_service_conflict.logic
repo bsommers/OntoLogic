@@ -1,0 +1,6 @@
+; Conflict fixture: violates the integrity axiom that a dessert is never a main course.
+(import "../../../examples/domain_food_service.logic")
+
+; Assert an individual that is both Dessert and MainCourse,
+; contradicting the disjointness axiom in the base ontology.
+(exists (x) (and (Dessert x) (MainCourse x)))

@@ -1,0 +1,14 @@
+# key names
+concept MenuItem
+concept Allergen
+concept Poultry
+concept WalkInFridge
+concept HotHoldingUnit
+concept FoodBatch
+concept GrillStation
+relation contains
+relation has_allergen
+relation prepared_by
+property cold_holding_temp_c
+property poultry_core_temp_c
+property hot_holding_temp_c

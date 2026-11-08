@@ -1,0 +1,6 @@
+; Conflict fixture: violates the clinical-medicine integrity axiom that
+; patients and clinicians are disjoint record types.
+(import "../../../examples/domain_clinical_medicine.logic")
+
+; Assert a staff member who is simultaneously a Patient and a Clinician.
+(exists (x) (and (Patient x) (Clinician x)))

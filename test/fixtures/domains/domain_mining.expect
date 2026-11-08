@@ -1,0 +1,9 @@
+# Mining domain
+concept Excavator
+concept HaulTruck
+concept GasSensor
+concept SafetyAlert
+concept TelemetryData
+property payload_weight
+property methane_level
+property is_autonomous

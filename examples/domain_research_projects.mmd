@@ -1,0 +1,206 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Organization["Organization"]
+    class University["University"]
+    class ResearchInstitute["ResearchInstitute"]
+    class FundingAgency["FundingAgency"]
+    class PublicFunder["PublicFunder"]
+    class PrivateFoundation["PrivateFoundation"]
+    class Publisher["Publisher"]
+    class EthicsCommittee["EthicsCommittee"]
+    class Department["Department"]
+    class ResearchGroup["ResearchGroup"]
+    class Investigator["Investigator"]
+    class PrincipalInvestigator["PrincipalInvestigator"]
+    class CoInvestigator["CoInvestigator"]
+    class PostdoctoralResearcher["PostdoctoralResearcher"]
+    class DoctoralStudent["DoctoralStudent"]
+    class ResearchParticipant["ResearchParticipant"]
+    class Reviewer["Reviewer"]
+    class Author["Author"]
+    class FundingInstrument["FundingInstrument"]
+    class Grant["Grant"]
+    class ProjectGrant["ProjectGrant"]
+    class FellowshipGrant["FellowshipGrant"]
+    class ProposalDocument["ProposalDocument"]
+    class Budget["Budget"]
+    class BudgetLine["BudgetLine"]
+    class DataManagementPlan["DataManagementPlan"]
+    class ProgressReport["ProgressReport"]
+    class FinalReport["FinalReport"]
+    class ConflictOfInterestDeclaration["ConflictOfInterestDeclaration"]
+    class ResearchProject["ResearchProject"]
+    class Study["Study"]
+    class ObservationalStudy["ObservationalStudy"]
+    class ClinicalTrial["ClinicalTrial"]
+    class SurveyStudy["SurveyStudy"]
+    class ComputationalStudy["ComputationalStudy"]
+    class HumanSubjectsStudy["HumanSubjectsStudy"]
+    class Experiment["Experiment"]
+    class Enrolment["Enrolment"]
+    class PeerReview["PeerReview"]
+    class EthicsReview["EthicsReview"]
+    class EthicsApproval["EthicsApproval"]
+    class InformedConsent["InformedConsent"]
+    class StudyProtocol["StudyProtocol"]
+    class PreRegistration["PreRegistration"]
+    class AdverseEventReport["AdverseEventReport"]
+    class Dataset["Dataset"]
+    class RawDataset["RawDataset"]
+    class ProcessedDataset["ProcessedDataset"]
+    class SensitiveDataset["SensitiveDataset"]
+    class OpenDataset["OpenDataset"]
+    class Metadata["Metadata"]
+    class Codebook["Codebook"]
+    class Software["Software"]
+    class Publication["Publication"]
+    class JournalArticle["JournalArticle"]
+    class ConferencePaper["ConferencePaper"]
+    class Preprint["Preprint"]
+    class Thesis["Thesis"]
+    class Citation["Citation"]
+    class Journal["Journal"]
+    class Repository["Repository"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    Object <|-- Person
+    Object <|-- Organization
+    Organization <|-- University
+    Organization <|-- ResearchInstitute
+    Organization <|-- FundingAgency
+    FundingAgency <|-- PublicFunder
+    FundingAgency <|-- PrivateFoundation
+    Organization <|-- Publisher
+    Organization <|-- EthicsCommittee
+    Organization <|-- Department
+    Organization <|-- ResearchGroup
+    Role <|-- Investigator
+    Investigator <|-- PrincipalInvestigator
+    Investigator <|-- CoInvestigator
+    Role <|-- PostdoctoralResearcher
+    Role <|-- DoctoralStudent
+    Role <|-- ResearchParticipant
+    Role <|-- Reviewer
+    Role <|-- Author
+    InformationContentEntity <|-- FundingInstrument
+    FundingInstrument <|-- Grant
+    Grant <|-- ProjectGrant
+    Grant <|-- FellowshipGrant
+    InformationContentEntity <|-- ProposalDocument
+    InformationContentEntity <|-- Budget
+    Budget <|-- BudgetLine
+    InformationContentEntity <|-- DataManagementPlan
+    InformationContentEntity <|-- ProgressReport
+    InformationContentEntity <|-- FinalReport
+    InformationContentEntity <|-- ConflictOfInterestDeclaration
+    Process <|-- ResearchProject
+    Process <|-- Study
+    Study <|-- ObservationalStudy
+    Study <|-- ClinicalTrial
+    Study <|-- SurveyStudy
+    Study <|-- ComputationalStudy
+    Study <|-- HumanSubjectsStudy
+    Process <|-- Experiment
+    Process <|-- Enrolment
+    Process <|-- PeerReview
+    Process <|-- EthicsReview
+    InformationContentEntity <|-- EthicsApproval
+    InformationContentEntity <|-- InformedConsent
+    InformationContentEntity <|-- StudyProtocol
+    InformationContentEntity <|-- PreRegistration
+    InformationContentEntity <|-- AdverseEventReport
+    InformationContentEntity <|-- Dataset
+    Dataset <|-- RawDataset
+    Dataset <|-- ProcessedDataset
+    Dataset <|-- SensitiveDataset
+    Dataset <|-- OpenDataset
+    InformationContentEntity <|-- Metadata
+    Metadata <|-- Codebook
+    InformationContentEntity <|-- Software
+    InformationContentEntity <|-- Publication
+    Publication <|-- JournalArticle
+    Publication <|-- ConferencePaper
+    Publication <|-- Preprint
+    Publication <|-- Thesis
+    InformationContentEntity <|-- Citation
+    Object <|-- Journal
+    Object <|-- Repository
+    Grant : +String grant_number
+    Grant : +Integer award_amount
+    Budget : +Integer budget_total
+    Grant : +Boolean grant_active
+    ResearchProject : +Integer duration_months
+    Study : +Integer sample_size
+    Study : +Integer enrolled_count
+    Study : +Boolean study_started
+    Study : +Boolean is_preregistered
+    EthicsApproval : +Boolean approval_valid
+    Enrolment : +Boolean consent_obtained
+    Dataset : +Boolean data_is_personal
+    Dataset : +Boolean data_is_anonymised
+    Dataset : +Boolean data_is_public
+    Dataset : +Boolean has_metadata
+    Publication : +String doi
+    Publication : +Boolean is_peer_reviewed
+    Publication : +Integer author_count
+    Publication : +Boolean has_coi_declared
+    Person : +Integer h_index
+    Grant --> FundingAgency : awarded_by
+    Grant --> Organization : held_by
+    Grant --> PrincipalInvestigator : led_by
+    ResearchProject --> Grant : funds
+    Grant --> Budget : has_budget
+    Budget --> BudgetLine : includes_line
+    ProposalDocument --> ResearchProject : proposes
+    Person --> Organization : employed_by
+    Person --> ResearchGroup : member_of
+    Investigator --> Study : conducts
+    Study --> ResearchProject : part_of_project
+    Study --> StudyProtocol : governed_by
+    Study --> EthicsApproval : approved_by_ethics
+    EthicsApproval --> EthicsCommittee : issued_by
+    Enrolment --> ResearchParticipant : enrols
+    Enrolment --> Study : enrolment_in
+    Enrolment --> InformedConsent : has_consent
+    Study --> Dataset : generates
+    ProcessedDataset --> RawDataset : derived_from_dataset
+    Dataset --> Metadata : described_by
+    Dataset --> Repository : deposited_in
+    ResearchProject --> DataManagementPlan : governed_by_plan
+    Publication --> Study : reports_on
+    Publication --> Dataset : uses_dataset
+    Publication --> Author : authored_by
+    Publication --> Journal : published_in
+    Publication --> Publication : cites
+    Publication --> Grant : acknowledges
+    Publication --> Reviewer : reviewed_by
+    ConflictOfInterestDeclaration --> Author : declares
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall s (HumanSubjectsStudy(s) and study_started = True implies exists a (approved_by_ethics(s, a)))
+%%   forall e (Enrolment(e) implies exists c (has_consent(e, c)))
+%%   forall g (Grant(g) and grant_active = True implies exists b (has_budget(g, b)))
+%%   forall d (Dataset(d) and data_is_personal = True and data_is_public = True implies data_is_anonymised = True)
+%%   forall d (Dataset(d) and data_is_public = True implies has_metadata = True)
+%%   forall p (Publication(p) and is_peer_reviewed = True implies exists r (reviewed_by(p, r)))
+%%   forall p (Publication(p) and is_peer_reviewed = True implies has_coi_declared = True)
+%%   forall x (not Study(x) and Publication(x))
+%%   forall x (not Organization(x) and Person(x))
+%%   forall x (not RawDataset(x) and ProcessedDataset(x))

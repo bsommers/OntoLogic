@@ -1,0 +1,232 @@
+; --- Semiconductor Wafer Fab ---
+; Models lots, wafers, process steps, tools, recipes, cleanroom classes,
+; metrology, yield and defect inspection.
+; Axioms enforce: cleanroom class limits per area, wafer/lot bounds, recipe
+; qualification before use, metrology hold rules, and yield / defect sanity.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Facility and Cleanroom ---
+(def-concept Facility Site)
+(def-concept Cleanroom Site)
+(def-concept Bay Cleanroom)
+(def-concept LithographyBay Bay)
+(def-concept EtchBay Bay)
+(def-concept DiffusionBay Bay)
+(def-concept ThinFilmBay Bay)
+(def-concept MetrologyBay Bay)
+(def-concept ChemicalMechanicalPolishBay Bay)
+(def-concept ISOClass Quality)
+(def-concept ISOClass3 ISOClass)
+(def-concept ISOClass5 ISOClass)
+(def-concept ISOClass7 ISOClass)
+
+; --- Material ---
+(def-concept Wafer Object)
+(def-concept ProductWafer Wafer)
+(def-concept MonitorWafer Wafer)
+(def-concept DummyWafer Wafer)
+(def-concept Lot Object)
+(def-concept ProductionLot Lot)
+(def-concept EngineeringLot Lot)
+(def-concept HotLot ProductionLot)
+(def-concept Foup Object)
+(def-concept Reticle Object)
+(def-concept Die Object)
+(def-concept GoodDie Die)
+(def-concept ScrapDie Die)
+(def-concept ProcessChemical Object)
+(def-concept Photoresist ProcessChemical)
+(def-concept ProcessGas ProcessChemical)
+(def-concept Slurry ProcessChemical)
+
+; --- Tools ---
+(def-concept Tool Object)
+(def-concept ProcessTool Tool)
+(def-concept Stepper ProcessTool)
+(def-concept Scanner ProcessTool)
+(def-concept CoaterDeveloper ProcessTool)
+(def-concept PlasmaEtcher ProcessTool)
+(def-concept DiffusionFurnace ProcessTool)
+(def-concept CvdChamber ProcessTool)
+(def-concept PvdChamber ProcessTool)
+(def-concept IonImplanter ProcessTool)
+(def-concept CmpPolisher ProcessTool)
+(def-concept WetBench ProcessTool)
+(def-concept MetrologyTool Tool)
+(def-concept CriticalDimensionSem MetrologyTool)
+(def-concept OpticalOverlayTool MetrologyTool)
+(def-concept FilmThicknessGauge MetrologyTool)
+(def-concept InspectionTool Tool)
+(def-concept BrightFieldInspector InspectionTool)
+(def-concept DarkFieldInspector InspectionTool)
+(def-concept DefectReviewSem InspectionTool)
+(def-concept WaferProber Tool)
+(def-concept AutomatedMaterialHandling Tool)
+
+; --- Process Flow ---
+(def-concept ProcessStep Process)
+(def-concept Photolithography ProcessStep)
+(def-concept Etch ProcessStep)
+(def-concept Deposition ProcessStep)
+(def-concept Implantation ProcessStep)
+(def-concept Diffusion ProcessStep)
+(def-concept Planarization ProcessStep)
+(def-concept WetClean ProcessStep)
+(def-concept MetrologyStep Process)
+(def-concept InspectionStep Process)
+(def-concept ElectricalTest Process)
+(def-concept Rework Process)
+(def-concept ProcessFlow InformationContentEntity)
+(def-concept Layer InformationContentEntity)
+(def-concept Recipe InformationContentEntity)
+(def-concept QualifiedRecipe Recipe)
+(def-concept RecipeParameter InformationContentEntity)
+(def-concept ControlPlan InformationContentEntity)
+
+; --- Quality Data ---
+(def-concept Measurement InformationContentEntity)
+(def-concept CriticalDimensionMeasurement Measurement)
+(def-concept OverlayMeasurement Measurement)
+(def-concept ThicknessMeasurement Measurement)
+(def-concept Defect InformationContentEntity)
+(def-concept ParticleDefect Defect)
+(def-concept ScratchDefect Defect)
+(def-concept PatternDefect Defect)
+(def-concept KillerDefect Defect)
+(def-concept WaferMap InformationContentEntity)
+(def-concept YieldReport InformationContentEntity)
+(def-concept SpcChart InformationContentEntity)
+(def-concept OutOfControlEvent InformationContentEntity)
+(def-concept HoldOrder InformationContentEntity)
+
+; --- Roles ---
+(def-concept ProcessEngineerRole Role)
+(def-concept EquipmentTechnicianRole Role)
+(def-concept YieldEngineerRole Role)
+(def-concept OperatorRole Role)
+
+; --- Relations ---
+(def-relation contains_wafer Lot Wafer :cardinality 1..*)
+(def-relation carried_in Lot Foup :cardinality 1..1)
+(def-relation located_in Tool Bay)
+(def-relation processes_lot ProcessStep Lot :cardinality 1..*)
+(def-relation performed_on ProcessStep Tool :cardinality 1..1)
+(def-relation uses_recipe ProcessStep Recipe :cardinality 1..1)
+(def-relation has_parameter Recipe RecipeParameter :cardinality 1..*)
+(def-relation uses_reticle Photolithography Reticle :cardinality 1..1)
+(def-relation forms_layer ProcessStep Layer)
+(def-relation follows ProcessStep ProcessStep :cardinality 0..1)
+(def-relation part_of_flow ProcessStep ProcessFlow)
+(def-relation measures MetrologyStep Lot)
+(def-relation measured_on MetrologyStep MetrologyTool)
+(def-relation produces MetrologyStep Measurement :cardinality 1..*)
+(def-relation inspects InspectionStep Wafer)
+(def-relation detects InspectionStep Defect :cardinality 0..*)
+(def-relation found_on Defect Wafer)
+(def-relation hold_for HoldOrder Lot)
+(def-relation triggered_by HoldOrder OutOfControlEvent)
+(def-relation summarises YieldReport Lot)
+(def-relation maps WaferMap Wafer)
+(def-relation governed_by ProcessStep ControlPlan)
+
+; --- Properties ---
+(def-property lot_id Lot String :cardinality 1..1)
+(def-property wafer_count Lot Integer)
+(def-property wafer_diameter_mm Wafer Integer)
+(def-property wafer_thickness_um Wafer Integer)
+(def-property lot_priority Lot Integer)
+(def-property is_on_hold Lot Boolean)
+(def-property tool_state Tool String)
+(def-property is_qualified Tool Boolean)
+(def-property is_in_maintenance Tool Boolean)
+(def-property chamber_pressure_mtorr ProcessTool Integer)
+(def-property process_temp_c ProcessTool Integer)
+(def-property iso_class_number Cleanroom Integer)
+(def-property particle_count_per_m3 Cleanroom Integer)
+(def-property is_released Recipe Boolean)
+(def-property is_golden Recipe Boolean)
+(def-property cd_nm CriticalDimensionMeasurement Integer)
+(def-property cd_target_nm CriticalDimensionMeasurement Integer)
+(def-property overlay_nm OverlayMeasurement Integer)
+(def-property film_thickness_nm ThicknessMeasurement Integer)
+(def-property defect_density_per_cm2 Wafer Integer)
+(def-property defect_size_nm Defect Integer)
+(def-property is_killer Defect Boolean)
+(def-property die_yield_pct Wafer Integer)
+(def-property line_yield_pct YieldReport Integer)
+(def-property rework_count Lot Integer)
+(def-property is_cross_contaminated Wafer Boolean)
+
+; --- Axioms ---
+
+; 1. A lot carries 1 to 25 wafers (one FOUP)
+(forall (l)
+    (implies (Lot l)
+             (and (gte wafer_count 1) (lte wafer_count 25))))
+
+; 2. Wafer diameters are standard sizes within 100..450 mm
+(forall (w)
+    (implies (Wafer w)
+             (and (gte wafer_diameter_mm 100) (lte wafer_diameter_mm 450))))
+
+; 3. Yield figures are percentages
+(forall (w)
+    (implies (Wafer w)
+             (and (gte die_yield_pct 0) (lte die_yield_pct 100))))
+
+; 4. Lithography bays are held to at most ISO class 5 airborne cleanliness
+(forall (b)
+    (implies (LithographyBay b)
+             (lte iso_class_number 5)))
+
+; 5. Process steps may only run a released recipe
+(forall (r)
+    (implies (QualifiedRecipe r) (eq is_released True)))
+
+; 6. A process tool must be qualified before it processes product
+(forall (t)
+    (implies (ProcessTool t) (eq is_qualified True)))
+
+; 7. Every process step uses a recipe
+(forall (s)
+    (implies (ProcessStep s)
+             (exists (r) (and (Recipe r) (uses_recipe s r)))))
+
+; 8. Photolithography requires a reticle
+(forall (p)
+    (implies (Photolithography p)
+             (exists (r) (and (Reticle r) (uses_reticle p r)))))
+
+; 9. Killer defects are always flagged as killers
+(forall (d)
+    (implies (KillerDefect d) (eq is_killer True)))
+
+; 10. An out-of-control event produces a hold: a hold order must name its lot
+(forall (h)
+    (implies (HoldOrder h)
+             (exists (l) (and (Lot l) (hold_for h l)))))
+
+; 11. Rework is limited to at most 2 passes per lot
+(forall (l)
+    (implies (Lot l) (lte rework_count 2)))
+
+; 12. Wafer roles are exclusive: a product wafer is never a dummy wafer
+(forall (w)
+    (implies (ProductWafer w) (not (DummyWafer w))))
+
+; 13. Process tools and metrology tools are distinct equipment classes
+(forall (t)
+    (implies (ProcessTool t) (not (MetrologyTool t))))

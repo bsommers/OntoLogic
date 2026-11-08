@@ -1,0 +1,208 @@
+; --- Consumer IoT / Smart Home ---
+; Models devices, hubs, rooms, automations, firmware updates and the
+; privacy / consent obligations around household data.
+; Axioms enforce: camera and microphone consent, signed firmware, hub
+; connectivity, automation safety (no unattended hazards) and data retention.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Site IndependentContinuant)
+(def-concept Agent MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- People and Places ---
+(def-concept Person Agent)
+(def-concept Household InformationContentEntity)
+(def-concept Resident Person)
+(def-concept Guest Person)
+(def-concept Child Resident)
+(def-concept Home Site)
+(def-concept Room Site)
+(def-concept Bedroom Room)
+(def-concept Kitchen Room)
+(def-concept LivingRoom Room)
+(def-concept Bathroom Room)
+(def-concept Garage Room)
+
+; --- Devices ---
+(def-concept SmartDevice Object)
+(def-concept Hub SmartDevice)
+(def-concept ThreadBorderRouter Hub)
+(def-concept ZigbeeCoordinator Hub)
+(def-concept Light SmartDevice)
+(def-concept Thermostat SmartDevice)
+(def-concept SmartPlug SmartDevice)
+(def-concept DoorLock SmartDevice)
+(def-concept Camera SmartDevice)
+(def-concept DoorbellCamera Camera)
+(def-concept SmartSpeaker SmartDevice)
+(def-concept MotionSensor SmartDevice)
+(def-concept ContactSensor SmartDevice)
+(def-concept SmokeDetector SmartDevice)
+(def-concept LeakSensor SmartDevice)
+(def-concept Oven SmartDevice)
+(def-concept RobotVacuum SmartDevice)
+(def-concept GarageDoorOpener SmartDevice)
+
+; --- Connectivity ---
+(def-concept Radio Object)
+(def-concept WifiRadio Radio)
+(def-concept ThreadRadio Radio)
+(def-concept ZigbeeRadio Radio)
+(def-concept BluetoothRadio Radio)
+(def-concept CloudService Object)
+(def-concept MobileApp Object)
+
+; --- Automation ---
+(def-concept Automation InformationContentEntity)
+(def-concept Trigger InformationContentEntity)
+(def-concept TimeTrigger Trigger)
+(def-concept PresenceTrigger Trigger)
+(def-concept SensorTrigger Trigger)
+(def-concept VoiceTrigger Trigger)
+(def-concept Condition InformationContentEntity)
+(def-concept Action InformationContentEntity)
+(def-concept Scene InformationContentEntity)
+(def-concept AutomationRun Process)
+
+; --- Firmware ---
+(def-concept FirmwareImage InformationContentEntity)
+(def-concept SecurityPatch FirmwareImage)
+(def-concept FeatureRelease FirmwareImage)
+(def-concept FirmwareUpdate Process)
+(def-concept RollbackEvent Process)
+
+; --- Privacy and Consent ---
+(def-concept PersonalData InformationContentEntity)
+(def-concept VideoRecording PersonalData)
+(def-concept AudioRecording PersonalData)
+(def-concept PresenceHistory PersonalData)
+(def-concept DeviceUsageLog PersonalData)
+(def-concept Consent InformationContentEntity)
+(def-concept ConsentGrant Consent)
+(def-concept ConsentWithdrawal Consent)
+(def-concept PrivacyPolicy InformationContentEntity)
+(def-concept DataSharingAgreement InformationContentEntity)
+(def-concept DataSubjectRequest Process)
+(def-concept DeletionRequest DataSubjectRequest)
+(def-concept ExportRequest DataSubjectRequest)
+
+; --- Roles ---
+(def-concept OwnerRole Role)
+(def-concept AdminRole Role)
+(def-concept MemberRole Role)
+(def-concept GuestAccessRole Role)
+
+; --- Relations ---
+(def-relation paired_with SmartDevice Hub :cardinality 0..1)
+(def-relation located_in SmartDevice Room :cardinality 1..1)
+(def-relation part_of_home Room Home)
+(def-relation uses_radio SmartDevice Radio :cardinality 1..*)
+(def-relation syncs_with Hub CloudService)
+(def-relation controls_via MobileApp Hub)
+(def-relation owns Resident SmartDevice :cardinality 0..*)
+(def-relation member_of Resident Household)
+(def-relation triggers_automation Trigger Automation)
+(def-relation performs Automation Action :cardinality 1..*)
+(def-relation targets Action SmartDevice)
+(def-relation applies_to FirmwareUpdate SmartDevice)
+(def-relation installs FirmwareUpdate FirmwareImage)
+(def-relation captured_by PersonalData SmartDevice)
+(def-relation concerns PersonalData Person)
+(def-relation granted_by Consent Person)
+(def-relation covers Consent PersonalData :cardinality 1..*)
+(def-relation governed_by SmartDevice PrivacyPolicy)
+
+; --- Properties ---
+(def-property device_name SmartDevice String :cardinality 1..1)
+(def-property firmware_version SmartDevice String)
+(def-property battery_pct SmartDevice Integer)
+(def-property is_online SmartDevice Boolean)
+(def-property is_recording Camera Boolean)
+(def-property is_listening SmartSpeaker Boolean)
+(def-property has_hardware_mute SmartSpeaker Boolean)
+(def-property is_on Oven Boolean)
+(def-property target_temp_c Thermostat Integer)
+(def-property is_locked DoorLock Boolean)
+(def-property is_door_open GarageDoorOpener Boolean)
+(def-property is_signed FirmwareImage Boolean)
+(def-property rollout_pct FirmwareUpdate Integer)
+(def-property is_security_critical FirmwareImage Boolean)
+(def-property age_years Person Integer)
+(def-property is_home_occupied Home Boolean)
+(def-property retention_days PersonalData Integer)
+(def-property is_active Consent Boolean)
+(def-property is_shared_with_third_party PersonalData Boolean)
+(def-property is_end_to_end_encrypted VideoRecording Boolean)
+(def-property default_password_changed SmartDevice Boolean)
+(def-property runs_unattended Automation Boolean)
+
+; --- Axioms ---
+
+; 1. Thermostat targets stay in a safe range (5..35 C)
+(forall (t)
+    (implies (Thermostat t)
+             (and (gte target_temp_c 5) (lte target_temp_c 35))))
+
+; 2. Battery percentage is a valid percentage
+(forall (d)
+    (implies (SmartDevice d)
+             (and (gte battery_pct 0) (lte battery_pct 100))))
+
+; 3. Firmware is only installed when the image is cryptographically signed
+(forall (i)
+    (implies (FirmwareImage i) (eq is_signed True)))
+
+; 4. Personal data is retained for at most one year
+(forall (p)
+    (implies (PersonalData p)
+             (and (gte retention_days 1) (lte retention_days 365))))
+
+; 5. Video recordings are always end-to-end encrypted
+(forall (v)
+    (implies (VideoRecording v) (eq is_end_to_end_encrypted True)))
+
+; 6. Personal data cannot be shared with third parties without consent
+(forall (p)
+    (implies (and (PersonalData p) (eq is_shared_with_third_party True))
+             (exists (c) (and (Consent c) (covers c p)))))
+
+; 7. Every recording is covered by a consent grant
+(forall (v)
+    (implies (VideoRecording v)
+             (exists (c) (and (ConsentGrant c) (covers c v)))))
+
+; 8. A smart speaker that is listening must offer a hardware mute
+(forall (s)
+    (implies (and (SmartSpeaker s) (eq is_listening True))
+             (eq has_hardware_mute True)))
+
+; 9. Hazard rule: no automation (e.g. one driving an oven) runs unattended
+(forall (a)
+    (implies (Automation a) (eq runs_unattended False)))
+
+; 10. Every device has changed its factory default password
+(forall (d)
+    (implies (SmartDevice d) (eq default_password_changed True)))
+
+; 11. Cameras and microphones are different device classes
+(forall (c)
+    (implies (Camera c) (not (SmartSpeaker c))))
+
+; 12. A consent grant and a consent withdrawal are mutually exclusive
+(forall (c)
+    (implies (ConsentGrant c) (not (ConsentWithdrawal c))))
+
+; 13. Rollout progress is a percentage
+(forall (u)
+    (implies (FirmwareUpdate u)
+             (and (gte rollout_pct 0) (lte rollout_pct 100))))

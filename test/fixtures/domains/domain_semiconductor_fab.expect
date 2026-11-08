@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Wafer
+concept Lot
+concept LithographyBay
+concept QualifiedRecipe
+concept KillerDefect
+relation contains_wafer
+relation uses_recipe
+relation hold_for
+property wafer_count
+property die_yield_pct
+property iso_class_number

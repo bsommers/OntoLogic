@@ -184,6 +184,7 @@ test-suite ontologic-test
       ComplianceGRCSpec
       CppSpec
       D2Spec
+      DomainExamplesSpec
       EcosystemSpec
       EcosystemUnifiedSpec
       ExamplesSpec

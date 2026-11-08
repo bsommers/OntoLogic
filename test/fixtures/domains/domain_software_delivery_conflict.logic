@@ -1,0 +1,6 @@
+; Conflict fixture: asserts a published release that was never signed off,
+; violating the release-gate axiom of domain_software_delivery.
+(import "../../../examples/domain_software_delivery.logic")
+
+(exists (r)
+    (and (Release r) (eq is_published True) (eq is_signed_off False)))

@@ -1,0 +1,4 @@
+(import "../../../examples/domain_mining.logic")
+(forall (s)
+    (implies (GasSensor s)
+             (and (gt methane_level 5) (lt methane_level 3))))

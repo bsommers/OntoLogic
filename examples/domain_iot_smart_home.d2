@@ -1,0 +1,210 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Site": { shape: class }
+"Agent": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Household": { shape: class }
+"Resident": { shape: class }
+"Guest": { shape: class }
+"Child": { shape: class }
+"Home": { shape: class }
+"Room": { shape: class }
+"Bedroom": { shape: class }
+"Kitchen": { shape: class }
+"LivingRoom": { shape: class }
+"Bathroom": { shape: class }
+"Garage": { shape: class }
+"SmartDevice": { shape: class }
+"Hub": { shape: class }
+"ThreadBorderRouter": { shape: class }
+"ZigbeeCoordinator": { shape: class }
+"Light": { shape: class }
+"Thermostat": { shape: class }
+"SmartPlug": { shape: class }
+"DoorLock": { shape: class }
+"Camera": { shape: class }
+"DoorbellCamera": { shape: class }
+"SmartSpeaker": { shape: class }
+"MotionSensor": { shape: class }
+"ContactSensor": { shape: class }
+"SmokeDetector": { shape: class }
+"LeakSensor": { shape: class }
+"Oven": { shape: class }
+"RobotVacuum": { shape: class }
+"GarageDoorOpener": { shape: class }
+"Radio": { shape: class }
+"WifiRadio": { shape: class }
+"ThreadRadio": { shape: class }
+"ZigbeeRadio": { shape: class }
+"BluetoothRadio": { shape: class }
+"CloudService": { shape: class }
+"MobileApp": { shape: class }
+"Automation": { shape: class }
+"Trigger": { shape: class }
+"TimeTrigger": { shape: class }
+"PresenceTrigger": { shape: class }
+"SensorTrigger": { shape: class }
+"VoiceTrigger": { shape: class }
+"Condition": { shape: class }
+"Action": { shape: class }
+"Scene": { shape: class }
+"AutomationRun": { shape: class }
+"FirmwareImage": { shape: class }
+"SecurityPatch": { shape: class }
+"FeatureRelease": { shape: class }
+"FirmwareUpdate": { shape: class }
+"RollbackEvent": { shape: class }
+"PersonalData": { shape: class }
+"VideoRecording": { shape: class }
+"AudioRecording": { shape: class }
+"PresenceHistory": { shape: class }
+"DeviceUsageLog": { shape: class }
+"Consent": { shape: class }
+"ConsentGrant": { shape: class }
+"ConsentWithdrawal": { shape: class }
+"PrivacyPolicy": { shape: class }
+"DataSharingAgreement": { shape: class }
+"DataSubjectRequest": { shape: class }
+"DeletionRequest": { shape: class }
+"ExportRequest": { shape: class }
+"OwnerRole": { shape: class }
+"AdminRole": { shape: class }
+"MemberRole": { shape: class }
+"GuestAccessRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Site" -> "IndependentContinuant"
+"Agent" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Agent"
+"Household" -> "InformationContentEntity"
+"Resident" -> "Person"
+"Guest" -> "Person"
+"Child" -> "Resident"
+"Home" -> "Site"
+"Room" -> "Site"
+"Bedroom" -> "Room"
+"Kitchen" -> "Room"
+"LivingRoom" -> "Room"
+"Bathroom" -> "Room"
+"Garage" -> "Room"
+"SmartDevice" -> "Object"
+"Hub" -> "SmartDevice"
+"ThreadBorderRouter" -> "Hub"
+"ZigbeeCoordinator" -> "Hub"
+"Light" -> "SmartDevice"
+"Thermostat" -> "SmartDevice"
+"SmartPlug" -> "SmartDevice"
+"DoorLock" -> "SmartDevice"
+"Camera" -> "SmartDevice"
+"DoorbellCamera" -> "Camera"
+"SmartSpeaker" -> "SmartDevice"
+"MotionSensor" -> "SmartDevice"
+"ContactSensor" -> "SmartDevice"
+"SmokeDetector" -> "SmartDevice"
+"LeakSensor" -> "SmartDevice"
+"Oven" -> "SmartDevice"
+"RobotVacuum" -> "SmartDevice"
+"GarageDoorOpener" -> "SmartDevice"
+"Radio" -> "Object"
+"WifiRadio" -> "Radio"
+"ThreadRadio" -> "Radio"
+"ZigbeeRadio" -> "Radio"
+"BluetoothRadio" -> "Radio"
+"CloudService" -> "Object"
+"MobileApp" -> "Object"
+"Automation" -> "InformationContentEntity"
+"Trigger" -> "InformationContentEntity"
+"TimeTrigger" -> "Trigger"
+"PresenceTrigger" -> "Trigger"
+"SensorTrigger" -> "Trigger"
+"VoiceTrigger" -> "Trigger"
+"Condition" -> "InformationContentEntity"
+"Action" -> "InformationContentEntity"
+"Scene" -> "InformationContentEntity"
+"AutomationRun" -> "Process"
+"FirmwareImage" -> "InformationContentEntity"
+"SecurityPatch" -> "FirmwareImage"
+"FeatureRelease" -> "FirmwareImage"
+"FirmwareUpdate" -> "Process"
+"RollbackEvent" -> "Process"
+"PersonalData" -> "InformationContentEntity"
+"VideoRecording" -> "PersonalData"
+"AudioRecording" -> "PersonalData"
+"PresenceHistory" -> "PersonalData"
+"DeviceUsageLog" -> "PersonalData"
+"Consent" -> "InformationContentEntity"
+"ConsentGrant" -> "Consent"
+"ConsentWithdrawal" -> "Consent"
+"PrivacyPolicy" -> "InformationContentEntity"
+"DataSharingAgreement" -> "InformationContentEntity"
+"DataSubjectRequest" -> "Process"
+"DeletionRequest" -> "DataSubjectRequest"
+"ExportRequest" -> "DataSubjectRequest"
+"OwnerRole" -> "Role"
+"AdminRole" -> "Role"
+"MemberRole" -> "Role"
+"GuestAccessRole" -> "Role"
+"SmartDevice"."device_name": String
+"SmartDevice"."firmware_version": String
+"SmartDevice"."battery_pct": Integer
+"SmartDevice"."is_online": Boolean
+"Camera"."is_recording": Boolean
+"SmartSpeaker"."is_listening": Boolean
+"SmartSpeaker"."has_hardware_mute": Boolean
+"Oven"."is_on": Boolean
+"Thermostat"."target_temp_c": Integer
+"DoorLock"."is_locked": Boolean
+"GarageDoorOpener"."is_door_open": Boolean
+"FirmwareImage"."is_signed": Boolean
+"FirmwareUpdate"."rollout_pct": Integer
+"FirmwareImage"."is_security_critical": Boolean
+"Person"."age_years": Integer
+"Home"."is_home_occupied": Boolean
+"PersonalData"."retention_days": Integer
+"Consent"."is_active": Boolean
+"PersonalData"."is_shared_with_third_party": Boolean
+"VideoRecording"."is_end_to_end_encrypted": Boolean
+"SmartDevice"."default_password_changed": Boolean
+"Automation"."runs_unattended": Boolean
+"SmartDevice" -> "Hub": paired_with
+"SmartDevice" -> "Room": located_in
+"Room" -> "Home": part_of_home
+"SmartDevice" -> "Radio": uses_radio
+"Hub" -> "CloudService": syncs_with
+"MobileApp" -> "Hub": controls_via
+"Resident" -> "SmartDevice": owns
+"Resident" -> "Household": member_of
+"Trigger" -> "Automation": triggers_automation
+"Automation" -> "Action": performs
+"Action" -> "SmartDevice": targets
+"FirmwareUpdate" -> "SmartDevice": applies_to
+"FirmwareUpdate" -> "FirmwareImage": installs
+"PersonalData" -> "SmartDevice": captured_by
+"PersonalData" -> "Person": concerns
+"Consent" -> "Person": granted_by
+"Consent" -> "PersonalData": covers
+"SmartDevice" -> "PrivacyPolicy": governed_by
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall p (PersonalData(p) and is_shared_with_third_party = True implies exists c (Consent(c) and covers(c, p)))
+#   forall v (VideoRecording(v) implies exists c (ConsentGrant(c) and covers(c, v)))
+#   forall s (SmartSpeaker(s) and is_listening = True implies has_hardware_mute = True)
+#   forall c (Camera(c) implies not SmartSpeaker(c))
+#   forall c (ConsentGrant(c) implies not ConsentWithdrawal(c))

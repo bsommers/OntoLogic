@@ -1,0 +1,233 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Asset": { shape: class }
+"Endpoint": { shape: class }
+"Workstation": { shape: class }
+"Server": { shape: class }
+"DomainController": { shape: class }
+"DatabaseServer": { shape: class }
+"MobileDevice": { shape: class }
+"NetworkDevice": { shape: class }
+"Firewall": { shape: class }
+"Router": { shape: class }
+"CloudWorkload": { shape: class }
+"Application": { shape: class }
+"UserAccount": { shape: class }
+"ServiceAccount": { shape: class }
+"PrivilegedAccount": { shape: class }
+"DataStore": { shape: class }
+"BusinessUnit": { shape: class }
+"Vulnerability": { shape: class }
+"KnownExploitedVulnerability": { shape: class }
+"Weakness": { shape: class }
+"Misconfiguration": { shape: class }
+"Patch": { shape: class }
+"ThreatActor": { shape: class }
+"CriminalGroup": { shape: class }
+"StateSponsoredGroup": { shape: class }
+"Insider": { shape: class }
+"Technique": { shape: class }
+"Tactic": { shape: class }
+"Malware": { shape: class }
+"Ransomware": { shape: class }
+"ThreatIntelFeed": { shape: class }
+"Indicator": { shape: class }
+"IpIndicator": { shape: class }
+"DomainIndicator": { shape: class }
+"HashIndicator": { shape: class }
+"Sensor": { shape: class }
+"EdrAgent": { shape: class }
+"NetworkSensor": { shape: class }
+"LogCollector": { shape: class }
+"SiemPlatform": { shape: class }
+"DetectionRule": { shape: class }
+"Alert": { shape: class }
+"FalsePositiveAlert": { shape: class }
+"TruePositiveAlert": { shape: class }
+"LogEvent": { shape: class }
+"Evidence": { shape: class }
+"MemoryImage": { shape: class }
+"PacketCapture": { shape: class }
+"DiskImage": { shape: class }
+"Incident": { shape: class }
+"PhishingIncident": { shape: class }
+"MalwareIncident": { shape: class }
+"DataBreachIncident": { shape: class }
+"DenialOfServiceIncident": { shape: class }
+"Severity": { shape: class }
+"ServiceLevelAgreement": { shape: class }
+"Playbook": { shape: class }
+"PlaybookStep": { shape: class }
+"ContainmentAction": { shape: class }
+"IsolateHost": { shape: class }
+"DisableAccount": { shape: class }
+"BlockIndicator": { shape: class }
+"Triage": { shape: class }
+"Investigation": { shape: class }
+"Eradication": { shape: class }
+"Recovery": { shape: class }
+"PostIncidentReview": { shape: class }
+"Escalation": { shape: class }
+"Analyst": { shape: class }
+"Tier1Analyst": { shape: class }
+"Tier2Analyst": { shape: class }
+"Tier3Analyst": { shape: class }
+"IncidentCommander": { shape: class }
+"ThreatHunter": { shape: class }
+"SocManager": { shape: class }
+"OnCallRole": { shape: class }
+"ApproverRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Asset" -> "Object"
+"Endpoint" -> "Asset"
+"Workstation" -> "Endpoint"
+"Server" -> "Endpoint"
+"DomainController" -> "Server"
+"DatabaseServer" -> "Server"
+"MobileDevice" -> "Endpoint"
+"NetworkDevice" -> "Asset"
+"Firewall" -> "NetworkDevice"
+"Router" -> "NetworkDevice"
+"CloudWorkload" -> "Asset"
+"Application" -> "Asset"
+"UserAccount" -> "Asset"
+"ServiceAccount" -> "UserAccount"
+"PrivilegedAccount" -> "UserAccount"
+"DataStore" -> "Asset"
+"BusinessUnit" -> "Agent"
+"Vulnerability" -> "InformationContentEntity"
+"KnownExploitedVulnerability" -> "Vulnerability"
+"Weakness" -> "InformationContentEntity"
+"Misconfiguration" -> "Weakness"
+"Patch" -> "InformationContentEntity"
+"ThreatActor" -> "Agent"
+"CriminalGroup" -> "ThreatActor"
+"StateSponsoredGroup" -> "ThreatActor"
+"Insider" -> "ThreatActor"
+"Technique" -> "InformationContentEntity"
+"Tactic" -> "InformationContentEntity"
+"Malware" -> "InformationContentEntity"
+"Ransomware" -> "Malware"
+"ThreatIntelFeed" -> "InformationContentEntity"
+"Indicator" -> "InformationContentEntity"
+"IpIndicator" -> "Indicator"
+"DomainIndicator" -> "Indicator"
+"HashIndicator" -> "Indicator"
+"Sensor" -> "Object"
+"EdrAgent" -> "Sensor"
+"NetworkSensor" -> "Sensor"
+"LogCollector" -> "Sensor"
+"SiemPlatform" -> "Object"
+"DetectionRule" -> "InformationContentEntity"
+"Alert" -> "InformationContentEntity"
+"FalsePositiveAlert" -> "Alert"
+"TruePositiveAlert" -> "Alert"
+"LogEvent" -> "InformationContentEntity"
+"Evidence" -> "InformationContentEntity"
+"MemoryImage" -> "Evidence"
+"PacketCapture" -> "Evidence"
+"DiskImage" -> "Evidence"
+"Incident" -> "InformationContentEntity"
+"PhishingIncident" -> "Incident"
+"MalwareIncident" -> "Incident"
+"DataBreachIncident" -> "Incident"
+"DenialOfServiceIncident" -> "Incident"
+"Severity" -> "Quality"
+"ServiceLevelAgreement" -> "InformationContentEntity"
+"Playbook" -> "InformationContentEntity"
+"PlaybookStep" -> "InformationContentEntity"
+"ContainmentAction" -> "Process"
+"IsolateHost" -> "ContainmentAction"
+"DisableAccount" -> "ContainmentAction"
+"BlockIndicator" -> "ContainmentAction"
+"Triage" -> "Process"
+"Investigation" -> "Process"
+"Eradication" -> "Process"
+"Recovery" -> "Process"
+"PostIncidentReview" -> "Process"
+"Escalation" -> "Process"
+"Analyst" -> "Agent"
+"Tier1Analyst" -> "Analyst"
+"Tier2Analyst" -> "Analyst"
+"Tier3Analyst" -> "Analyst"
+"IncidentCommander" -> "Analyst"
+"ThreatHunter" -> "Analyst"
+"SocManager" -> "Agent"
+"OnCallRole" -> "Role"
+"ApproverRole" -> "Role"
+"Asset"."hostname": String
+"Asset"."criticality": Integer
+"Asset"."is_internet_facing": Boolean
+"Asset"."is_crown_jewel": Boolean
+"Vulnerability"."cvss_score": Integer
+"Vulnerability"."epss_percent": Integer
+"Vulnerability"."is_patched": Boolean
+"Vulnerability"."days_open": Integer
+"Alert"."alert_confidence": Integer
+"Alert"."alert_severity": Integer
+"Incident"."incident_severity": Integer
+"Incident"."is_escalated": Boolean
+"Incident"."is_contained": Boolean
+"Incident"."minutes_to_acknowledge": Integer
+"Incident"."minutes_to_contain": Integer
+"Incident"."is_closed": Boolean
+"Incident"."has_post_incident_review": Boolean
+"ServiceLevelAgreement"."sla_ack_minutes": Integer
+"ServiceLevelAgreement"."sla_contain_minutes": Integer
+"ContainmentAction"."requires_approval": Boolean
+"ContainmentAction"."is_approved": Boolean
+"Evidence"."chain_of_custody_intact": Boolean
+"UserAccount"."is_mfa_enabled": Boolean
+"DataStore"."is_legal_hold": Boolean
+"Application" -> "Asset": runs_on
+"Asset" -> "BusinessUnit": owned_by
+"Asset" -> "Vulnerability": affected_by
+"Vulnerability" -> "Patch": remediated_by
+"Technique" -> "Vulnerability": exploits
+"ThreatActor" -> "Technique": uses_technique
+"ThreatActor" -> "Malware": deploys
+"Sensor" -> "LogEvent": generates
+"LogEvent" -> "SiemPlatform": collected_by
+"DetectionRule" -> "Alert": fires
+"Alert" -> "Asset": concerns_asset
+"Alert" -> "Indicator": matches
+"Alert" -> "Incident": escalates_to
+"Incident" -> "Asset": involves
+"Incident" -> "ThreatActor": attributed_to
+"Incident" -> "Analyst": assigned_to
+"Incident" -> "Playbook": handled_by_playbook
+"Playbook" -> "PlaybookStep": has_step
+"Incident" -> "ContainmentAction": contains
+"ContainmentAction" -> "Analyst": approved_by
+"Incident" -> "Evidence": supported_by
+"Incident" -> "ServiceLevelAgreement": bound_by
+"Analyst" -> "SocManager": reports_to
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall i (Incident(i) and incident_severity = 4 implies is_escalated = True)
+#   forall c (DisableAccount(c) implies exists a (Analyst(a) and approved_by(c, a)))
+#   forall c (IsolateHost(c) implies exists a (Analyst(a) and approved_by(c, a)))
+#   forall i (Incident(i) implies exists p (Playbook(p) and handled_by_playbook(i, p)))
+#   forall i (Incident(i) and is_closed = True implies has_post_incident_review = True)
+#   forall a (FalsePositiveAlert(a) implies not TruePositiveAlert(a))
+#   forall a (Tier1Analyst(a) implies not Tier3Analyst(a))

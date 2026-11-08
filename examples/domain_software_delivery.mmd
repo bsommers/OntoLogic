@@ -1,0 +1,189 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Team["Team"]
+    class Developer["Developer"]
+    class Reviewer["Reviewer"]
+    class CodeOwner["CodeOwner"]
+    class ReleaseManager["ReleaseManager"]
+    class OnCallEngineer["OnCallEngineer"]
+    class IncidentCommander["IncidentCommander"]
+    class SourceArtifact["SourceArtifact"]
+    class Repository["Repository"]
+    class MonorepoRepository["MonorepoRepository"]
+    class Branch["Branch"]
+    class ProtectedBranch["ProtectedBranch"]
+    class FeatureBranch["FeatureBranch"]
+    class Commit["Commit"]
+    class SignedCommit["SignedCommit"]
+    class MergeCommit["MergeCommit"]
+    class Tag["Tag"]
+    class CodeChange["CodeChange"]
+    class PullRequest["PullRequest"]
+    class DraftPullRequest["DraftPullRequest"]
+    class MergedPullRequest["MergedPullRequest"]
+    class ReviewComment["ReviewComment"]
+    class BuildArtifact["BuildArtifact"]
+    class ContainerImage["ContainerImage"]
+    class Package["Package"]
+    class SoftwareBillOfMaterials["SoftwareBillOfMaterials"]
+    class Release["Release"]
+    class CandidateRelease["CandidateRelease"]
+    class StableRelease["StableRelease"]
+    class HotfixRelease["HotfixRelease"]
+    class Changelog["Changelog"]
+    class TestReport["TestReport"]
+    class CoverageReport["CoverageReport"]
+    class PostmortemReport["PostmortemReport"]
+    class Environment["Environment"]
+    class DevelopmentEnvironment["DevelopmentEnvironment"]
+    class StagingEnvironment["StagingEnvironment"]
+    class ProductionEnvironment["ProductionEnvironment"]
+    class BuildAgent["BuildAgent"]
+    class Service["Service"]
+    class FeatureFlag["FeatureFlag"]
+    class DeliveryProcess["DeliveryProcess"]
+    class CodeReview["CodeReview"]
+    class Build["Build"]
+    class FailedBuild["FailedBuild"]
+    class TestRun["TestRun"]
+    class UnitTestRun["UnitTestRun"]
+    class IntegrationTestRun["IntegrationTestRun"]
+    class SecurityScan["SecurityScan"]
+    class Deployment["Deployment"]
+    class ProductionDeployment["ProductionDeployment"]
+    class CanaryDeployment["CanaryDeployment"]
+    class Rollback["Rollback"]
+    class IncidentResponse["IncidentResponse"]
+    class Incident["Incident"]
+    class ProductionIncident["ProductionIncident"]
+    class SecurityIncident["SecurityIncident"]
+    class Alert["Alert"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    Object <|-- Person
+    Object <|-- Team
+    Role <|-- Developer
+    Role <|-- Reviewer
+    Reviewer <|-- CodeOwner
+    Role <|-- ReleaseManager
+    Role <|-- OnCallEngineer
+    Role <|-- IncidentCommander
+    InformationContentEntity <|-- SourceArtifact
+    SourceArtifact <|-- Repository
+    Repository <|-- MonorepoRepository
+    SourceArtifact <|-- Branch
+    Branch <|-- ProtectedBranch
+    Branch <|-- FeatureBranch
+    SourceArtifact <|-- Commit
+    Commit <|-- SignedCommit
+    Commit <|-- MergeCommit
+    SourceArtifact <|-- Tag
+    SourceArtifact <|-- CodeChange
+    CodeChange <|-- PullRequest
+    PullRequest <|-- DraftPullRequest
+    PullRequest <|-- MergedPullRequest
+    SourceArtifact <|-- ReviewComment
+    InformationContentEntity <|-- BuildArtifact
+    BuildArtifact <|-- ContainerImage
+    BuildArtifact <|-- Package
+    InformationContentEntity <|-- SoftwareBillOfMaterials
+    InformationContentEntity <|-- Release
+    Release <|-- CandidateRelease
+    Release <|-- StableRelease
+    Release <|-- HotfixRelease
+    InformationContentEntity <|-- Changelog
+    InformationContentEntity <|-- TestReport
+    TestReport <|-- CoverageReport
+    InformationContentEntity <|-- PostmortemReport
+    Object <|-- Environment
+    Environment <|-- DevelopmentEnvironment
+    Environment <|-- StagingEnvironment
+    Environment <|-- ProductionEnvironment
+    Object <|-- BuildAgent
+    Object <|-- Service
+    InformationContentEntity <|-- FeatureFlag
+    Process <|-- DeliveryProcess
+    DeliveryProcess <|-- CodeReview
+    DeliveryProcess <|-- Build
+    Build <|-- FailedBuild
+    DeliveryProcess <|-- TestRun
+    TestRun <|-- UnitTestRun
+    TestRun <|-- IntegrationTestRun
+    DeliveryProcess <|-- SecurityScan
+    DeliveryProcess <|-- Deployment
+    Deployment <|-- ProductionDeployment
+    ProductionDeployment <|-- CanaryDeployment
+    DeliveryProcess <|-- Rollback
+    DeliveryProcess <|-- IncidentResponse
+    Occurrent <|-- Incident
+    Incident <|-- ProductionIncident
+    Incident <|-- SecurityIncident
+    InformationContentEntity <|-- Alert
+    Commit : +String commit_hash
+    PullRequest : +Integer approval_count
+    PullRequest : +Integer lines_changed
+    PullRequest : +Boolean is_merged
+    PullRequest : +Boolean ci_passed
+    Branch : +Boolean is_protected
+    Build : +Integer build_duration_s
+    Build : +Boolean build_succeeded
+    TestRun : +Integer tests_total
+    TestRun : +Integer tests_failed
+    CoverageReport : +Integer coverage_percent
+    Release : +String semver
+    Release : +Boolean is_signed_off
+    Release : +Boolean is_published
+    Deployment : +Boolean deploy_succeeded
+    Incident : +Integer incident_severity
+    Incident : +Integer time_to_resolve_min
+    Incident : +Boolean is_resolved
+    Incident : +Boolean has_postmortem
+    Repository --> Commit : contains_commit
+    Commit --> Person : authored_by
+    PullRequest --> Commit : proposes
+    PullRequest --> Branch : targets_branch
+    PullRequest --> Reviewer : reviewed_by
+    CodeReview --> PullRequest : reviews
+    Build --> Commit : builds_from
+    Build --> BuildArtifact : produces
+    TestRun --> Build : validates
+    SecurityScan --> BuildArtifact : scans
+    Release --> BuildArtifact : packages_artifact
+    Release --> SoftwareBillOfMaterials : has_sbom
+    Deployment --> Release : deploys
+    Deployment --> Environment : deploys_to
+    Rollback --> Deployment : rolls_back
+    Incident --> Deployment : caused_by
+    Incident --> IncidentCommander : owned_by
+    IncidentResponse --> Incident : responds_to
+    Incident --> PostmortemReport : documented_in
+    Service --> Environment : runs_on
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall p (PullRequest(p) and is_merged = True implies ci_passed = True)
+%%   forall p (PullRequest(p) and is_merged = True implies gte(approval_count, 2))
+%%   forall b (Build(b) and build_succeeded = True implies exists t (TestRun(t)))
+%%   forall r (Release(r) and is_published = True implies is_signed_off = True)
+%%   forall d (forall r (Deployment(d) and deploys(d, r) implies Release(r)))
+%%   forall r (Release(r) and is_signed_off = True implies exists s (has_sbom(r, s)))
+%%   forall i (Incident(i) and is_resolved = False implies exists c (owned_by(i, c)))
+%%   forall i (Incident(i) and incident_severity = 1 and is_resolved = True implies has_postmortem = True)
+%%   forall x (not Commit(x) and Build(x))
+%%   forall x (not Release(x) and Deployment(x))

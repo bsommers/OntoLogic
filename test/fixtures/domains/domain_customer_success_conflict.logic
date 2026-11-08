@@ -1,0 +1,6 @@
+; Conflict fixture: violates the integrity axiom that an account cannot be both enterprise and small-business tier.
+(import "../../../examples/domain_customer_success.logic")
+
+; Assert an individual that is both EnterpriseAccount and SmallBusinessAccount,
+; contradicting the disjointness axiom in the base ontology.
+(exists (x) (and (EnterpriseAccount x) (SmallBusinessAccount x)))

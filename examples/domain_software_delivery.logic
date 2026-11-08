@@ -1,0 +1,192 @@
+; Domain: Software delivery (source control through production incidents).
+; Models repositories, commits, pull requests, reviews, builds, tests, releases,
+; deployments and incidents, with a condensed BFO upper level.
+; Axioms enforce delivery integrity: merged changes are reviewed and built,
+; releases are signed off, production deployments need a passing release,
+; incidents get severity and ownership, and artifacts/processes stay disjoint.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Agents and roles ---
+(def-concept Person Object)
+(def-concept Team Object)
+(def-concept Developer Role)
+(def-concept Reviewer Role)
+(def-concept CodeOwner Reviewer)
+(def-concept ReleaseManager Role)
+(def-concept OnCallEngineer Role)
+(def-concept IncidentCommander Role)
+
+; --- Source control artifacts ---
+(def-concept SourceArtifact InformationContentEntity)
+(def-concept Repository SourceArtifact)
+(def-concept MonorepoRepository Repository)
+(def-concept Branch SourceArtifact)
+(def-concept ProtectedBranch Branch)
+(def-concept FeatureBranch Branch)
+(def-concept Commit SourceArtifact)
+(def-concept SignedCommit Commit)
+(def-concept MergeCommit Commit)
+(def-concept Tag SourceArtifact)
+(def-concept CodeChange SourceArtifact)
+(def-concept PullRequest CodeChange)
+(def-concept DraftPullRequest PullRequest)
+(def-concept MergedPullRequest PullRequest)
+(def-concept ReviewComment SourceArtifact)
+
+; --- Delivery artifacts ---
+(def-concept BuildArtifact InformationContentEntity)
+(def-concept ContainerImage BuildArtifact)
+(def-concept Package BuildArtifact)
+(def-concept SoftwareBillOfMaterials InformationContentEntity)
+(def-concept Release InformationContentEntity)
+(def-concept CandidateRelease Release)
+(def-concept StableRelease Release)
+(def-concept HotfixRelease Release)
+(def-concept Changelog InformationContentEntity)
+(def-concept TestReport InformationContentEntity)
+(def-concept CoverageReport TestReport)
+(def-concept PostmortemReport InformationContentEntity)
+
+; --- Environments and infrastructure ---
+(def-concept Environment Object)
+(def-concept DevelopmentEnvironment Environment)
+(def-concept StagingEnvironment Environment)
+(def-concept ProductionEnvironment Environment)
+(def-concept BuildAgent Object)
+(def-concept Service Object)
+(def-concept FeatureFlag InformationContentEntity)
+
+; --- Processes ---
+(def-concept DeliveryProcess Process)
+(def-concept CodeReview DeliveryProcess)
+(def-concept Build DeliveryProcess)
+(def-concept FailedBuild Build)
+(def-concept TestRun DeliveryProcess)
+(def-concept UnitTestRun TestRun)
+(def-concept IntegrationTestRun TestRun)
+(def-concept SecurityScan DeliveryProcess)
+(def-concept Deployment DeliveryProcess)
+(def-concept ProductionDeployment Deployment)
+(def-concept CanaryDeployment ProductionDeployment)
+(def-concept Rollback DeliveryProcess)
+(def-concept IncidentResponse DeliveryProcess)
+
+; --- Incidents ---
+(def-concept Incident Occurrent)
+(def-concept ProductionIncident Incident)
+(def-concept SecurityIncident Incident)
+(def-concept Alert InformationContentEntity)
+
+; --- Properties ---
+(def-property commit_hash Commit String :cardinality 1..1)
+(def-property approval_count PullRequest Integer)
+(def-property lines_changed PullRequest Integer)
+(def-property is_merged PullRequest Boolean)
+(def-property ci_passed PullRequest Boolean)
+(def-property is_protected Branch Boolean)
+(def-property build_duration_s Build Integer)
+(def-property build_succeeded Build Boolean)
+(def-property tests_total TestRun Integer)
+(def-property tests_failed TestRun Integer)
+(def-property coverage_percent CoverageReport Integer)
+(def-property semver Release String :cardinality 1..1)
+(def-property is_signed_off Release Boolean)
+(def-property is_published Release Boolean)
+(def-property deploy_succeeded Deployment Boolean)
+(def-property incident_severity Incident Integer)
+(def-property time_to_resolve_min Incident Integer)
+(def-property is_resolved Incident Boolean)
+(def-property has_postmortem Incident Boolean)
+
+; --- Relations ---
+(def-relation contains_commit Repository Commit :cardinality 0..*)
+(def-relation authored_by Commit Person)
+(def-relation proposes PullRequest Commit :cardinality 1..*)
+(def-relation targets_branch PullRequest Branch)
+(def-relation reviewed_by PullRequest Reviewer :cardinality 0..*)
+(def-relation reviews CodeReview PullRequest)
+(def-relation builds_from Build Commit)
+(def-relation produces Build BuildArtifact :cardinality 0..*)
+(def-relation validates TestRun Build)
+(def-relation scans SecurityScan BuildArtifact)
+(def-relation packages_artifact Release BuildArtifact :cardinality 1..*)
+(def-relation has_sbom Release SoftwareBillOfMaterials)
+(def-relation deploys Deployment Release)
+(def-relation deploys_to Deployment Environment)
+(def-relation rolls_back Rollback Deployment)
+(def-relation caused_by Incident Deployment)
+(def-relation owned_by Incident IncidentCommander)
+(def-relation responds_to IncidentResponse Incident)
+(def-relation documented_in Incident PostmortemReport)
+(def-relation runs_on Service Environment)
+
+; --- Axioms ---
+; 1. Integrity: a merged pull request must have passed CI.
+(forall (p)
+    (implies (and (PullRequest p) (eq is_merged True))
+             (eq ci_passed True)))
+
+; 2. Review policy: a merged pull request needs at least two approvals.
+(forall (p)
+    (implies (and (PullRequest p) (eq is_merged True))
+             (gte approval_count 2)))
+
+; 3. Change size: pull requests are bounded to keep review effective.
+(forall (p)
+    (implies (PullRequest p)
+             (and (gte lines_changed 0) (lte lines_changed 5000))))
+
+; 4. Build integrity: a build marked succeeded is validated by some test run.
+(forall (b)
+    (implies (and (Build b) (eq build_succeeded True))
+             (exists (t) (TestRun t))))
+
+; 5. Test consistency: test counts are never negative.
+(forall (t)
+    (implies (TestRun t)
+             (and (gte tests_failed 0) (gte tests_total 0))))
+
+; 6. Release gate: a published release must be signed off.
+(forall (r)
+    (implies (and (Release r) (eq is_published True))
+             (eq is_signed_off True)))
+
+; 7. Production safety: anything deployed to an environment is a release.
+(forall (d r)
+    (implies (and (Deployment d) (deploys d r))
+             (Release r)))
+
+; 8. Traceability: a signed-off release carries a software bill of materials.
+(forall (r)
+    (implies (and (Release r) (eq is_signed_off True))
+             (exists (s) (has_sbom r s))))
+
+; 9. Incident severity range: 1 (critical) to 4 (minor).
+(forall (i)
+    (implies (Incident i)
+             (and (gte incident_severity 1) (lte incident_severity 4))))
+
+; 10. Ownership: an unresolved incident must be owned by an incident commander.
+(forall (i)
+    (implies (and (Incident i) (eq is_resolved False))
+             (exists (c) (owned_by i c))))
+
+; 11. Learning: a resolved severity-1 incident requires a documented postmortem.
+(forall (i)
+    (implies (and (Incident i) (eq incident_severity 1) (eq is_resolved True))
+             (eq has_postmortem True)))
+
+; 12. Disjointness: a source commit is never a process, a release is never a build.
+(forall (x) (not (and (Commit x) (Build x))))
+(forall (x) (not (and (Release x) (Deployment x))))

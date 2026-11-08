@@ -1,0 +1,198 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Requirement["Requirement"]
+    class StakeholderNeed["StakeholderNeed"]
+    class SystemRequirement["SystemRequirement"]
+    class FunctionalRequirement["FunctionalRequirement"]
+    class PerformanceRequirement["PerformanceRequirement"]
+    class InterfaceRequirement["InterfaceRequirement"]
+    class SafetyRequirement["SafetyRequirement"]
+    class SecurityRequirement["SecurityRequirement"]
+    class ReliabilityRequirement["ReliabilityRequirement"]
+    class ConstraintRequirement["ConstraintRequirement"]
+    class DerivedRequirement["DerivedRequirement"]
+    class ComponentRequirement["ComponentRequirement"]
+    class AcceptanceCriterion["AcceptanceCriterion"]
+    class SystemElement["SystemElement"]
+    class System["System"]
+    class Subsystem["Subsystem"]
+    class Assembly["Assembly"]
+    class Component["Component"]
+    class HardwareComponent["HardwareComponent"]
+    class SoftwareComponent["SoftwareComponent"]
+    class COTSComponent["COTSComponent"]
+    class Interface["Interface"]
+    class ElectricalInterface["ElectricalInterface"]
+    class MechanicalInterface["MechanicalInterface"]
+    class DataInterface["DataInterface"]
+    class Port["Port"]
+    class DesignArtifact["DesignArtifact"]
+    class ArchitectureModel["ArchitectureModel"]
+    class InterfaceControlDocument["InterfaceControlDocument"]
+    class Specification["Specification"]
+    class Baseline["Baseline"]
+    class FunctionalBaseline["FunctionalBaseline"]
+    class AllocatedBaseline["AllocatedBaseline"]
+    class ProductBaseline["ProductBaseline"]
+    class VerificationActivity["VerificationActivity"]
+    class Inspection["Inspection"]
+    class Analysis["Analysis"]
+    class Demonstration["Demonstration"]
+    class Test["Test"]
+    class UnitTest["UnitTest"]
+    class IntegrationTest["IntegrationTest"]
+    class SystemQualificationTest["SystemQualificationTest"]
+    class ValidationActivity["ValidationActivity"]
+    class VerificationEvidence["VerificationEvidence"]
+    class TestProcedure["TestProcedure"]
+    class TestResult["TestResult"]
+    class Nonconformance["Nonconformance"]
+    class ChangeRequest["ChangeRequest"]
+    class EngineeringChangeProposal["EngineeringChangeProposal"]
+    class WaiverRequest["WaiverRequest"]
+    class ChangeBoard["ChangeBoard"]
+    class ChangeImpactAssessment["ChangeImpactAssessment"]
+    class ChangeImplementation["ChangeImplementation"]
+    class Stakeholder["Stakeholder"]
+    class SystemsEngineer["SystemsEngineer"]
+    class RequirementOwner["RequirementOwner"]
+    class VerificationEngineer["VerificationEngineer"]
+    class ConfigurationManager["ConfigurationManager"]
+    class LifecycleStage["LifecycleStage"]
+    class ConceptStage["ConceptStage"]
+    class DevelopmentStage["DevelopmentStage"]
+    class ProductionStage["ProductionStage"]
+    class DesignReview["DesignReview"]
+    class TraceabilityLink["TraceabilityLink"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    InformationContentEntity <|-- Requirement
+    Requirement <|-- StakeholderNeed
+    Requirement <|-- SystemRequirement
+    SystemRequirement <|-- FunctionalRequirement
+    SystemRequirement <|-- PerformanceRequirement
+    SystemRequirement <|-- InterfaceRequirement
+    SystemRequirement <|-- SafetyRequirement
+    SystemRequirement <|-- SecurityRequirement
+    SystemRequirement <|-- ReliabilityRequirement
+    SystemRequirement <|-- ConstraintRequirement
+    SystemRequirement <|-- DerivedRequirement
+    Requirement <|-- ComponentRequirement
+    InformationContentEntity <|-- AcceptanceCriterion
+    Object <|-- SystemElement
+    SystemElement <|-- System
+    SystemElement <|-- Subsystem
+    SystemElement <|-- Assembly
+    SystemElement <|-- Component
+    Component <|-- HardwareComponent
+    Component <|-- SoftwareComponent
+    Component <|-- COTSComponent
+    Object <|-- Interface
+    Interface <|-- ElectricalInterface
+    Interface <|-- MechanicalInterface
+    Interface <|-- DataInterface
+    Object <|-- Port
+    InformationContentEntity <|-- DesignArtifact
+    DesignArtifact <|-- ArchitectureModel
+    DesignArtifact <|-- InterfaceControlDocument
+    DesignArtifact <|-- Specification
+    InformationContentEntity <|-- Baseline
+    Baseline <|-- FunctionalBaseline
+    Baseline <|-- AllocatedBaseline
+    Baseline <|-- ProductBaseline
+    Process <|-- VerificationActivity
+    VerificationActivity <|-- Inspection
+    VerificationActivity <|-- Analysis
+    VerificationActivity <|-- Demonstration
+    VerificationActivity <|-- Test
+    Test <|-- UnitTest
+    Test <|-- IntegrationTest
+    Test <|-- SystemQualificationTest
+    Process <|-- ValidationActivity
+    InformationContentEntity <|-- VerificationEvidence
+    InformationContentEntity <|-- TestProcedure
+    VerificationEvidence <|-- TestResult
+    InformationContentEntity <|-- Nonconformance
+    InformationContentEntity <|-- ChangeRequest
+    ChangeRequest <|-- EngineeringChangeProposal
+    ChangeRequest <|-- WaiverRequest
+    Object <|-- ChangeBoard
+    InformationContentEntity <|-- ChangeImpactAssessment
+    Process <|-- ChangeImplementation
+    Role <|-- Stakeholder
+    Role <|-- SystemsEngineer
+    Role <|-- RequirementOwner
+    Role <|-- VerificationEngineer
+    Role <|-- ConfigurationManager
+    Process <|-- LifecycleStage
+    LifecycleStage <|-- ConceptStage
+    LifecycleStage <|-- DevelopmentStage
+    LifecycleStage <|-- ProductionStage
+    Process <|-- DesignReview
+    InformationContentEntity <|-- TraceabilityLink
+    Requirement : +String req_id
+    Requirement : +Integer req_priority
+    Requirement : +Boolean is_approved
+    Requirement : +Boolean is_verified
+    Requirement : +Boolean is_allocated
+    Requirement : +Boolean is_testable
+    SafetyRequirement : +Integer safety_integrity_level
+    SafetyRequirement : +Boolean hazard_analysis_done
+    SystemElement : +Integer mass_kg
+    SystemElement : +Integer mass_budget_kg
+    SystemElement : +Integer power_draw_w
+    Component : +Integer tech_readiness_level
+    DesignArtifact : +Boolean is_baselined
+    DataInterface : +Integer interface_bandwidth_mbps
+    VerificationActivity : +Boolean verification_passed
+    ChangeRequest : +String change_status
+    ChangeRequest : +Boolean change_approved
+    ChangeRequest : +Boolean impact_assessed
+    Nonconformance : +Boolean nonconformance_open
+    Requirement --> Requirement : derives_from
+    SystemElement --> Requirement : satisfies
+    Requirement --> SystemElement : allocated_to
+    Requirement --> VerificationActivity : verified_by
+    VerificationActivity --> VerificationEvidence : produces_evidence
+    VerificationActivity --> TestProcedure : uses_procedure
+    SystemElement --> SystemElement : part_of
+    Interface --> Port : connects
+    SystemElement --> Port : exposes
+    Interface --> InterfaceControlDocument : defined_in
+    InterfaceRequirement --> Interface : specifies_interface
+    Requirement --> RequirementOwner : owned_by
+    ChangeRequest --> Requirement : modifies
+    ChangeRequest --> DesignArtifact : modifies_design
+    ChangeRequest --> ChangeImpactAssessment : assessed_by
+    ChangeRequest --> ChangeBoard : decided_by
+    TraceabilityLink --> Requirement : traces_from
+    TraceabilityLink --> SystemElement : traces_to
+    Requirement --> DesignReview : reviewed_in
+    Nonconformance --> VerificationActivity : raised_by
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall r (Requirement(r) and is_approved = True implies is_allocated = True)
+%%   forall r (Requirement(r) and is_approved = True implies is_testable = True)
+%%   forall r (Requirement(r) and is_verified = True implies exists v (verified_by(r, v)))
+%%   forall r (SafetyRequirement(r) and is_approved = True implies hazard_analysis_done = True)
+%%   forall c (forall d (ChangeRequest(c) and modifies_design(c, d) implies change_approved = True))
+%%   forall c (ChangeRequest(c) and change_approved = True implies impact_assessed = True)
+%%   forall i (Interface(i) implies exists p (connects(i, p)))
+%%   forall x (not Requirement(x) and SystemElement(x))
+%%   forall x (not VerificationActivity(x) and ChangeImplementation(x))

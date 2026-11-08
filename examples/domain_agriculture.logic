@@ -1,0 +1,192 @@
+; =====================================================================
+; Domain: Agriculture
+; Models farms, fields, crops, livestock, irrigation, soil sensors and
+; harvests on a condensed BFO upper level.
+; Axioms enforce: agronomic limits (soil pH and moisture ranges, irrigation
+; triggered by dry soil), livestock welfare and biosecurity (withdrawal
+; periods, stocking density, quarantine), harvest traceability, and
+; disjointness of crops and livestock.
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Farm Structure ---
+(def-concept Farm Site)
+(def-concept Field Site)
+(def-concept ArableField Field)
+(def-concept Pasture Field)
+(def-concept Orchard Field)
+(def-concept Greenhouse Field)
+(def-concept Paddock Field)
+(def-concept Barn Site)
+(def-concept MilkingParlour Site)
+(def-concept GrainSilo Site)
+(def-concept WaterSource Site)
+(def-concept Borehole WaterSource)
+(def-concept Reservoir WaterSource)
+
+; --- People ---
+(def-concept Person Agent)
+(def-concept Farmer Person)
+(def-concept FarmHand Person)
+(def-concept Agronomist Person)
+(def-concept Veterinarian Person)
+(def-concept Inspector Person)
+
+; --- Crops ---
+(def-concept Plant MaterialEntity)
+(def-concept Crop Plant)
+(def-concept CerealCrop Crop)
+(def-concept Wheat CerealCrop)
+(def-concept Maize CerealCrop)
+(def-concept Barley CerealCrop)
+(def-concept LegumeCrop Crop)
+(def-concept Soybean LegumeCrop)
+(def-concept VegetableCrop Crop)
+(def-concept Tomato VegetableCrop)
+(def-concept FruitCrop Crop)
+(def-concept Apple FruitCrop)
+(def-concept CoverCrop Crop)
+(def-concept Weed Plant)
+(def-concept Pest Object)
+(def-concept CropDisease Quality)
+
+; --- Livestock ---
+(def-concept Animal MaterialEntity)
+(def-concept Livestock Animal)
+(def-concept Cattle Livestock)
+(def-concept DairyCow Cattle)
+(def-concept BeefCattle Cattle)
+(def-concept Sheep Livestock)
+(def-concept Pig Livestock)
+(def-concept Poultry Livestock)
+(def-concept Herd Object)
+(def-concept Flock Object)
+(def-concept Feed MaterialEntity)
+(def-concept VeterinaryTreatment Process)
+(def-concept Vaccination VeterinaryTreatment)
+(def-concept AntibioticTreatment VeterinaryTreatment)
+(def-concept Quarantine Process)
+
+; --- Irrigation and Soil ---
+(def-concept IrrigationSystem Object)
+(def-concept DripIrrigation IrrigationSystem)
+(def-concept PivotIrrigation IrrigationSystem)
+(def-concept Sprinkler IrrigationSystem)
+(def-concept Pump Object)
+(def-concept Valve Object)
+(def-concept Sensor Object)
+(def-concept SoilSensor Sensor)
+(def-concept MoistureSensor SoilSensor)
+(def-concept PhSensor SoilSensor)
+(def-concept NitrogenSensor SoilSensor)
+(def-concept WeatherStation Sensor)
+(def-concept SensorReading InformationContentEntity)
+(def-concept Soil MaterialEntity)
+(def-concept Fertilizer MaterialEntity)
+(def-concept Pesticide MaterialEntity)
+
+; --- Processes ---
+(def-concept FarmOperation Process)
+(def-concept Planting FarmOperation)
+(def-concept Irrigating FarmOperation)
+(def-concept Fertilizing FarmOperation)
+(def-concept Spraying FarmOperation)
+(def-concept Harvesting FarmOperation)
+(def-concept Milking FarmOperation)
+(def-concept Grazing FarmOperation)
+(def-concept Harvest InformationContentEntity)
+(def-concept GrainHarvest Harvest)
+(def-concept FruitHarvest Harvest)
+(def-concept HarvestLot InformationContentEntity)
+(def-concept FieldRecord InformationContentEntity)
+
+; --- Properties ---
+(def-property area_hectares Field Float)
+(def-property soil_ph SoilSensor Float)
+(def-property soil_moisture_percent MoistureSensor Integer)
+(def-property soil_nitrogen_ppm NitrogenSensor Integer)
+(def-property needs_irrigation Field Boolean)
+(def-property irrigation_active IrrigationSystem Boolean)
+(def-property flow_rate_lpm Pump Integer)
+(def-property tank_level_percent Reservoir Integer)
+(def-property air_temperature_c WeatherStation Integer)
+(def-property crop_variety Crop String)
+(def-property days_to_maturity Crop Integer)
+(def-property expected_yield_tonnes Harvest Float)
+(def-property moisture_at_harvest Harvest Integer)
+(def-property has_traceability_lot HarvestLot Boolean)
+(def-property animal_count Herd Integer)
+(def-property stocking_density Paddock Integer)
+(def-property ear_tag Livestock String)
+(def-property body_weight_kg Livestock Integer)
+(def-property withdrawal_days AntibioticTreatment Integer)
+(def-property days_since_treatment Livestock Integer)
+(def-property in_quarantine Livestock Boolean)
+(def-property sold_for_slaughter Livestock Boolean)
+(def-property pesticide_applied Spraying Boolean)
+(def-property days_before_harvest Spraying Integer)
+
+; --- Relations ---
+(def-relation owns Farmer Farm)
+(def-relation part_of Field Farm)
+(def-relation planted_with Field Crop)
+(def-relation irrigates IrrigationSystem Field)
+(def-relation supplied_by IrrigationSystem WaterSource)
+(def-relation powered_by IrrigationSystem Pump)
+(def-relation controls Valve IrrigationSystem)
+(def-relation installed_in SoilSensor Field)
+(def-relation measures SensorReading SoilSensor)
+(def-relation grazes Herd Paddock)
+(def-relation member_of Livestock Herd)
+(def-relation fed_with Livestock Feed)
+(def-relation treated_with Livestock VeterinaryTreatment)
+(def-relation administered_by VeterinaryTreatment Veterinarian)
+(def-relation harvested_from Harvest Field)
+(def-relation yields Harvest HarvestLot)
+(def-relation advised_by Field Agronomist)
+(def-relation threatens Pest Crop)
+(def-relation affects CropDisease Crop)
+(def-relation applied_to Fertilizer Field)
+(def-relation housed_in Livestock Barn)
+
+; --- Axioms ---
+; 1. Integrity: crops are never livestock
+(forall (x) (not (and (Crop x) (Livestock x))))
+; 2. Integrity: weeds are never cultivated crops
+(forall (x) (not (and (Crop x) (Weed x))))
+; 3. Integrity: fertilizers and pesticides are distinct agrochemicals
+(forall (x) (not (and (Fertilizer x) (Pesticide x))))
+; 4. Integrity: farmers and inspectors are separate parties
+(forall (x) (not (and (Farmer x) (Inspector x))))
+; 5. Agronomy: soil pH must lie in the physical range 3 to 10
+(forall (s) (implies (PhSensor s) (and (gte soil_ph 3) (lte soil_ph 10))))
+; 6. Agronomy: soil moisture is a percentage
+(forall (s) (implies (MoistureSensor s) (and (gte soil_moisture_percent 0) (lte soil_moisture_percent 100))))
+; 7. Irrigation: below 20 percent soil moisture the field needs irrigation
+(forall (s) (implies (and (MoistureSensor s) (lt soil_moisture_percent 20)) (exists (i) (IrrigationSystem i))))
+; 8. Irrigation: reservoir level is a percentage
+(forall (r) (implies (Reservoir r) (and (gte tank_level_percent 0) (lte tank_level_percent 100))))
+; 9. Welfare: paddock stocking density is capped at 40 animals
+(forall (p) (implies (Paddock p) (lte stocking_density 40)))
+; 10. Biosecurity: animals in quarantine are never sold for slaughter
+(forall (a) (implies (and (Livestock a) (eq in_quarantine True)) (eq sold_for_slaughter False)))
+; 11. Residue safety: antibiotic withdrawal period is at least 7 days
+(forall (t) (implies (AntibioticTreatment t) (gte withdrawal_days 7)))
+; 12. Residue safety: pesticide must be sprayed at least 14 days before harvest
+(forall (s) (implies (and (Spraying s) (eq pesticide_applied True)) (gte days_before_harvest 14)))
+; 13. Traceability: every harvest lot carries a traceability lot code
+(forall (l) (implies (HarvestLot l) (eq has_traceability_lot True)))

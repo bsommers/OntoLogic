@@ -1,0 +1,223 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Organization": { shape: class }
+"Shipper": { shape: class }
+"Consignee": { shape: class }
+"Carrier": { shape: class }
+"RoadCarrier": { shape: class }
+"AirCarrier": { shape: class }
+"OceanCarrier": { shape: class }
+"RailCarrier": { shape: class }
+"Supplier": { shape: class }
+"CustomsBroker": { shape: class }
+"ThirdPartyLogisticsProvider": { shape: class }
+"Facility": { shape: class }
+"Warehouse": { shape: class }
+"DistributionCenter": { shape: class }
+"CrossDock": { shape: class }
+"ColdStore": { shape: class }
+"HazmatStore": { shape: class }
+"Port": { shape: class }
+"Airport": { shape: class }
+"RailTerminal": { shape: class }
+"StorageZone": { shape: class }
+"DockDoor": { shape: class }
+"StorageLocation": { shape: class }
+"TransportAsset": { shape: class }
+"Vehicle": { shape: class }
+"Truck": { shape: class }
+"ReeferTruck": { shape: class }
+"Van": { shape: class }
+"Aircraft": { shape: class }
+"Vessel": { shape: class }
+"Container": { shape: class }
+"ReeferContainer": { shape: class }
+"Pallet": { shape: class }
+"Person": { shape: class }
+"Driver": { shape: class }
+"Goods": { shape: class }
+"GeneralCargo": { shape: class }
+"PerishableGoods": { shape: class }
+"FrozenGoods": { shape: class }
+"ChilledGoods": { shape: class }
+"Pharmaceuticals": { shape: class }
+"DangerousGoods": { shape: class }
+"FlammableGoods": { shape: class }
+"CorrosiveGoods": { shape: class }
+"OversizedGoods": { shape: class }
+"StockKeepingUnit": { shape: class }
+"InventoryRecord": { shape: class }
+"Lot": { shape: class }
+"Order": { shape: class }
+"PurchaseOrder": { shape: class }
+"SalesOrder": { shape: class }
+"TransferOrder": { shape: class }
+"Shipment": { shape: class }
+"InboundShipment": { shape: class }
+"OutboundShipment": { shape: class }
+"ColdChainShipment": { shape: class }
+"InternationalShipment": { shape: class }
+"Leg": { shape: class }
+"Pickup": { shape: class }
+"Delivery": { shape: class }
+"Receiving": { shape: class }
+"PutAway": { shape: class }
+"Picking": { shape: class }
+"Packing": { shape: class }
+"CustomsClearance": { shape: class }
+"Exception": { shape: class }
+"DelayException": { shape: class }
+"TemperatureExcursion": { shape: class }
+"ShippingDocument": { shape: class }
+"BillOfLading": { shape: class }
+"CommercialInvoice": { shape: class }
+"PackingList": { shape: class }
+"CustomsDeclaration": { shape: class }
+"ProofOfDelivery": { shape: class }
+"TemperatureLog": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Organization" -> "Agent"
+"Shipper" -> "Organization"
+"Consignee" -> "Organization"
+"Carrier" -> "Organization"
+"RoadCarrier" -> "Carrier"
+"AirCarrier" -> "Carrier"
+"OceanCarrier" -> "Carrier"
+"RailCarrier" -> "Carrier"
+"Supplier" -> "Organization"
+"CustomsBroker" -> "Organization"
+"ThirdPartyLogisticsProvider" -> "Organization"
+"Facility" -> "Site"
+"Warehouse" -> "Facility"
+"DistributionCenter" -> "Warehouse"
+"CrossDock" -> "Warehouse"
+"ColdStore" -> "Warehouse"
+"HazmatStore" -> "Warehouse"
+"Port" -> "Facility"
+"Airport" -> "Facility"
+"RailTerminal" -> "Facility"
+"StorageZone" -> "Site"
+"DockDoor" -> "Site"
+"StorageLocation" -> "Site"
+"TransportAsset" -> "Object"
+"Vehicle" -> "TransportAsset"
+"Truck" -> "Vehicle"
+"ReeferTruck" -> "Truck"
+"Van" -> "Vehicle"
+"Aircraft" -> "TransportAsset"
+"Vessel" -> "TransportAsset"
+"Container" -> "TransportAsset"
+"ReeferContainer" -> "Container"
+"Pallet" -> "TransportAsset"
+"Person" -> "Agent"
+"Driver" -> "Person"
+"Goods" -> "MaterialEntity"
+"GeneralCargo" -> "Goods"
+"PerishableGoods" -> "Goods"
+"FrozenGoods" -> "PerishableGoods"
+"ChilledGoods" -> "PerishableGoods"
+"Pharmaceuticals" -> "Goods"
+"DangerousGoods" -> "Goods"
+"FlammableGoods" -> "DangerousGoods"
+"CorrosiveGoods" -> "DangerousGoods"
+"OversizedGoods" -> "Goods"
+"StockKeepingUnit" -> "InformationContentEntity"
+"InventoryRecord" -> "InformationContentEntity"
+"Lot" -> "InformationContentEntity"
+"Order" -> "InformationContentEntity"
+"PurchaseOrder" -> "Order"
+"SalesOrder" -> "Order"
+"TransferOrder" -> "Order"
+"Shipment" -> "Process"
+"InboundShipment" -> "Shipment"
+"OutboundShipment" -> "Shipment"
+"ColdChainShipment" -> "Shipment"
+"InternationalShipment" -> "Shipment"
+"Leg" -> "Process"
+"Pickup" -> "Process"
+"Delivery" -> "Process"
+"Receiving" -> "Process"
+"PutAway" -> "Process"
+"Picking" -> "Process"
+"Packing" -> "Process"
+"CustomsClearance" -> "Process"
+"Exception" -> "Process"
+"DelayException" -> "Exception"
+"TemperatureExcursion" -> "Exception"
+"ShippingDocument" -> "InformationContentEntity"
+"BillOfLading" -> "ShippingDocument"
+"CommercialInvoice" -> "ShippingDocument"
+"PackingList" -> "ShippingDocument"
+"CustomsDeclaration" -> "ShippingDocument"
+"ProofOfDelivery" -> "ShippingDocument"
+"TemperatureLog" -> "InformationContentEntity"
+"Shipment"."tracking_number": String
+"Shipment"."gross_weight_kg": Integer
+"Shipment"."transit_hours": Integer
+"Shipment"."is_delivered": Boolean
+"Shipment"."has_proof_of_delivery": Boolean
+"Shipment"."has_customs_declaration": Boolean
+"Vehicle"."payload_capacity_kg": Integer
+"Vehicle"."loaded_weight_kg": Integer
+"ReeferContainer"."reefer_set_point_c": Integer
+"ColdStore"."cold_store_temp_c": Integer
+"FrozenGoods"."frozen_goods_temp_c": Integer
+"ChilledGoods"."chilled_goods_temp_c": Integer
+"Pharmaceuticals"."pharma_temp_c": Integer
+"InventoryRecord"."on_hand_quantity": Integer
+"InventoryRecord"."reserved_quantity": Integer
+"InventoryRecord"."reorder_point": Integer
+"Lot"."shelf_life_days": Integer
+"Warehouse"."storage_capacity_pallets": Integer
+"Driver"."driving_hours_today": Integer
+"DangerousGoods"."un_number": String
+"Shipment" -> "Shipper": shipped_by
+"Shipment" -> "Consignee": consigned_to
+"Shipment" -> "Carrier": carried_by
+"Shipment" -> "Goods": transports
+"Shipment" -> "Leg": has_leg
+"Leg" -> "TransportAsset": leg_uses
+"Shipment" -> "Facility": originates_at
+"Shipment" -> "Facility": destined_for
+"InventoryRecord" -> "StorageLocation": stored_in
+"InventoryRecord" -> "StockKeepingUnit": tracks
+"StorageLocation" -> "Warehouse": located_in
+"StorageZone" -> "Warehouse": zone_of
+"Shipment" -> "Order": fulfils
+"Shipment" -> "ShippingDocument": documented_by
+"ColdChainShipment" -> "TemperatureLog": monitored_by
+"Vehicle" -> "Carrier": operated_by
+"Truck" -> "Driver": driven_by
+"CustomsClearance" -> "CustomsBroker": cleared_by
+"Goods" -> "Warehouse": stored_with
+"DangerousGoods" -> "Goods": segregated_from
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not Shipper(x) and Carrier(x))
+#   forall x (not DangerousGoods(x) and GeneralCargo(x))
+#   forall x (not InboundShipment(x) and OutboundShipment(x))
+#   forall x (not FrozenGoods(x) and ChilledGoods(x))
+#   forall x (not HazmatStore(x) and ColdStore(x))
+#   forall s (Shipment(s) and is_delivered = True implies has_proof_of_delivery = True)

@@ -1,0 +1,13 @@
+# key names
+concept Shipment
+concept Warehouse
+concept Carrier
+concept ColdChainShipment
+concept FrozenGoods
+concept DangerousGoods
+concept InventoryRecord
+relation carried_by
+relation transports
+relation stored_in
+property frozen_goods_temp_c
+property on_hand_quantity

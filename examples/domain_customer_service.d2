@@ -1,0 +1,187 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Customer": { shape: class }
+"EnterpriseCustomer": { shape: class }
+"ConsumerCustomer": { shape: class }
+"SupportStaff": { shape: class }
+"SupportAgent": { shape: class }
+"SeniorAgent": { shape: class }
+"TeamLead": { shape: class }
+"KnowledgeAuthor": { shape: class }
+"Bot": { shape: class }
+"SupportTeam": { shape: class }
+"TierOneTeam": { shape: class }
+"TierTwoTeam": { shape: class }
+"EngineeringTeam": { shape: class }
+"Ticket": { shape: class }
+"Incident": { shape: class }
+"ServiceRequest": { shape: class }
+"Question": { shape: class }
+"Complaint": { shape: class }
+"Problem": { shape: class }
+"TicketComment": { shape: class }
+"InternalNote": { shape: class }
+"PublicReply": { shape: class }
+"Resolution": { shape: class }
+"Attachment": { shape: class }
+"SatisfactionSurvey": { shape: class }
+"Priority": { shape: class }
+"CriticalPriority": { shape: class }
+"HighPriority": { shape: class }
+"NormalPriority": { shape: class }
+"LowPriority": { shape: class }
+"TicketStatus": { shape: class }
+"OpenStatus": { shape: class }
+"PendingStatus": { shape: class }
+"SolvedStatus": { shape: class }
+"ClosedStatus": { shape: class }
+"Channel": { shape: class }
+"EmailChannel": { shape: class }
+"PhoneChannel": { shape: class }
+"ChatChannel": { shape: class }
+"SocialChannel": { shape: class }
+"PortalChannel": { shape: class }
+"Queue": { shape: class }
+"GeneralQueue": { shape: class }
+"BillingQueue": { shape: class }
+"TechnicalQueue": { shape: class }
+"PriorityQueue": { shape: class }
+"ServiceLevelAgreement": { shape: class }
+"PremiumSLA": { shape: class }
+"StandardSLA": { shape: class }
+"SLABreach": { shape: class }
+"Escalation": { shape: class }
+"ManagerEscalation": { shape: class }
+"EngineeringEscalation": { shape: class }
+"Assignment": { shape: class }
+"Handover": { shape: class }
+"KnowledgeArticle": { shape: class }
+"FAQArticle": { shape: class }
+"TroubleshootingGuide": { shape: class }
+"InternalRunbook": { shape: class }
+"ArticleVersion": { shape: class }
+"MacroTemplate": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Agent"
+"Customer" -> "Person"
+"EnterpriseCustomer" -> "Customer"
+"ConsumerCustomer" -> "Customer"
+"SupportStaff" -> "Person"
+"SupportAgent" -> "SupportStaff"
+"SeniorAgent" -> "SupportAgent"
+"TeamLead" -> "SupportStaff"
+"KnowledgeAuthor" -> "SupportStaff"
+"Bot" -> "Agent"
+"SupportTeam" -> "Object"
+"TierOneTeam" -> "SupportTeam"
+"TierTwoTeam" -> "SupportTeam"
+"EngineeringTeam" -> "SupportTeam"
+"Ticket" -> "InformationContentEntity"
+"Incident" -> "Ticket"
+"ServiceRequest" -> "Ticket"
+"Question" -> "Ticket"
+"Complaint" -> "Ticket"
+"Problem" -> "Ticket"
+"TicketComment" -> "InformationContentEntity"
+"InternalNote" -> "TicketComment"
+"PublicReply" -> "TicketComment"
+"Resolution" -> "InformationContentEntity"
+"Attachment" -> "InformationContentEntity"
+"SatisfactionSurvey" -> "InformationContentEntity"
+"Priority" -> "Quality"
+"CriticalPriority" -> "Priority"
+"HighPriority" -> "Priority"
+"NormalPriority" -> "Priority"
+"LowPriority" -> "Priority"
+"TicketStatus" -> "Quality"
+"OpenStatus" -> "TicketStatus"
+"PendingStatus" -> "TicketStatus"
+"SolvedStatus" -> "TicketStatus"
+"ClosedStatus" -> "TicketStatus"
+"Channel" -> "Object"
+"EmailChannel" -> "Channel"
+"PhoneChannel" -> "Channel"
+"ChatChannel" -> "Channel"
+"SocialChannel" -> "Channel"
+"PortalChannel" -> "Channel"
+"Queue" -> "Object"
+"GeneralQueue" -> "Queue"
+"BillingQueue" -> "Queue"
+"TechnicalQueue" -> "Queue"
+"PriorityQueue" -> "Queue"
+"ServiceLevelAgreement" -> "InformationContentEntity"
+"PremiumSLA" -> "ServiceLevelAgreement"
+"StandardSLA" -> "ServiceLevelAgreement"
+"SLABreach" -> "Process"
+"Escalation" -> "Process"
+"ManagerEscalation" -> "Escalation"
+"EngineeringEscalation" -> "Escalation"
+"Assignment" -> "Process"
+"Handover" -> "Process"
+"KnowledgeArticle" -> "InformationContentEntity"
+"FAQArticle" -> "KnowledgeArticle"
+"TroubleshootingGuide" -> "KnowledgeArticle"
+"InternalRunbook" -> "KnowledgeArticle"
+"ArticleVersion" -> "InformationContentEntity"
+"MacroTemplate" -> "InformationContentEntity"
+"Ticket"."ticket_id": String
+"Ticket"."first_response_minutes": Integer
+"Ticket"."resolution_minutes": Integer
+"Ticket"."reopen_count": Integer
+"Ticket"."is_breached": Boolean
+"Ticket"."is_escalated": Boolean
+"Ticket"."has_resolution": Boolean
+"SatisfactionSurvey"."csat_score": Integer
+"ServiceLevelAgreement"."response_target_minutes": Integer
+"ServiceLevelAgreement"."resolution_target_minutes": Integer
+"SupportAgent"."open_ticket_count": Integer
+"SupportAgent"."max_concurrent_chats": Integer
+"Queue"."queue_depth": Integer
+"KnowledgeArticle"."is_published": Boolean
+"KnowledgeArticle"."helpful_votes": Integer
+"KnowledgeArticle"."is_internal_only": Boolean
+"Ticket" -> "Customer": raised_by
+"Ticket" -> "Channel": received_via
+"Ticket" -> "SupportAgent": assigned_to
+"Ticket" -> "Queue": held_in
+"Ticket" -> "ServiceLevelAgreement": governed_by
+"Ticket" -> "Priority": has_priority
+"Ticket" -> "TicketStatus": has_status
+"Escalation" -> "Ticket": escalates
+"Escalation" -> "SupportTeam": escalated_to
+"Ticket" -> "Resolution": resolved_with
+"Resolution" -> "KnowledgeArticle": cites
+"TicketComment" -> "Ticket": commented_on
+"SupportAgent" -> "SupportTeam": member_of
+"SupportTeam" -> "Queue": staffs
+"ServiceLevelAgreement" -> "Customer": covers_customer
+"SatisfactionSurvey" -> "Ticket": rates
+"KnowledgeArticle" -> "KnowledgeAuthor": authored_by
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not Customer(x) and SupportStaff(x))
+#   forall x (not Bot(x) and SupportStaff(x))
+#   forall x (not Ticket(x) and KnowledgeArticle(x))
+#   forall x (not CriticalPriority(x) and LowPriority(x))
+#   forall x (not OpenStatus(x) and ClosedStatus(x))
+#   forall t (Ticket(t) and is_breached = True implies is_escalated = True)
+#   forall t (Ticket(t) and gt(reopen_count, 3) implies is_escalated = True)

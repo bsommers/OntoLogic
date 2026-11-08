@@ -1,0 +1,200 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Sample["Sample"]
+    class BiologicalSample["BiologicalSample"]
+    class BloodSample["BloodSample"]
+    class TissueSample["TissueSample"]
+    class CellCulture["CellCulture"]
+    class EnvironmentalSample["EnvironmentalSample"]
+    class WaterSample["WaterSample"]
+    class SoilSample["SoilSample"]
+    class ChemicalSample["ChemicalSample"]
+    class Aliquot["Aliquot"]
+    class ReferenceMaterial["ReferenceMaterial"]
+    class CertifiedReferenceMaterial["CertifiedReferenceMaterial"]
+    class Reagent["Reagent"]
+    class Solvent["Solvent"]
+    class Buffer["Buffer"]
+    class Container["Container"]
+    class SampleVial["SampleVial"]
+    class StorageUnit["StorageUnit"]
+    class Freezer["Freezer"]
+    class ColdRoom["ColdRoom"]
+    class Incubator["Incubator"]
+    class Instrument["Instrument"]
+    class Spectrometer["Spectrometer"]
+    class MassSpectrometer["MassSpectrometer"]
+    class Chromatograph["Chromatograph"]
+    class Microscope["Microscope"]
+    class Centrifuge["Centrifuge"]
+    class AnalyticalBalance["AnalyticalBalance"]
+    class PCRThermocycler["PCRThermocycler"]
+    class Sensor["Sensor"]
+    class TemperatureProbe["TemperatureProbe"]
+    class Laboratory["Laboratory"]
+    class CleanRoom["CleanRoom"]
+    class BiosafetyLab["BiosafetyLab"]
+    class Person["Person"]
+    class LabTechnician["LabTechnician"]
+    class PrincipalScientist["PrincipalScientist"]
+    class QualityManager["QualityManager"]
+    class CustodyHolder["CustodyHolder"]
+    class Analyst["Analyst"]
+    class Protocol["Protocol"]
+    class StandardOperatingProcedure["StandardOperatingProcedure"]
+    class AnalyticalMethod["AnalyticalMethod"]
+    class CalibrationCertificate["CalibrationCertificate"]
+    class Measurement["Measurement"]
+    class RawMeasurement["RawMeasurement"]
+    class DerivedMeasurement["DerivedMeasurement"]
+    class DatasetRecord["DatasetRecord"]
+    class LabNotebookEntry["LabNotebookEntry"]
+    class CustodyRecord["CustodyRecord"]
+    class SafetyDataSheet["SafetyDataSheet"]
+    class Deviation["Deviation"]
+    class LabProcess["LabProcess"]
+    class Experiment["Experiment"]
+    class ControlExperiment["ControlExperiment"]
+    class Replicate["Replicate"]
+    class SamplePreparation["SamplePreparation"]
+    class Extraction["Extraction"]
+    class Dilution["Dilution"]
+    class Calibration["Calibration"]
+    class MeasurementProcess["MeasurementProcess"]
+    class CustodyTransfer["CustodyTransfer"]
+    class Disposal["Disposal"]
+    class QualityAudit["QualityAudit"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    MaterialEntity <|-- Sample
+    Sample <|-- BiologicalSample
+    BiologicalSample <|-- BloodSample
+    BiologicalSample <|-- TissueSample
+    BiologicalSample <|-- CellCulture
+    Sample <|-- EnvironmentalSample
+    EnvironmentalSample <|-- WaterSample
+    EnvironmentalSample <|-- SoilSample
+    Sample <|-- ChemicalSample
+    Sample <|-- Aliquot
+    MaterialEntity <|-- ReferenceMaterial
+    ReferenceMaterial <|-- CertifiedReferenceMaterial
+    MaterialEntity <|-- Reagent
+    Reagent <|-- Solvent
+    Reagent <|-- Buffer
+    Object <|-- Container
+    Container <|-- SampleVial
+    Object <|-- StorageUnit
+    StorageUnit <|-- Freezer
+    StorageUnit <|-- ColdRoom
+    StorageUnit <|-- Incubator
+    Object <|-- Instrument
+    Instrument <|-- Spectrometer
+    Spectrometer <|-- MassSpectrometer
+    Instrument <|-- Chromatograph
+    Instrument <|-- Microscope
+    Instrument <|-- Centrifuge
+    Instrument <|-- AnalyticalBalance
+    Instrument <|-- PCRThermocycler
+    Instrument <|-- Sensor
+    Sensor <|-- TemperatureProbe
+    Object <|-- Laboratory
+    Laboratory <|-- CleanRoom
+    Laboratory <|-- BiosafetyLab
+    Object <|-- Person
+    Role <|-- LabTechnician
+    Role <|-- PrincipalScientist
+    Role <|-- QualityManager
+    Role <|-- CustodyHolder
+    Role <|-- Analyst
+    InformationContentEntity <|-- Protocol
+    Protocol <|-- StandardOperatingProcedure
+    Protocol <|-- AnalyticalMethod
+    InformationContentEntity <|-- CalibrationCertificate
+    InformationContentEntity <|-- Measurement
+    Measurement <|-- RawMeasurement
+    Measurement <|-- DerivedMeasurement
+    InformationContentEntity <|-- DatasetRecord
+    InformationContentEntity <|-- LabNotebookEntry
+    InformationContentEntity <|-- CustodyRecord
+    InformationContentEntity <|-- SafetyDataSheet
+    InformationContentEntity <|-- Deviation
+    Process <|-- LabProcess
+    LabProcess <|-- Experiment
+    Experiment <|-- ControlExperiment
+    Experiment <|-- Replicate
+    LabProcess <|-- SamplePreparation
+    SamplePreparation <|-- Extraction
+    SamplePreparation <|-- Dilution
+    LabProcess <|-- Calibration
+    LabProcess <|-- MeasurementProcess
+    LabProcess <|-- CustodyTransfer
+    LabProcess <|-- Disposal
+    LabProcess <|-- QualityAudit
+    Sample : +String sample_id
+    Sample : +Integer volume_ml
+    Sample : +Boolean is_biohazard
+    Sample : +Integer storage_temp_c
+    Sample : +Boolean is_expired
+    Sample : +String collection_date
+    Instrument : +String instrument_serial
+    Instrument : +Boolean calibration_valid
+    Instrument : +Integer days_since_calibration
+    Measurement : +Integer measured_value
+    Measurement : +Integer uncertainty_percent
+    Protocol : +Boolean protocol_approved
+    Protocol : +Integer protocol_version
+    Experiment : +Integer replicate_count
+    Experiment : +Boolean experiment_complete
+    CustodyRecord : +Boolean custody_gap
+    BiosafetyLab : +Integer containment_level
+    Sample : +Boolean is_disposed
+    Aliquot --> Sample : derived_from
+    Sample --> StorageUnit : stored_in
+    Sample --> Container : held_in
+    Measurement --> Instrument : measured_by
+    Measurement --> Sample : measures
+    MeasurementProcess --> Laboratory : performed_in
+    Experiment --> Protocol : follows_protocol
+    Experiment --> Sample : uses_sample
+    Experiment --> Instrument : uses_instrument
+    Experiment --> Measurement : produces_measurement
+    Instrument --> CalibrationCertificate : calibrated_by
+    Calibration --> Instrument : calibration_of
+    Calibration --> ReferenceMaterial : uses_reference
+    CustodyRecord --> Sample : custody_of
+    CustodyTransfer --> Person : released_by
+    CustodyTransfer --> Person : received_by
+    CustodyTransfer --> Sample : transfers
+    CustodyTransfer --> CustodyRecord : recorded_in
+    LabProcess --> Person : performed_by
+    Experiment --> LabNotebookEntry : documented_in
+    Deviation --> Protocol : deviates_from
+    Sample --> SafetyDataSheet : handled_under
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall m (forall i (Measurement(m) and measured_by(m, i) implies calibration_valid = True))
+%%   forall i (Instrument(i) and gt(days_since_calibration, 365) implies calibration_valid = False)
+%%   forall e (forall p (Experiment(e) and follows_protocol(e, p) implies protocol_approved = True))
+%%   forall t (CustodyTransfer(t) implies exists r (recorded_in(t, r)))
+%%   forall s (Sample(s) and is_biohazard = True implies exists d (handled_under(s, d)))
+%%   forall e (Experiment(e) and experiment_complete = True implies gte(replicate_count, 3))
+%%   forall e (forall s (Experiment(e) and uses_sample(e, s) implies is_expired = False))
+%%   forall s (Sample(s) and is_disposed = True implies volume_ml = 0)
+%%   forall x (not Sample(x) and Instrument(x))
+%%   forall x (not Measurement(x) and Protocol(x))

@@ -1,0 +1,183 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Patient": { shape: class }
+"PediatricPatient": { shape: class }
+"GeriatricPatient": { shape: class }
+"PregnantPatient": { shape: class }
+"Clinician": { shape: class }
+"Physician": { shape: class }
+"Surgeon": { shape: class }
+"Nurse": { shape: class }
+"Pharmacist": { shape: class }
+"Therapist": { shape: class }
+"PrescriberRole": { shape: class }
+"AttendingRole": { shape: class }
+"CareTeam": { shape: class }
+"Facility": { shape: class }
+"Hospital": { shape: class }
+"Clinic": { shape: class }
+"Ward": { shape: class }
+"IntensiveCareUnit": { shape: class }
+"OperatingTheatre": { shape: class }
+"Pharmacy": { shape: class }
+"Encounter": { shape: class }
+"InpatientAdmission": { shape: class }
+"OutpatientVisit": { shape: class }
+"EmergencyVisit": { shape: class }
+"TelehealthVisit": { shape: class }
+"Procedure": { shape: class }
+"SurgicalProcedure": { shape: class }
+"Administration": { shape: class }
+"Discharge": { shape: class }
+"Condition": { shape: class }
+"Diagnosis": { shape: class }
+"ChronicCondition": { shape: class }
+"AcuteCondition": { shape: class }
+"Allergy": { shape: class }
+"DrugAllergy": { shape: class }
+"FoodAllergy": { shape: class }
+"Contraindication": { shape: class }
+"VitalSign": { shape: class }
+"Observation": { shape: class }
+"LabResult": { shape: class }
+"ImagingResult": { shape: class }
+"DischargeSummary": { shape: class }
+"ClinicalNote": { shape: class }
+"EscalationRecord": { shape: class }
+"ClinicalOrder": { shape: class }
+"MedicationOrder": { shape: class }
+"ControlledSubstanceOrder": { shape: class }
+"LabOrder": { shape: class }
+"ImagingOrder": { shape: class }
+"ReferralOrder": { shape: class }
+"Medication": { shape: class }
+"Antibiotic": { shape: class }
+"PenicillinAntibiotic": { shape: class }
+"Anticoagulant": { shape: class }
+"Analgesic": { shape: class }
+"Opioid": { shape: class }
+"NSAID": { shape: class }
+"ACEInhibitor": { shape: class }
+"ActiveIngredient": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Agent"
+"Patient" -> "Person"
+"PediatricPatient" -> "Patient"
+"GeriatricPatient" -> "Patient"
+"PregnantPatient" -> "Patient"
+"Clinician" -> "Person"
+"Physician" -> "Clinician"
+"Surgeon" -> "Physician"
+"Nurse" -> "Clinician"
+"Pharmacist" -> "Clinician"
+"Therapist" -> "Clinician"
+"PrescriberRole" -> "Role"
+"AttendingRole" -> "Role"
+"CareTeam" -> "Object"
+"Facility" -> "Site"
+"Hospital" -> "Facility"
+"Clinic" -> "Facility"
+"Ward" -> "Facility"
+"IntensiveCareUnit" -> "Ward"
+"OperatingTheatre" -> "Facility"
+"Pharmacy" -> "Facility"
+"Encounter" -> "Process"
+"InpatientAdmission" -> "Encounter"
+"OutpatientVisit" -> "Encounter"
+"EmergencyVisit" -> "Encounter"
+"TelehealthVisit" -> "Encounter"
+"Procedure" -> "Process"
+"SurgicalProcedure" -> "Procedure"
+"Administration" -> "Process"
+"Discharge" -> "Process"
+"Condition" -> "Quality"
+"Diagnosis" -> "Condition"
+"ChronicCondition" -> "Diagnosis"
+"AcuteCondition" -> "Diagnosis"
+"Allergy" -> "Condition"
+"DrugAllergy" -> "Allergy"
+"FoodAllergy" -> "Allergy"
+"Contraindication" -> "Condition"
+"VitalSign" -> "Quality"
+"Observation" -> "InformationContentEntity"
+"LabResult" -> "Observation"
+"ImagingResult" -> "Observation"
+"DischargeSummary" -> "InformationContentEntity"
+"ClinicalNote" -> "InformationContentEntity"
+"EscalationRecord" -> "InformationContentEntity"
+"ClinicalOrder" -> "InformationContentEntity"
+"MedicationOrder" -> "ClinicalOrder"
+"ControlledSubstanceOrder" -> "MedicationOrder"
+"LabOrder" -> "ClinicalOrder"
+"ImagingOrder" -> "ClinicalOrder"
+"ReferralOrder" -> "ClinicalOrder"
+"Medication" -> "MaterialEntity"
+"Antibiotic" -> "Medication"
+"PenicillinAntibiotic" -> "Antibiotic"
+"Anticoagulant" -> "Medication"
+"Analgesic" -> "Medication"
+"Opioid" -> "Analgesic"
+"NSAID" -> "Analgesic"
+"ACEInhibitor" -> "Medication"
+"ActiveIngredient" -> "MaterialEntity"
+"Patient"."patient_age": Integer
+"Patient"."weight_kg": Float
+"Patient"."heart_rate": Integer
+"Patient"."systolic_bp": Integer
+"Patient"."oxygen_saturation": Integer
+"Patient"."body_temperature": Float
+"Patient"."medical_record_number": String
+"Clinician"."license_number": String
+"Clinician"."is_licensed_prescriber": Boolean
+"MedicationOrder"."dose_mg": Integer
+"Medication"."max_daily_dose_mg": Integer
+"ClinicalOrder"."is_signed": Boolean
+"InpatientAdmission"."length_of_stay_days": Integer
+"Ward"."bed_count": Integer
+"EmergencyVisit"."triage_level": Integer
+"LabResult"."is_critical": Boolean
+"Discharge"."has_summary": Boolean
+"Patient" -> "Clinician": treated_by
+"Clinician" -> "Encounter": attends
+"Patient" -> "Encounter": subject_of
+"Patient" -> "Diagnosis": diagnosed_with
+"Patient" -> "Allergy": has_allergy
+"Clinician" -> "MedicationOrder": prescribes
+"MedicationOrder" -> "Medication": orders_medication
+"MedicationOrder" -> "Patient": received_by
+"Contraindication" -> "Medication": contraindicates
+"Allergy" -> "Medication": triggers_allergy
+"Medication" -> "ActiveIngredient": has_ingredient
+"Clinician" -> "CareTeam": member_of
+"Encounter" -> "Facility": located_in
+"LabResult" -> "LabOrder": results_from
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not Patient(x) and Clinician(x))
+#   forall x (not ClinicalOrder(x) and Observation(x))
+#   forall x (not Medication(x) and ActiveIngredient(x))
+#   forall p (forall a (forall m (forall o (has_allergy(p, a) and triggers_allergy(a, m) and orders_medication(o, m) implies not received_by(o, p)))))
+#   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists e (EscalationRecord(e)))

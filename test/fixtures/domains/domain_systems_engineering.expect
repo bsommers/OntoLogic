@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Requirement
+concept SafetyRequirement
+concept Interface
+concept VerificationActivity
+concept ChangeRequest
+relation verified_by
+relation allocated_to
+relation derives_from
+property is_approved
+property is_allocated
+property change_approved

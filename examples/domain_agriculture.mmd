@@ -1,0 +1,238 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Farm["Farm"]
+    class Field["Field"]
+    class ArableField["ArableField"]
+    class Pasture["Pasture"]
+    class Orchard["Orchard"]
+    class Greenhouse["Greenhouse"]
+    class Paddock["Paddock"]
+    class Barn["Barn"]
+    class MilkingParlour["MilkingParlour"]
+    class GrainSilo["GrainSilo"]
+    class WaterSource["WaterSource"]
+    class Borehole["Borehole"]
+    class Reservoir["Reservoir"]
+    class Person["Person"]
+    class Farmer["Farmer"]
+    class FarmHand["FarmHand"]
+    class Agronomist["Agronomist"]
+    class Veterinarian["Veterinarian"]
+    class Inspector["Inspector"]
+    class Plant["Plant"]
+    class Crop["Crop"]
+    class CerealCrop["CerealCrop"]
+    class Wheat["Wheat"]
+    class Maize["Maize"]
+    class Barley["Barley"]
+    class LegumeCrop["LegumeCrop"]
+    class Soybean["Soybean"]
+    class VegetableCrop["VegetableCrop"]
+    class Tomato["Tomato"]
+    class FruitCrop["FruitCrop"]
+    class Apple["Apple"]
+    class CoverCrop["CoverCrop"]
+    class Weed["Weed"]
+    class Pest["Pest"]
+    class CropDisease["CropDisease"]
+    class Animal["Animal"]
+    class Livestock["Livestock"]
+    class Cattle["Cattle"]
+    class DairyCow["DairyCow"]
+    class BeefCattle["BeefCattle"]
+    class Sheep["Sheep"]
+    class Pig["Pig"]
+    class Poultry["Poultry"]
+    class Herd["Herd"]
+    class Flock["Flock"]
+    class Feed["Feed"]
+    class VeterinaryTreatment["VeterinaryTreatment"]
+    class Vaccination["Vaccination"]
+    class AntibioticTreatment["AntibioticTreatment"]
+    class Quarantine["Quarantine"]
+    class IrrigationSystem["IrrigationSystem"]
+    class DripIrrigation["DripIrrigation"]
+    class PivotIrrigation["PivotIrrigation"]
+    class Sprinkler["Sprinkler"]
+    class Pump["Pump"]
+    class Valve["Valve"]
+    class Sensor["Sensor"]
+    class SoilSensor["SoilSensor"]
+    class MoistureSensor["MoistureSensor"]
+    class PhSensor["PhSensor"]
+    class NitrogenSensor["NitrogenSensor"]
+    class WeatherStation["WeatherStation"]
+    class SensorReading["SensorReading"]
+    class Soil["Soil"]
+    class Fertilizer["Fertilizer"]
+    class Pesticide["Pesticide"]
+    class FarmOperation["FarmOperation"]
+    class Planting["Planting"]
+    class Irrigating["Irrigating"]
+    class Fertilizing["Fertilizing"]
+    class Spraying["Spraying"]
+    class Harvesting["Harvesting"]
+    class Milking["Milking"]
+    class Grazing["Grazing"]
+    class Harvest["Harvest"]
+    class GrainHarvest["GrainHarvest"]
+    class FruitHarvest["FruitHarvest"]
+    class HarvestLot["HarvestLot"]
+    class FieldRecord["FieldRecord"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Site <|-- Farm
+    Site <|-- Field
+    Field <|-- ArableField
+    Field <|-- Pasture
+    Field <|-- Orchard
+    Field <|-- Greenhouse
+    Field <|-- Paddock
+    Site <|-- Barn
+    Site <|-- MilkingParlour
+    Site <|-- GrainSilo
+    Site <|-- WaterSource
+    WaterSource <|-- Borehole
+    WaterSource <|-- Reservoir
+    Agent <|-- Person
+    Person <|-- Farmer
+    Person <|-- FarmHand
+    Person <|-- Agronomist
+    Person <|-- Veterinarian
+    Person <|-- Inspector
+    MaterialEntity <|-- Plant
+    Plant <|-- Crop
+    Crop <|-- CerealCrop
+    CerealCrop <|-- Wheat
+    CerealCrop <|-- Maize
+    CerealCrop <|-- Barley
+    Crop <|-- LegumeCrop
+    LegumeCrop <|-- Soybean
+    Crop <|-- VegetableCrop
+    VegetableCrop <|-- Tomato
+    Crop <|-- FruitCrop
+    FruitCrop <|-- Apple
+    Crop <|-- CoverCrop
+    Plant <|-- Weed
+    Object <|-- Pest
+    Quality <|-- CropDisease
+    MaterialEntity <|-- Animal
+    Animal <|-- Livestock
+    Livestock <|-- Cattle
+    Cattle <|-- DairyCow
+    Cattle <|-- BeefCattle
+    Livestock <|-- Sheep
+    Livestock <|-- Pig
+    Livestock <|-- Poultry
+    Object <|-- Herd
+    Object <|-- Flock
+    MaterialEntity <|-- Feed
+    Process <|-- VeterinaryTreatment
+    VeterinaryTreatment <|-- Vaccination
+    VeterinaryTreatment <|-- AntibioticTreatment
+    Process <|-- Quarantine
+    Object <|-- IrrigationSystem
+    IrrigationSystem <|-- DripIrrigation
+    IrrigationSystem <|-- PivotIrrigation
+    IrrigationSystem <|-- Sprinkler
+    Object <|-- Pump
+    Object <|-- Valve
+    Object <|-- Sensor
+    Sensor <|-- SoilSensor
+    SoilSensor <|-- MoistureSensor
+    SoilSensor <|-- PhSensor
+    SoilSensor <|-- NitrogenSensor
+    Sensor <|-- WeatherStation
+    InformationContentEntity <|-- SensorReading
+    MaterialEntity <|-- Soil
+    MaterialEntity <|-- Fertilizer
+    MaterialEntity <|-- Pesticide
+    Process <|-- FarmOperation
+    FarmOperation <|-- Planting
+    FarmOperation <|-- Irrigating
+    FarmOperation <|-- Fertilizing
+    FarmOperation <|-- Spraying
+    FarmOperation <|-- Harvesting
+    FarmOperation <|-- Milking
+    FarmOperation <|-- Grazing
+    InformationContentEntity <|-- Harvest
+    Harvest <|-- GrainHarvest
+    Harvest <|-- FruitHarvest
+    InformationContentEntity <|-- HarvestLot
+    InformationContentEntity <|-- FieldRecord
+    Field : +Float area_hectares
+    SoilSensor : +Float soil_ph
+    MoistureSensor : +Integer soil_moisture_percent
+    NitrogenSensor : +Integer soil_nitrogen_ppm
+    Field : +Boolean needs_irrigation
+    IrrigationSystem : +Boolean irrigation_active
+    Pump : +Integer flow_rate_lpm
+    Reservoir : +Integer tank_level_percent
+    WeatherStation : +Integer air_temperature_c
+    Crop : +String crop_variety
+    Crop : +Integer days_to_maturity
+    Harvest : +Float expected_yield_tonnes
+    Harvest : +Integer moisture_at_harvest
+    HarvestLot : +Boolean has_traceability_lot
+    Herd : +Integer animal_count
+    Paddock : +Integer stocking_density
+    Livestock : +String ear_tag
+    Livestock : +Integer body_weight_kg
+    AntibioticTreatment : +Integer withdrawal_days
+    Livestock : +Integer days_since_treatment
+    Livestock : +Boolean in_quarantine
+    Livestock : +Boolean sold_for_slaughter
+    Spraying : +Boolean pesticide_applied
+    Spraying : +Integer days_before_harvest
+    Farmer --> Farm : owns
+    Field --> Farm : part_of
+    Field --> Crop : planted_with
+    IrrigationSystem --> Field : irrigates
+    IrrigationSystem --> WaterSource : supplied_by
+    IrrigationSystem --> Pump : powered_by
+    Valve --> IrrigationSystem : controls
+    SoilSensor --> Field : installed_in
+    SensorReading --> SoilSensor : measures
+    Herd --> Paddock : grazes
+    Livestock --> Herd : member_of
+    Livestock --> Feed : fed_with
+    Livestock --> VeterinaryTreatment : treated_with
+    VeterinaryTreatment --> Veterinarian : administered_by
+    Harvest --> Field : harvested_from
+    Harvest --> HarvestLot : yields
+    Field --> Agronomist : advised_by
+    Pest --> Crop : threatens
+    CropDisease --> Crop : affects
+    Fertilizer --> Field : applied_to
+    Livestock --> Barn : housed_in
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not Crop(x) and Livestock(x))
+%%   forall x (not Crop(x) and Weed(x))
+%%   forall x (not Fertilizer(x) and Pesticide(x))
+%%   forall x (not Farmer(x) and Inspector(x))
+%%   forall s (MoistureSensor(s) and lt(soil_moisture_percent, 20) implies exists i (IrrigationSystem(i)))
+%%   forall a (Livestock(a) and in_quarantine = True implies sold_for_slaughter = False)
+%%   forall s (Spraying(s) and pesticide_applied = True implies gte(days_before_harvest, 14))
