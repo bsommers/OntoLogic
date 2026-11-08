@@ -31,8 +31,8 @@ jobs:
   haskell-test:
     name: Haskell Build & Test
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, vm]  # self-hosted runner in a KVM guest
-    timeout-minutes: 25
+    runs-on: ubuntu-24.04  # standard GitHub-hosted runner: free for public repos
+    timeout-minutes: 60  # a cold-cache stack build on a hosted runner is slow
 
     steps:
       - name: Check out repository
@@ -136,8 +136,8 @@ jobs:
   java-gradle-test:
     name: Java & Gradle Verification
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: [self-hosted, linux, vm]  # self-hosted runner in a KVM guest
-    timeout-minutes: 15
+    runs-on: ubuntu-24.04  # standard GitHub-hosted runner: free for public repos
+    timeout-minutes: 45
 
     steps:
       - name: Check out repository
