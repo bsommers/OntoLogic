@@ -1,0 +1,75 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class ComputeNode["ComputeNode"]
+    class PhysicalServer["PhysicalServer"]
+    class VirtualMachine["VirtualMachine"]
+    class Container["Container"]
+    class KubernetesCluster["KubernetesCluster"]
+    class SoftwareComponent["SoftwareComponent"]
+    class MQTTBroker["MQTTBroker"]
+    class Database["Database"]
+    class LoadBalancer["LoadBalancer"]
+    class Microservice["Microservice"]
+    class ComputingProcess["ComputingProcess"]
+    class DeploymentProcess["DeploymentProcess"]
+    class ScalingProcess["ScalingProcess"]
+    class FailoverProcess["FailoverProcess"]
+    class DataReplicationProcess["DataReplicationProcess"]
+    class LogFile["LogFile"]
+    class Metric["Metric"]
+    class Configuration["Configuration"]
+    class Alert["Alert"]
+    class DevOpsRole["DevOpsRole"]
+    class SRERole["SRERole"]
+    class DeveloperRole["DeveloperRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    Object <|-- ComputeNode
+    ComputeNode <|-- PhysicalServer
+    ComputeNode <|-- VirtualMachine
+    ComputeNode <|-- Container
+    Object <|-- KubernetesCluster
+    Object <|-- SoftwareComponent
+    SoftwareComponent <|-- MQTTBroker
+    SoftwareComponent <|-- Database
+    SoftwareComponent <|-- LoadBalancer
+    SoftwareComponent <|-- Microservice
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- DeploymentProcess
+    ComputingProcess <|-- ScalingProcess
+    ComputingProcess <|-- FailoverProcess
+    ComputingProcess <|-- DataReplicationProcess
+    InformationContentEntity <|-- LogFile
+    InformationContentEntity <|-- Metric
+    InformationContentEntity <|-- Configuration
+    InformationContentEntity <|-- Alert
+    Role <|-- DevOpsRole
+    Role <|-- SRERole
+    Role <|-- DeveloperRole
+    ComputeNode : +Integer cpu_usage
+    ComputeNode : +Integer memory_usage
+    MQTTBroker : +Integer active_connections
+    KubernetesCluster : +Integer replica_count
+    SoftwareComponent : +Boolean is_healthy
+    Object : +String region
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall vm (VirtualMachine(vm) and gt(cpu_usage, 80) implies exists p (ScalingProcess(p)))
+%%   forall b (MQTTBroker(b) and gt(active_connections, 0) implies is_healthy = True)
+%%   forall c (SoftwareComponent(c) and is_healthy = False implies exists a (Alert(a)))

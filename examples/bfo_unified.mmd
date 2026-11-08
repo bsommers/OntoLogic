@@ -1,0 +1,174 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class ObjectAggregate["ObjectAggregate"]
+    class GDC["GDC"]
+    class InformationContentEntity["InformationContentEntity"]
+    class SDC["SDC"]
+    class Quality["Quality"]
+    class RealizableEntity["RealizableEntity"]
+    class Role["Role"]
+    class Function["Function"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class ProcessBoundary["ProcessBoundary"]
+    class SpatiotemporalRegion["SpatiotemporalRegion"]
+    class Infrastructure["Infrastructure"]
+    class Equipment["Equipment"]
+    class Machine["Machine"]
+    class Sensor["Sensor"]
+    class Robot["Robot"]
+    class WeldingRobot["WeldingRobot"]
+    class PaintingRobot["PaintingRobot"]
+    class AssemblyRobot["AssemblyRobot"]
+    class Mixer["Mixer"]
+    class Oven["Oven"]
+    class ProofingChamber["ProofingChamber"]
+    class CuttingMachine["CuttingMachine"]
+    class BaggingMachine["BaggingMachine"]
+    class PackagingMachine["PackagingMachine"]
+    class Refrigerator["Refrigerator"]
+    class Product["Product"]
+    class Pipeline["Pipeline"]
+    class Refinery["Refinery"]
+    class OffshorePlatform["OffshorePlatform"]
+    class Wellhead["Wellhead"]
+    class Pump["Pump"]
+    class Valve["Valve"]
+    class Compressor["Compressor"]
+    class PLC["PLC"]
+    class PressureSensor["PressureSensor"]
+    class TemperatureSensor["TemperatureSensor"]
+    class VibrationSensor["VibrationSensor"]
+    class Scanner["Scanner"]
+    class OpticalScanner["OpticalScanner"]
+    class LaserScanner["LaserScanner"]
+    class BluewristScanner["BluewristScanner"]
+    class Substance["Substance"]
+    class Petroleum["Petroleum"]
+    class NaturalGas["NaturalGas"]
+    class Water["Water"]
+    class OperatorRole["OperatorRole"]
+    class SafetyRole["SafetyRole"]
+    class MaintenanceRole["MaintenanceRole"]
+    class ManufacturingFunction["ManufacturingFunction"]
+    class PumpingFunction["PumpingFunction"]
+    class RefiningFunction["RefiningFunction"]
+    class SensingFunction["SensingFunction"]
+    class WeldingFunction["WeldingFunction"]
+    class IndustrialProcess["IndustrialProcess"]
+    class ManufacturingProcess["ManufacturingProcess"]
+    class AssemblyProcess["AssemblyProcess"]
+    class WeldingProcess["WeldingProcess"]
+    class BakingProcess["BakingProcess"]
+    class ExtractionProcess["ExtractionProcess"]
+    class RefiningProcess["RefiningProcess"]
+    class TransportProcess["TransportProcess"]
+    class MaintenanceProcess["MaintenanceProcess"]
+    class ComputingProcess["ComputingProcess"]
+    class SoftwareProcess["SoftwareProcess"]
+    class SoftwareCode["SoftwareCode"]
+    class ControlLogic["ControlLogic"]
+    class SensorData["SensorData"]
+    class SafetyProtocol["SafetyProtocol"]
+    class LimitBreachEvent["LimitBreachEvent"]
+    class FailureRisk["FailureRisk"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    MaterialEntity <|-- ObjectAggregate
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Occurrent <|-- ProcessBoundary
+    Occurrent <|-- SpatiotemporalRegion
+    Object <|-- Infrastructure
+    Object <|-- Equipment
+    Equipment <|-- Machine
+    Equipment <|-- Sensor
+    Machine <|-- Robot
+    Robot <|-- WeldingRobot
+    Robot <|-- PaintingRobot
+    Robot <|-- AssemblyRobot
+    Machine <|-- Mixer
+    Machine <|-- Oven
+    Machine <|-- ProofingChamber
+    Machine <|-- CuttingMachine
+    Machine <|-- BaggingMachine
+    Machine <|-- PackagingMachine
+    Machine <|-- Refrigerator
+    Object <|-- Product
+    Infrastructure <|-- Pipeline
+    Infrastructure <|-- Refinery
+    Infrastructure <|-- OffshorePlatform
+    Infrastructure <|-- Wellhead
+    Equipment <|-- Pump
+    Equipment <|-- Valve
+    Equipment <|-- Compressor
+    Equipment <|-- PLC
+    Sensor <|-- PressureSensor
+    Sensor <|-- TemperatureSensor
+    Sensor <|-- VibrationSensor
+    Equipment <|-- Scanner
+    Scanner <|-- OpticalScanner
+    Scanner <|-- LaserScanner
+    LaserScanner <|-- BluewristScanner
+    MaterialEntity <|-- Substance
+    Substance <|-- Petroleum
+    Substance <|-- NaturalGas
+    Substance <|-- Water
+    Role <|-- OperatorRole
+    Role <|-- SafetyRole
+    Role <|-- MaintenanceRole
+    Function <|-- ManufacturingFunction
+    Function <|-- PumpingFunction
+    Function <|-- RefiningFunction
+    Function <|-- SensingFunction
+    Function <|-- WeldingFunction
+    Process <|-- IndustrialProcess
+    IndustrialProcess <|-- ManufacturingProcess
+    ManufacturingProcess <|-- AssemblyProcess
+    ManufacturingProcess <|-- WeldingProcess
+    ManufacturingProcess <|-- BakingProcess
+    IndustrialProcess <|-- ExtractionProcess
+    IndustrialProcess <|-- RefiningProcess
+    IndustrialProcess <|-- TransportProcess
+    IndustrialProcess <|-- MaintenanceProcess
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- SoftwareProcess
+    InformationContentEntity <|-- SoftwareCode
+    SoftwareCode <|-- ControlLogic
+    InformationContentEntity <|-- SensorData
+    InformationContentEntity <|-- SafetyProtocol
+    InformationContentEntity <|-- LimitBreachEvent
+    InformationContentEntity <|-- FailureRisk
+    Equipment : +Boolean is_active
+    Equipment : +Integer temperature
+    MaterialEntity : +Integer has_pressure
+    MaterialEntity : +Integer has_vibration_level
+    Pipeline : +Integer flow_rate
+    Mixer : +Integer rpm
+    PackagingMachine : +Integer items_per_minute
+    Scanner : +Boolean defect_detected
+    Scanner : +Integer scan_resolution_microns
+    Object : +Process participates_in
+    Object : +Role bearer_of
+    Process : +Function realizes
+    InformationContentEntity : +Process concretizes
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+%%   forall p (Pipeline(p) and gt(has_pressure, 1000) implies exists e (LimitBreachEvent(e)))
+%%   forall m (Mixer(m) and is_active() implies gt(rpm, 0))
+%%   forall p (Pump(p) and gt(has_vibration_level, 50) implies exists r (FailureRisk(r)))
+%%   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

@@ -1,0 +1,33 @@
+; --- Smart Grid Relational Topology Ontology ---
+
+; Taxonomy
+(def-concept GridEntity)
+(def-concept Substation GridEntity)
+(def-concept Transformer Substation)
+(def-concept Meter GridEntity)
+(def-concept SmartMeter Meter)
+
+; Properties
+(def-property grid_id GridEntity String)
+(def-property voltage Transformer Integer)
+(def-property reading_interval SmartMeter Integer)
+
+; Relations
+(def-relation feeds Substation Transformer)
+(def-relation monitors SmartMeter Transformer)
+
+; Constraints
+; Voltage must be high voltage (between 10000V and 500000V)
+(forall (t)
+    (implies (Transformer t)
+        (and (gt voltage 10000) (lt voltage 500000))))
+
+; SmartMeter reading interval must be between 1 and 60 minutes
+(forall (m)
+    (implies (SmartMeter m)
+        (and (gte reading_interval 1) (lte reading_interval 60))))
+
+; Relational axiom: if Substation s feeds Transformer t, then SmartMeter m monitors t
+(forall (s t m)
+    (implies (and (feeds s t) (monitors m t))
+        (SmartMeter m)))

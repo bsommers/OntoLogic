@@ -1,0 +1,77 @@
+;; ============================================================================
+;; TIER 3.9: OCSF (Open Cybersecurity Schema Framework v1.1.0) Ontology
+;; Grounded in OCSF Taxonomy, UCO Observables, and CCO Hierarchy
+;; ============================================================================
+
+(import "uco_observables.logic")
+
+(namespace ocsf "https://schema.ocsf.io/1.1.0/")
+
+;; ----------------------------------------------------------------------------
+;; OCSF Event Categories
+;; ----------------------------------------------------------------------------
+(def-concept ocsf:OCSEventCategory cco:DirectiveICE)
+
+(def-concept ocsf:SystemActivityCategory ocsf:OCSEventCategory)
+(def-concept ocsf:FindingsCategory ocsf:OCSEventCategory)
+(def-concept ocsf:IdentityAccessCategory ocsf:OCSEventCategory)
+(def-concept ocsf:NetworkActivityCategory ocsf:OCSEventCategory)
+(def-concept ocsf:DiscoveryCategory ocsf:OCSEventCategory)
+
+;; ----------------------------------------------------------------------------
+;; OCSF Event Classes
+;; ----------------------------------------------------------------------------
+(def-concept ocsf:OCSEvent cco:SecurityEvent)
+
+(def-concept ocsf:FileActivity ocsf:OCSEvent)
+(def-concept ocsf:ProcessActivity ocsf:OCSEvent)
+(def-concept ocsf:SecurityFinding ocsf:OCSEvent)
+(def-concept ocsf:AuthenticationEvent ocsf:OCSEvent)
+(def-concept ocsf:NetworkActivityEvent ocsf:OCSEvent)
+(def-concept ocsf:DNSActivity ocsf:OCSEvent)
+(def-concept ocsf:HTTPActivity ocsf:OCSEvent)
+
+;; ----------------------------------------------------------------------------
+;; OCSF Telemetry Properties
+;; ----------------------------------------------------------------------------
+(def-property ocsf:class_uid ocsf:OCSEvent Integer)
+(def-property ocsf:category_uid ocsf:OCSEvent Integer)
+(def-property ocsf:severity_id ocsf:OCSEvent Integer)
+(def-property ocsf:status_id ocsf:OCSEvent Integer)
+(def-property ocsf:activity_name ocsf:OCSEvent String)
+(def-property ocsf:message ocsf:OCSEvent String)
+(def-property ocsf:confidence_score ocsf:SecurityFinding Double)
+(def-property ocsf:bytes_in ocsf:NetworkActivityEvent Integer)
+(def-property ocsf:bytes_out ocsf:NetworkActivityEvent Integer)
+
+;; ----------------------------------------------------------------------------
+;; OCSF Telemetry Relations
+;; ----------------------------------------------------------------------------
+(def-relation ocsf:has_category ocsf:OCSEvent ocsf:OCSEventCategory)
+(def-relation ocsf:source_endpoint ocsf:NetworkActivityEvent uco-obs:IPAddress)
+(def-relation ocsf:destination_endpoint ocsf:NetworkActivityEvent uco-obs:IPAddress)
+(def-relation ocsf:targeted_file ocsf:FileActivity uco-obs:File)
+(def-relation ocsf:actor_user ocsf:AuthenticationEvent uco-obs:UserAccount)
+(def-relation ocsf:subject_process ocsf:ProcessActivity uco-obs:DigitalProcess)
+
+;; ----------------------------------------------------------------------------
+;; First-Order Logic Constraints for Telemetry Validation
+;; ----------------------------------------------------------------------------
+
+(forall (e)
+  (implies (ocsf:OCSEvent e)
+           (and (gte ocsf:severity_id 0)
+                (lte ocsf:severity_id 6))))
+
+(forall (f)
+  (implies (ocsf:SecurityFinding f)
+           (and (gte ocsf:confidence_score 0.0)
+                (lte ocsf:confidence_score 100.0))))
+
+(forall (n)
+  (implies (ocsf:NetworkActivityEvent n)
+           (gte ocsf:bytes_in 0)))
+
+(forall (n)
+  (implies (ocsf:NetworkActivityEvent n)
+           (gte ocsf:bytes_out 0)))

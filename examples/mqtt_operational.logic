@@ -1,0 +1,83 @@
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Acme Operational Domain (Design, Sell, Operate) ---
+
+; Organizational Layout
+(def-concept OrganizationUnit Object)
+(def-concept EngineeringUnit OrganizationUnit)
+(def-concept SalesUnit OrganizationUnit)
+(def-concept CustomerSuccessUnit OrganizationUnit)
+(def-concept CloudOperationsUnit OrganizationUnit)
+
+; Products & Offerings
+(def-concept Product Object)
+(def-concept AcmeBroker Product)
+(def-concept AcmeEdgeGateway Product)
+(def-concept AcmeCloudService Product)
+(def-concept AcmeBrokerPlugin Product)
+
+; Customers & Markets
+(def-concept Customer Object)
+(def-concept AutomotiveCustomer Customer)
+(def-concept EnergyCustomer Customer)
+(def-concept ManufacturingCustomer Customer)
+(def-concept LogisticsCustomer Customer)
+
+; Deployment Environments
+(def-concept Environment Object)
+(def-concept OnPremisesEnvironment Environment)
+(def-concept PublicCloudEnvironment Environment)
+(def-concept HybridEnvironment Environment)
+
+; Processes
+(def-concept BusinessProcess Process)
+(def-concept SoftwareDesignProcess BusinessProcess)
+(def-concept SalesCycleProcess BusinessProcess)
+(def-concept CustomerOnboardingProcess BusinessProcess)
+(def-concept IncidentResolutionProcess BusinessProcess)
+(def-concept CloudProvisioningProcess BusinessProcess)
+
+; Information
+(def-concept Contract InformationContentEntity)
+(def-concept SLA InformationContentEntity)
+(def-concept FeatureRequest InformationContentEntity)
+(def-concept SupportTicket InformationContentEntity)
+
+; Properties
+(def-property contract_value Contract Integer)
+(def-property sla_uptime_target SLA Integer) ; e.g., 9999 (99.99%)
+(def-property customer_satisfaction Customer Integer) ; NPS score
+(def-property is_deployed Product Boolean)
+
+; Axioms
+
+; 1. Sales: High Value Contract implies Executive Review (Role)
+(def-concept ExecutiveRole Role)
+(forall (c)
+    (implies (and (Contract c) (gt contract_value 100000))
+             (exists (r) (ExecutiveRole r))))
+
+; 2. Operations: Cloud Product requires Cloud Environment
+(forall (p)
+    (implies (AcmeCloudService p) 
+             (exists (e) (PublicCloudEnvironment e))))
+
+; 3. Support: Low NPS (< 50) triggers Incident Resolution
+(forall (c)
+    (implies (and (Customer c) (lt customer_satisfaction 50))
+             (exists (p) (IncidentResolutionProcess p))))
+
+; 4. Design: Feature Request drives Software Design
+(forall (f)
+    (implies (FeatureRequest f)
+             (exists (p) (SoftwareDesignProcess p))))

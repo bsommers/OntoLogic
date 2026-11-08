@@ -1,0 +1,64 @@
+;; ============================================================================
+;; TIER 3.2: MITRE ATT&CK Enterprise Matrix Ontology
+;; Grounded in MITRE ATT&CK Knowledge Base, STIX 2.1, and UCO Observables
+;; ============================================================================
+
+(import "stix_cve.logic")
+
+(namespace attack "https://attack.mitre.org/")
+
+;; ----------------------------------------------------------------------------
+;; MITRE ATT&CK Core Concepts
+;; ----------------------------------------------------------------------------
+(def-concept attack:AttackObject stix:SDO)
+(def-concept attack:AttackTactic attack:AttackObject)
+
+;; 12 Enterprise Tactics
+(def-concept attack:InitialAccess attack:AttackTactic)
+(def-concept attack:Execution attack:AttackTactic)
+(def-concept attack:Persistence attack:AttackTactic)
+(def-concept attack:PrivilegeEscalation attack:AttackTactic)
+(def-concept attack:DefenseEvasion attack:AttackTactic)
+(def-concept attack:CredentialAccess attack:AttackTactic)
+(def-concept attack:Discovery attack:AttackTactic)
+(def-concept attack:LateralMovement attack:AttackTactic)
+(def-concept attack:Collection attack:AttackTactic)
+(def-concept attack:CommandAndControl attack:AttackTactic)
+(def-concept attack:Exfiltration attack:AttackTactic)
+(def-concept attack:Impact attack:AttackTactic)
+
+;; Techniques & Subtechniques
+(def-concept attack:AttackTechnique stix:AttackPattern)
+(def-concept attack:AttackSubTechnique attack:AttackTechnique)
+
+;; Mitigations & Data Sources
+(def-concept attack:AttackMitigation stix:CourseOfAction)
+(def-concept attack:AttackDataSource attack:AttackObject)
+(def-concept attack:AttackDataComponent attack:AttackObject)
+
+;; Adversaries & Software
+(def-concept attack:ThreatGroup stix:ThreatActor)
+(def-concept attack:AttackSoftware stix:Malware)
+
+;; ----------------------------------------------------------------------------
+;; ATT&CK Properties
+;; ----------------------------------------------------------------------------
+(def-property attack:technique_id attack:AttackTechnique String)
+(def-property attack:subtechnique_id attack:AttackSubTechnique String)
+(def-property attack:tactic_id attack:AttackTactic String)
+(def-property attack:platform attack:AttackTechnique String)
+(def-property attack:is_subtechnique attack:AttackTechnique Boolean)
+(def-property attack:group_id attack:ThreatGroup String)
+(def-property attack:software_id attack:AttackSoftware String)
+
+;; ----------------------------------------------------------------------------
+;; ATT&CK Relations
+;; ----------------------------------------------------------------------------
+(def-relation attack:has_tactic attack:AttackTechnique attack:AttackTactic)
+(def-relation attack:subtechnique_of attack:AttackSubTechnique attack:AttackTechnique)
+(def-relation attack:mitigated_by attack:AttackTechnique attack:AttackMitigation)
+(def-relation attack:detected_by attack:AttackTechnique attack:AttackDataComponent)
+(def-relation attack:component_of attack:AttackDataComponent attack:AttackDataSource)
+(def-relation attack:targets_observable attack:AttackTechnique uco-obs:CyberObservable)
+(def-relation attack:employed_by attack:ThreatGroup attack:AttackTechnique)
+(def-relation attack:uses_software attack:ThreatGroup attack:AttackSoftware)

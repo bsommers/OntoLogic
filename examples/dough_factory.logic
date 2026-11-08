@@ -1,0 +1,48 @@
+; --- Taxonomy ---
+(def-concept Asset)
+(def-concept Machine Asset)
+(def-concept Sensor Asset)
+
+; Processing Equipment
+(def-concept Mixer Machine)
+(def-concept Oven Machine)
+(def-concept ProofingChamber Machine)
+(def-concept CuttingMachine Machine)
+(def-concept BaggingMachine Machine)
+(def-concept PackagingMachine Machine)
+(def-concept Refrigerator Machine)
+
+; Monitoring Equipment
+(def-concept Camera Sensor)
+(def-concept SecurityCamera Camera)
+
+; --- Properties ---
+(def-property is_active Machine Boolean)
+(def-property temperature Machine Integer) ; For Ovens, Fridges, Proofers
+(def-property humidity Machine Integer)    ; For Ovens, Proofers
+(def-property rpm Mixer Integer)
+(def-property is_recording Camera Boolean)
+(def-property items_per_minute PackagingMachine Integer)
+
+; --- Axioms ---
+
+; 1. Refrigeration Safety: Fridges must be cold (e.g., < 5 degrees)
+(forall (r)
+    (implies (Refrigerator r) (lt temperature 5)))
+
+; 2. Oven Operation: If an oven is active, it should be hot (e.g., > 100 degrees)
+; Note: simplify to just checking range for now
+(forall (o)
+    (implies (and (Oven o) (is_active)) (gt temperature 100)))
+
+; 3. Proofing: Humidity must be controlled (e.g., between 60 and 90)
+(forall (p)
+    (implies (ProofingChamber p) (and (gte humidity 60) (lte humidity 90))))
+
+; 4. Security: All Security Cameras must be recording
+(forall (c)
+    (implies (SecurityCamera c) (eq is_recording True)))
+
+; 5. Mixing: Active mixers must be spinning
+(forall (m)
+    (implies (and (Mixer m) (is_active)) (gt rpm 0)))

@@ -1,0 +1,45 @@
+;; ============================================================================
+;; TIER 3.10: SIGMA Generic Detection Rule Semantics & SIEM Mapping Ontology
+;; Grounded in SIGMA Specification, OCSF Telemetry, and MITRE ATT&CK
+;; ============================================================================
+
+(import "ocsf_schema.logic")
+(import "mitre_attack.logic")
+
+(namespace sigma "https://github.com/SigmaHQ/sigma#")
+
+;; ----------------------------------------------------------------------------
+;; SIGMA Core Concepts & Detection Severity Levels
+;; ----------------------------------------------------------------------------
+(def-concept sigma:SigmaRule cco:DirectiveICE)
+(def-concept sigma:SigmaDetectionCondition cco:DirectiveICE)
+(def-concept sigma:DetectionLevel cco:DirectiveICE)
+
+(def-concept sigma:LowLevel sigma:DetectionLevel)
+(def-concept sigma:MediumLevel sigma:DetectionLevel)
+(def-concept sigma:HighLevel sigma:DetectionLevel)
+(def-concept sigma:CriticalLevel sigma:DetectionLevel)
+
+;; ----------------------------------------------------------------------------
+;; SIGMA Properties
+;; ----------------------------------------------------------------------------
+(def-property sigma:rule_id sigma:SigmaRule String)
+(def-property sigma:rule_title sigma:SigmaRule String)
+(def-property sigma:status sigma:SigmaRule String)
+(def-property sigma:false_positive_risk sigma:SigmaRule Double)
+
+;; ----------------------------------------------------------------------------
+;; SIGMA Detection Relations
+;; ----------------------------------------------------------------------------
+(def-relation sigma:detects_technique sigma:SigmaRule attack:AttackTechnique)
+(def-relation sigma:matches_ocsf_event sigma:SigmaRule ocsf:OCSEvent)
+(def-relation sigma:has_detection_level sigma:SigmaRule sigma:DetectionLevel)
+
+;; ----------------------------------------------------------------------------
+;; First-Order Logic Constraints for SIGMA Rules
+;; ----------------------------------------------------------------------------
+
+(forall (r)
+  (implies (sigma:SigmaRule r)
+           (and (gte sigma:false_positive_risk 0.0)
+                (lte sigma:false_positive_risk 1.0))))

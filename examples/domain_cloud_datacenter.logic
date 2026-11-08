@@ -1,0 +1,70 @@
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Cloud / Datacenter / Software Domain ---
+
+; Infrastructure (Physical & Virtual)
+(def-concept ComputeNode Object)
+(def-concept PhysicalServer ComputeNode)
+(def-concept VirtualMachine ComputeNode)
+(def-concept Container ComputeNode)
+(def-concept KubernetesCluster Object)
+
+; Software Components
+(def-concept SoftwareComponent Object)
+(def-concept MQTTBroker SoftwareComponent) ; Acme
+(def-concept Database SoftwareComponent)
+(def-concept LoadBalancer SoftwareComponent)
+(def-concept Microservice SoftwareComponent)
+
+; Processes
+(def-concept ComputingProcess Process)
+(def-concept DeploymentProcess ComputingProcess)
+(def-concept ScalingProcess ComputingProcess)
+(def-concept FailoverProcess ComputingProcess)
+(def-concept DataReplicationProcess ComputingProcess)
+
+; Information
+(def-concept LogFile InformationContentEntity)
+(def-concept Metric InformationContentEntity)
+(def-concept Configuration InformationContentEntity)
+(def-concept Alert InformationContentEntity)
+
+; Roles
+(def-concept DevOpsRole Role)
+(def-concept SRERole Role) ; Site Reliability Engineer
+(def-concept DeveloperRole Role)
+
+; Properties
+(def-property cpu_usage ComputeNode Integer) ; Percent
+(def-property memory_usage ComputeNode Integer) ; Percent
+(def-property active_connections MQTTBroker Integer)
+(def-property replica_count KubernetesCluster Integer)
+(def-property is_healthy SoftwareComponent Boolean)
+(def-property region Object String) ; e.g., "us-east-1"
+
+; Axioms
+
+; 1. Auto-Scaling: High CPU usage implies scaling action
+(forall (vm)
+    (implies (and (VirtualMachine vm) (gt cpu_usage 80))
+             (exists (p) (ScalingProcess p))))
+
+; 2. High Availability: Broker must have connections to be considered "active" (simplified)
+(forall (b)
+    (implies (and (MQTTBroker b) (gt active_connections 0))
+             (eq is_healthy True)))
+
+; 3. Reliability: Unhealthy component triggers Alert
+(forall (c)
+    (implies (and (SoftwareComponent c) (eq is_healthy False))
+             (exists (a) (Alert a))))

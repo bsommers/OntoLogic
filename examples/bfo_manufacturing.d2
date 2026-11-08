@@ -1,0 +1,69 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"GDC": { shape: class }
+"InformationContentEntity": { shape: class }
+"SDC": { shape: class }
+"Quality": { shape: class }
+"RealizableEntity": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"ProcessBoundary": { shape: class }
+"SpatiotemporalRegion": { shape: class }
+"Machine": { shape: class }
+"Robot": { shape: class }
+"Product": { shape: class }
+"ManufacturingProcess": { shape: class }
+"AssemblyProcess": { shape: class }
+"WeldingProcess": { shape: class }
+"ComputingProcess": { shape: class }
+"SoftwareProcess": { shape: class }
+"OperatorRole": { shape: class }
+"SafetyRole": { shape: class }
+"SoftwareCode": { shape: class }
+"ControlLogic": { shape: class }
+"WeldingFunction": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"GDC" -> "Continuant"
+"InformationContentEntity" -> "GDC"
+"SDC" -> "Continuant"
+"Quality" -> "SDC"
+"RealizableEntity" -> "SDC"
+"Role" -> "RealizableEntity"
+"Function" -> "RealizableEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"ProcessBoundary" -> "Occurrent"
+"SpatiotemporalRegion" -> "Occurrent"
+"Machine" -> "Object"
+"Robot" -> "Machine"
+"Product" -> "Object"
+"ManufacturingProcess" -> "Process"
+"AssemblyProcess" -> "ManufacturingProcess"
+"WeldingProcess" -> "ManufacturingProcess"
+"ComputingProcess" -> "Process"
+"SoftwareProcess" -> "ComputingProcess"
+"OperatorRole" -> "Role"
+"SafetyRole" -> "Role"
+"SoftwareCode" -> "InformationContentEntity"
+"ControlLogic" -> "SoftwareCode"
+"WeldingFunction" -> "Function"
+"Object"."participates_in": Process
+"Object"."bearer_of": Role
+"Process"."realizes": Function
+"InformationContentEntity"."concretizes": Process
+"Process"."duration": Integer
+"ManufacturingProcess"."is_running": Boolean
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall r (Robot(r) implies exists f (Function(f)))
+#   forall p (WeldingProcess(p) implies exists m (Robot(m) and participates_in(m, p)))
+#   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))
+#   forall p (ManufacturingProcess(p) and is_running = True implies gt(duration, 0))

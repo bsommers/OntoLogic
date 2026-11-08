@@ -1,0 +1,64 @@
+;; ============================================================================
+;; TIER 1: Basic Formal Ontology (BFO 2020 - ISO/IEC 21838-2)
+;; Official Top-Level Upper Ontology for OntoLogic Standard Library
+;; ============================================================================
+
+(namespace bfo "http://purl.obolibrary.org/obo/BFO_")
+
+;; Root Entity
+(def-concept bfo:Entity)
+
+;; ----------------------------------------------------------------------------
+;; Continuant Hierarchy (Entities that persist through time as a whole)
+;; ----------------------------------------------------------------------------
+(def-concept bfo:Continuant bfo:Entity)
+
+;; Independent Continuant
+(def-concept bfo:IndependentContinuant bfo:Continuant)
+(def-concept bfo:MaterialEntity bfo:IndependentContinuant)
+(def-concept bfo:FiatObjectPart bfo:IndependentContinuant)
+(def-concept bfo:Site bfo:IndependentContinuant)
+(def-concept bfo:ImmaterialEntity bfo:IndependentContinuant)
+
+;; Specifically Dependent Continuant
+(def-concept bfo:SpecificallyDependentContinuant bfo:Continuant)
+(def-concept bfo:Quality bfo:SpecificallyDependentContinuant)
+(def-concept bfo:RealizableEntity bfo:SpecificallyDependentContinuant)
+(def-concept bfo:Role bfo:RealizableEntity)
+(def-concept bfo:Disposition bfo:RealizableEntity)
+(def-concept bfo:Function bfo:Disposition)
+
+;; Generically Dependent Continuant
+(def-concept bfo:GenericallyDependentContinuant bfo:Continuant)
+(def-concept bfo:InformationContentEntity bfo:GenericallyDependentContinuant)
+
+;; ----------------------------------------------------------------------------
+;; Occurrent Hierarchy (Entities that unfold in time and have temporal parts)
+;; ----------------------------------------------------------------------------
+(def-concept bfo:Occurrent bfo:Entity)
+(def-concept bfo:ProcessOccurrent bfo:Occurrent)
+(def-concept bfo:Process bfo:ProcessOccurrent)
+(def-concept bfo:ProcessBoundary bfo:ProcessOccurrent)
+(def-concept bfo:TemporalRegion bfo:Occurrent)
+(def-concept bfo:SpatiotemporalRegion bfo:Occurrent)
+
+;; ----------------------------------------------------------------------------
+;; BFO Foundational Relations & Object Properties
+;; ----------------------------------------------------------------------------
+(def-relation bfo:part_of bfo:Entity bfo:Entity)
+(def-relation bfo:has_part bfo:Entity bfo:Entity)
+(def-relation bfo:inheres_in bfo:SpecificallyDependentContinuant bfo:IndependentContinuant)
+(def-relation bfo:bearer_of bfo:IndependentContinuant bfo:SpecificallyDependentContinuant)
+(def-relation bfo:has_participant bfo:Process bfo:IndependentContinuant)
+(def-relation bfo:participates_in bfo:IndependentContinuant bfo:Process)
+(def-relation bfo:realizes bfo:Process bfo:RealizableEntity)
+(def-relation bfo:realized_in bfo:RealizableEntity bfo:Process)
+(def-relation bfo:occupies_temporal_region bfo:Occurrent bfo:TemporalRegion)
+
+;; ----------------------------------------------------------------------------
+;; BFO Metadata Properties
+;; ----------------------------------------------------------------------------
+(def-property bfo:identifier bfo:Entity String)
+(def-property bfo:label bfo:Entity String)
+(def-property bfo:description bfo:Entity String)
+(def-property bfo:iri bfo:Entity String)

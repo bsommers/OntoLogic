@@ -1,0 +1,12 @@
+"IndustrialEntity": { shape: class }
+"Controller": { shape: class }
+"PLC": { shape: class }
+"RobotArm": { shape: class }
+
+"Controller" -> "IndustrialEntity"
+"PLC" -> "Controller"
+"RobotArm" -> "IndustrialEntity"
+"IndustrialEntity"."safety_status": Boolean
+"RobotArm"."axis_count": Integer
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall c (Controller(c) and safety_status = False implies active = False)

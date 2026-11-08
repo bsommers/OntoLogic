@@ -1,0 +1,8 @@
+"NetworkNode": { shape: class }
+"TrustedNode": { shape: class }
+"UntrustedNode": { shape: class }
+
+"TrustedNode" -> "NetworkNode"
+"UntrustedNode" -> "NetworkNode"
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall n (UntrustedNode(n) implies not can_access(n, AdminPanel))

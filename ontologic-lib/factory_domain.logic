@@ -1,0 +1,71 @@
+;; Vendored from example-org/factory-domain/ontology/factory_domain.logic.
+;; factory-domain owns the source; update this copy when that file changes.
+;; ============================================================================
+;; TIER 3: Dark Software Factory Domain Ontology (DSF)
+;; Formal OntoLogic Specification for ecosystem, Swarms, Tenets, Standards & CVM
+;; ============================================================================
+
+(import "cco_core.logic")
+
+(namespace dsf "http://bsommers.github.io/factory-domain/domain#")
+
+;; ----------------------------------------------------------------------------
+;; Factory Systems & Agent Swarms
+;; ----------------------------------------------------------------------------
+(def-concept dsf:SoftwareFactory cco:EngineeredSystem)
+(def-concept dsf:AutonomousSwarm cco:AgentSwarm)
+
+(def-concept dsf:FactoryRole cco:AgentRole)
+(def-concept dsf:FactoryManagerRole dsf:FactoryRole)
+(def-concept dsf:SupervisorRole dsf:FactoryRole)
+(def-concept dsf:LineLeadRole dsf:FactoryRole)
+(def-concept dsf:SafetyOfficerRole dsf:FactoryRole)
+
+;; ----------------------------------------------------------------------------
+;; Normative Directives & Directives ICE
+;; ----------------------------------------------------------------------------
+(def-concept dsf:FactoryInstruction cco:DirectiveICE)
+(def-concept dsf:ConstitutionalTenet dsf:FactoryInstruction)
+(def-concept dsf:OperationalStandard dsf:FactoryInstruction)
+(def-concept dsf:PosetStratum cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; Execution Runtimes & Appliances
+;; ----------------------------------------------------------------------------
+(def-concept dsf:ExecutionRuntime cco:Artifact)
+(def-concept dsf:CVMContainerSandbox dsf:ExecutionRuntime)
+(def-concept dsf:KVMVirtualAppliance dsf:ExecutionRuntime)
+(def-concept dsf:LiveBootableISO cco:InformationBearingArtifact)
+
+;; ----------------------------------------------------------------------------
+;; Verification, Toulmin Evidence & Safety
+;; ----------------------------------------------------------------------------
+(def-concept dsf:ToulminArgument bfo:InformationContentEntity)
+(def-concept dsf:ToulminClaim cco:DescriptiveICE)
+(def-concept dsf:ToulminGrounds cco:DescriptiveICE)
+(def-concept dsf:ToulminWarrant cco:DirectiveICE)
+(def-concept dsf:ToulminBacking cco:DescriptiveICE)
+(def-concept dsf:ToulminRebuttal cco:DescriptiveICE)
+
+(def-concept dsf:VerificationGate cco:ActOfVerification)
+(def-concept dsf:DualGateIntrospection dsf:VerificationGate)
+(def-concept dsf:SafetyOfficerGate dsf:VerificationGate)
+(def-concept dsf:CapabilityRecord cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; Domain Object Relations
+;; ----------------------------------------------------------------------------
+(def-relation dsf:enforces_standard dsf:SoftwareFactory dsf:OperationalStandard)
+(def-relation dsf:governed_by_tenet dsf:SoftwareFactory dsf:ConstitutionalTenet)
+(def-relation dsf:has_stratum_tier dsf:SoftwareFactory dsf:PosetStratum)
+(def-relation dsf:executes_in_runtime cco:Act dsf:ExecutionRuntime)
+(def-relation dsf:has_toulmin_backing cco:DescriptiveICE dsf:ToulminArgument)
+
+;; ----------------------------------------------------------------------------
+;; Domain Metadata Properties
+;; ----------------------------------------------------------------------------
+(def-property dsf:tenet_number dsf:ConstitutionalTenet Int)
+(def-property dsf:standard_number dsf:OperationalStandard Int)
+(def-property dsf:poset_tier_level dsf:PosetStratum Int)
+(def-property dsf:capability_id dsf:CapabilityRecord String)
+(def-property dsf:verification_command dsf:CapabilityRecord String)

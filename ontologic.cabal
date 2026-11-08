@@ -1,0 +1,250 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.38.3.
+--
+-- see: https://github.com/sol/hpack
+
+name:           ontologic
+version:        1.8.2
+homepage:       https://github.com/bsommers/OntoLogic#readme
+bug-reports:    https://github.com/bsommers/OntoLogic/issues
+author:         OntoLogic Team
+maintainer:     bsommers
+copyright:      2024 OntoLogic
+license:        Apache-2.0
+license-file:   LICENSE
+build-type:     Simple
+data-files:
+    ontologic-lib/autonomous_ai.logic
+    ontologic-lib/bfo_2020.logic
+    ontologic-lib/cco_core.logic
+    ontologic-lib/ecosystem.logic
+    ontologic-lib/ecosystem_unified.logic
+    ontologic-lib/factory_domain.logic
+    ontologic-lib/iso_42001_eu_ai_act.logic
+    ontologic-lib/mitre_atlas.logic
+    ontologic-lib/mitre_attack.logic
+    ontologic-lib/mitre_d3fend.logic
+    ontologic-lib/nist_ai_rmf.logic
+    ontologic-lib/nist_csf.logic
+    ontologic-lib/nist_sp800_53.logic
+    ontologic-lib/ocsf_schema.logic
+    ontologic-lib/sigma_rules.logic
+    ontologic-lib/software_systems.logic
+    ontologic-lib/stix_cve.logic
+    ontologic-lib/uco_observables.logic
+
+source-repository head
+  type: git
+  location: https://github.com/bsommers/OntoLogic
+
+library
+  exposed-modules:
+      Emitters.Cpp
+      Emitters.D2
+      Emitters.Go
+      Emitters.GraphQL
+      Emitters.Java
+      Emitters.JsonSchema
+      Emitters.Mermaid
+      Emitters.Neo4j
+      Emitters.OpenApi
+      Emitters.Owl
+      Emitters.Protobuf
+      Emitters.Python
+      Emitters.Rust
+      Emitters.Shacl
+      Emitters.SMT
+      Emitters.Sql
+      Emitters.TPTP
+      Emitters.TypeScript
+      FOLTheory
+      IR
+      IR.Clausify
+      IR.CNF
+      Linter
+      Linter.SAT
+      Loader
+      LSP
+      Main
+      OntoLogic
+      Parser
+      Prover.Resolution
+      Prover.Tableau
+      Prover.Unification
+      REPL
+      Solver
+      Targets
+  other-modules:
+      Paths_ontologic
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hashable
+    , megaparsec
+    , optparse-applicative
+    , parser-combinators
+    , process
+    , text
+  default-language: Haskell2010
+
+executable ontologic-exe
+  main-is: Main.hs
+  other-modules:
+      Emitters.Cpp
+      Emitters.D2
+      Emitters.Go
+      Emitters.GraphQL
+      Emitters.Java
+      Emitters.JsonSchema
+      Emitters.Mermaid
+      Emitters.Neo4j
+      Emitters.OpenApi
+      Emitters.Owl
+      Emitters.Protobuf
+      Emitters.Python
+      Emitters.Rust
+      Emitters.Shacl
+      Emitters.SMT
+      Emitters.Sql
+      Emitters.TPTP
+      Emitters.TypeScript
+      FOLTheory
+      IR
+      IR.Clausify
+      IR.CNF
+      Linter
+      Linter.SAT
+      Loader
+      LSP
+      OntoLogic
+      Parser
+      Prover.Resolution
+      Prover.Tableau
+      Prover.Unification
+      REPL
+      Solver
+      Targets
+      Paths_ontologic
+  hs-source-dirs:
+      src
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hashable
+    , megaparsec
+    , ontologic
+    , optparse-applicative
+    , parser-combinators
+    , process
+    , text
+  default-language: Haskell2010
+
+executable ontologic-lsp
+  main-is: Main.hs
+  other-modules:
+      Paths_ontologic
+  hs-source-dirs:
+      app-lsp
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hashable
+    , megaparsec
+    , ontologic
+    , optparse-applicative
+    , parser-combinators
+    , process
+    , text
+  default-language: Haskell2010
+
+test-suite ontologic-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      AIGovernanceSpec
+      AutonomousAISpec
+      CardinalitySpec
+      ClifInteropSpec
+      CNFSpec
+      CompileSpec
+      ComplianceGRCSpec
+      CppSpec
+      D2Spec
+      EcosystemSpec
+      EcosystemUnifiedSpec
+      ExamplesSpec
+      FOLTheorySpec
+      GoSpec
+      GraphQLSpec
+      ImportSpec
+      IndustrialBenchmarkSpec
+      InheritedBoundsSpec
+      IriSpec
+      IRSpec
+      JavaSpec
+      JsonSchemaSpec
+      LinterSpec
+      LSPSpec
+      MainSpec
+      MermaidSpec
+      NativeFallbackSpec
+      NativeProverSpec
+      Neo4jSpec
+      OpenApiSpec
+      OwlSpec
+      ParserSpec
+      PropertySpec
+      ProtobufSpec
+      PythonSpec
+      RegistrySpec
+      RelationSpec
+      REPLSpec
+      ResolutionSpec
+      RustSpec
+      ShaclSpec
+      SMTSpec
+      SoftwareSystemsSpec
+      SolverSpec
+      SqlSpec
+      StandardLibrarySpec
+      TableauSpec
+      TargetsSpec
+      TelemetryMonitoringSpec
+      ThreatModelingSpec
+      TPTPSpec
+      TypeScriptSpec
+      UnificationSpec
+      Paths_ontologic
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      QuickCheck
+    , base >=4.7 && <5
+    , bytestring
+    , containers
+    , directory
+    , filepath
+    , hashable
+    , hspec
+    , megaparsec
+    , ontologic
+    , optparse-applicative
+    , parser-combinators
+    , process
+    , text
+  default-language: Haskell2010

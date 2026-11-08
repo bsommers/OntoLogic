@@ -1,0 +1,14 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept Device)
+(def-concept Drone Device)
+(def-individual droneAlpha Drone)
+
+(forall (x)
+  (if (Drone x)
+    (Device x)))
+
+(forall (x)
+  (if (and (Device x) (airborne x))
+    (autonomous x)))

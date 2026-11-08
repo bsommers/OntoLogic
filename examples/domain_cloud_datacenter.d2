@@ -1,0 +1,74 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"ComputeNode": { shape: class }
+"PhysicalServer": { shape: class }
+"VirtualMachine": { shape: class }
+"Container": { shape: class }
+"KubernetesCluster": { shape: class }
+"SoftwareComponent": { shape: class }
+"MQTTBroker": { shape: class }
+"Database": { shape: class }
+"LoadBalancer": { shape: class }
+"Microservice": { shape: class }
+"ComputingProcess": { shape: class }
+"DeploymentProcess": { shape: class }
+"ScalingProcess": { shape: class }
+"FailoverProcess": { shape: class }
+"DataReplicationProcess": { shape: class }
+"LogFile": { shape: class }
+"Metric": { shape: class }
+"Configuration": { shape: class }
+"Alert": { shape: class }
+"DevOpsRole": { shape: class }
+"SRERole": { shape: class }
+"DeveloperRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"ComputeNode" -> "Object"
+"PhysicalServer" -> "ComputeNode"
+"VirtualMachine" -> "ComputeNode"
+"Container" -> "ComputeNode"
+"KubernetesCluster" -> "Object"
+"SoftwareComponent" -> "Object"
+"MQTTBroker" -> "SoftwareComponent"
+"Database" -> "SoftwareComponent"
+"LoadBalancer" -> "SoftwareComponent"
+"Microservice" -> "SoftwareComponent"
+"ComputingProcess" -> "Process"
+"DeploymentProcess" -> "ComputingProcess"
+"ScalingProcess" -> "ComputingProcess"
+"FailoverProcess" -> "ComputingProcess"
+"DataReplicationProcess" -> "ComputingProcess"
+"LogFile" -> "InformationContentEntity"
+"Metric" -> "InformationContentEntity"
+"Configuration" -> "InformationContentEntity"
+"Alert" -> "InformationContentEntity"
+"DevOpsRole" -> "Role"
+"SRERole" -> "Role"
+"DeveloperRole" -> "Role"
+"ComputeNode"."cpu_usage": Integer
+"ComputeNode"."memory_usage": Integer
+"MQTTBroker"."active_connections": Integer
+"KubernetesCluster"."replica_count": Integer
+"SoftwareComponent"."is_healthy": Boolean
+"Object"."region": String
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall vm (VirtualMachine(vm) and gt(cpu_usage, 80) implies exists p (ScalingProcess(p)))
+#   forall b (MQTTBroker(b) and gt(active_connections, 0) implies is_healthy = True)
+#   forall c (SoftwareComponent(c) and is_healthy = False implies exists a (Alert(a)))

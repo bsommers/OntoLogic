@@ -1,0 +1,85 @@
+;; ============================================================================
+;; TIER 2: Common Core Ontologies (CCO) Mid-Level Ontology Standard Library
+;; Based on CUBRC / US DoD CCO suite grounded in BFO 2020
+;; ============================================================================
+
+(import "bfo_2020.logic")
+
+(namespace cco "http://www.ontologyrepository.com/CommonCoreOntologies/")
+
+;; ----------------------------------------------------------------------------
+;; Agent Ontology (AgO)
+;; ----------------------------------------------------------------------------
+(def-concept cco:Agent bfo:MaterialEntity)
+(def-concept cco:Person cco:Agent)
+(def-concept cco:Organization cco:Agent)
+(def-concept cco:GroupOfAgents bfo:MaterialEntity)
+(def-concept cco:AgentSwarm bfo:MaterialEntity)
+(def-concept cco:AutonomousSoftwareAgent cco:Agent)
+
+;; ----------------------------------------------------------------------------
+;; Artifact Ontology (AO)
+;; ----------------------------------------------------------------------------
+(def-concept cco:Artifact bfo:MaterialEntity)
+(def-concept cco:EngineeredSystem cco:Artifact)
+(def-concept cco:HardwareComponent cco:Artifact)
+(def-concept cco:Facility cco:Artifact)
+(def-concept cco:InformationBearingArtifact cco:Artifact)
+(def-concept cco:SoftwareArtifact bfo:GenericallyDependentContinuant)
+
+;; ----------------------------------------------------------------------------
+;; Information Entity Ontology (IEO)
+;; ----------------------------------------------------------------------------
+(def-concept cco:DesignativeICE bfo:InformationContentEntity)
+(def-concept cco:DescriptiveICE bfo:InformationContentEntity)
+(def-concept cco:MeasurementICE bfo:InformationContentEntity)
+(def-concept cco:DirectiveICE bfo:InformationContentEntity)
+
+(def-concept cco:Algorithm cco:SoftwareArtifact)
+(def-concept cco:Identifier cco:DesignativeICE)
+(def-concept cco:DataRequirement cco:DirectiveICE)
+(def-concept cco:PolicyDocument cco:DirectiveICE)
+
+;; ----------------------------------------------------------------------------
+;; Event Ontology (EO)
+;; ----------------------------------------------------------------------------
+(def-concept cco:Act bfo:Process)
+(def-concept cco:PlannedProcess cco:Act)
+(def-concept cco:ActOfArtifactCreation cco:PlannedProcess)
+(def-concept cco:ActOfVerification cco:PlannedProcess)
+(def-concept cco:SystemFailure bfo:Process)
+(def-concept cco:SecurityEvent cco:Act)
+(def-concept cco:MaintenanceProcess cco:PlannedProcess)
+
+;; ----------------------------------------------------------------------------
+;; Quality & Realizable Roles
+;; ----------------------------------------------------------------------------
+(def-concept cco:ReliabilityQuality bfo:Quality)
+(def-concept cco:SecurityQuality bfo:Quality)
+(def-concept cco:PerformanceQuality bfo:Quality)
+
+(def-concept cco:AgentRole bfo:Role)
+(def-concept cco:AdministrativeRole cco:AgentRole)
+(def-concept cco:OperatorRole cco:AgentRole)
+(def-concept cco:AuditorRole cco:AgentRole)
+
+;; ----------------------------------------------------------------------------
+;; CCO Cross-Domain Relations
+;; ----------------------------------------------------------------------------
+(def-relation cco:is_agent_in cco:Agent cco:Act)
+(def-relation cco:has_agent cco:Act cco:Agent)
+(def-relation cco:affects cco:Act bfo:Entity)
+(def-relation cco:uses_artifact cco:Act cco:Artifact)
+(def-relation cco:prescribes cco:DirectiveICE bfo:Entity)
+(def-relation cco:is_bearer_of bfo:IndependentContinuant bfo:SpecificallyDependentContinuant)
+(def-relation cco:is_manifested_in cco:SoftwareArtifact cco:InformationBearingArtifact)
+(def-relation cco:is_component_of cco:HardwareComponent cco:EngineeredSystem)
+
+;; ----------------------------------------------------------------------------
+;; CCO Properties
+;; ----------------------------------------------------------------------------
+(def-property cco:version cco:SoftwareArtifact String)
+(def-property cco:serial_number cco:Artifact String)
+(def-property cco:metric_value cco:MeasurementICE Double)
+(def-property cco:directive_text cco:DirectiveICE String)
+(def-property cco:agent_name cco:Agent String)

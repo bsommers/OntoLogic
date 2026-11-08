@@ -1,0 +1,78 @@
+; --- Basic Formal Ontology (BFO) Upper Level ---
+(def-concept Entity)
+
+; Continuants (Objects, qualities, roles that persist in time)
+(def-concept Continuant Entity)
+
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+
+(def-concept GDC Continuant) ; Generically Dependent Continuant
+(def-concept InformationContentEntity GDC)
+
+(def-concept SDC Continuant) ; Specifically Dependent Continuant
+(def-concept Quality SDC)
+(def-concept RealizableEntity SDC)
+(def-concept Role RealizableEntity)
+(def-concept Function RealizableEntity)
+
+; Occurrents (Processes, events that unfold in time)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept ProcessBoundary Occurrent)
+(def-concept SpatiotemporalRegion Occurrent)
+
+; --- Manufacturing Domain Extensions ---
+
+; Domain Objects
+(def-concept Machine Object)
+(def-concept Robot Machine)
+(def-concept Product Object)
+
+; Domain Processes
+(def-concept ManufacturingProcess Process)
+(def-concept AssemblyProcess ManufacturingProcess)
+(def-concept WeldingProcess ManufacturingProcess)
+(def-concept ComputingProcess Process)
+(def-concept SoftwareProcess ComputingProcess) ; Running program execution (Occurrent)
+
+; Domain Roles
+(def-concept OperatorRole Role)
+(def-concept SafetyRole Role)
+
+; Domain Information
+(def-concept SoftwareCode InformationContentEntity) ; Software code specification (ICE / GDC)
+(def-concept ControlLogic SoftwareCode)
+
+; --- Relations (Properties) ---
+; BFO Relations between entities
+(def-property participates_in Object Process) ; Object participates in Process
+(def-property bearer_of Object Role) ; Object bears Role
+(def-property realizes Process Function) ; Process realizes Function
+(def-property concretizes InformationContentEntity Process) ; ICE concretized in Process execution
+
+(def-property duration Process Integer)
+(def-property is_running ManufacturingProcess Boolean)
+
+; --- Axioms ---
+
+; 1. Welding Robots have a WeldingFunction
+(def-concept WeldingFunction Function)
+(forall (r)
+    (implies (Robot r) (exists (f) (Function f))))
+
+; 2. Process Participation: WeldingProcess has an Object participant
+(forall (p)
+    (implies (WeldingProcess p)
+             (exists (m) (and (Robot m) (participates_in m p)))))
+
+; 3. Software Execution: Running SoftwareProcess concretizes SoftwareCode
+(forall (p)
+    (implies (SoftwareProcess p)
+             (exists (c) (and (SoftwareCode c) (concretizes c p)))))
+
+; 4. Active processes must have positive duration
+(forall (p)
+    (implies (and (ManufacturingProcess p) (eq is_running True)) (gt duration 0)))
+

@@ -1,0 +1,10 @@
+resolver: lts-21.25 # GHC 9.4.8
+packages:
+- .
+
+extra-deps:
+- megaparsec-9.3.0
+- hashable-1.4.3.0
+
+flags: {}
+extra-package-dbs: []

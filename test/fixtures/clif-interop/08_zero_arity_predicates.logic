@@ -1,0 +1,12 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept State)
+(def-individual current_state State)
+
+(system_initialized)
+(network_ready)
+
+(forall (x)
+  (implies (State x)
+    (system_initialized)))

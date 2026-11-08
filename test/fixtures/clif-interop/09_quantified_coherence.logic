@@ -1,0 +1,18 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept Vehicle)
+(def-concept Car Vehicle)
+(def-concept Aircraft Vehicle)
+(def-concept Drone Aircraft)
+
+(def-individual rover Car)
+(def-individual skywalker Drone)
+
+(forall (x)
+  (implies (Car x)
+    (not (Aircraft x))))
+
+(forall (x)
+  (implies (Drone x)
+    (and (Aircraft x) (unmanned x))))

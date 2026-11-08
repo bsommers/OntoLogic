@@ -1,0 +1,13 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept Prime)
+(def-individual p_zero Prime)
+
+(forall (x)
+  (implies (Prime x)
+    (greaterThanOne x)))
+
+(forall (x)
+  (implies (Prime x)
+    (not (greaterThanOne x))))

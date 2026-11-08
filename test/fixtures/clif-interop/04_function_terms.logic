@@ -1,0 +1,13 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept Node)
+(def-individual root Node)
+(def-individual leaf Node)
+
+(= (parent leaf) root)
+(= (root_node) root)
+
+(forall (x)
+  (implies (Node x)
+    (= (identity (identity x)) x)))

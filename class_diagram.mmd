@@ -1,0 +1,186 @@
+classDiagram
+    class Entity
+    class Continuant
+    class IndependentContinuant
+    class MaterialEntity
+    class Object
+    class ObjectAggregate
+    class GDC
+    class InformationContentEntity
+    class SDC
+    class Quality
+    class RealizableEntity
+    class Role
+    class Function
+    class Occurrent
+    class Process
+    class SpatiotemporalRegion
+    class Infrastructure
+    class Equipment
+    class Machine
+    class Sensor
+    class Robot
+    class WeldingRobot
+    class PaintingRobot
+    class AssemblyRobot
+    class Mixer
+    class Oven
+    class PackagingMachine
+    class Product
+    class Pipeline
+    class Refinery
+    class OffshorePlatform
+    class Wellhead
+    class Pump
+    class Valve
+    class Compressor
+    class PLC
+    class Petroleum
+    class NaturalGas
+    class MiningEquipment
+    class HeavyMachinery
+    class Excavator
+    class HaulTruck
+    class DrillRig
+    class Crusher
+    class ConveyorBelt
+    class ComputeNode
+    class PhysicalServer
+    class VirtualMachine
+    class Container
+    class KubernetesCluster
+    class SoftwareComponent
+    class MQTTBroker
+    class AcmeEdgeGateway
+    class AcmeCloudService
+    class Database
+    class LoadBalancer
+    class Microservice
+    class OperatorRole
+    class SafetyRole
+    class MaintenanceRole
+    class DevOpsRole
+    class SRERole
+    class CISORole
+    class SecurityAnalystRole
+    class ExecutiveRole
+    class Software
+    class ControlLogic
+    class SensorData
+    class Contract
+    class SLA
+    class SecurityArtifact
+    class DigitalCertificate
+    class PrivateKey
+    class SecurityPolicy
+    class Alert
+    class IndustrialProcess
+    class ManufacturingProcess
+    class ExtractionProcess
+    class RefiningProcess
+    class ComputingProcess
+    class DeploymentProcess
+    class ScalingProcess
+    class BusinessProcess
+    class SalesCycleProcess
+    class SecurityProcess
+    class AuthenticationProcess
+    class EncryptionProcess
+    class TrustedEntity
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    MaterialEntity <|-- ObjectAggregate
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Occurrent <|-- SpatiotemporalRegion
+    Object <|-- Infrastructure
+    Object <|-- Equipment
+    Equipment <|-- Machine
+    Equipment <|-- Sensor
+    Machine <|-- Robot
+    Robot <|-- WeldingRobot
+    Robot <|-- PaintingRobot
+    Robot <|-- AssemblyRobot
+    Machine <|-- Mixer
+    Machine <|-- Oven
+    Machine <|-- PackagingMachine
+    Object <|-- Product
+    Infrastructure <|-- Pipeline
+    Infrastructure <|-- Refinery
+    Infrastructure <|-- OffshorePlatform
+    Infrastructure <|-- Wellhead
+    Equipment <|-- Pump
+    Equipment <|-- Valve
+    Equipment <|-- Compressor
+    Equipment <|-- PLC
+    MaterialEntity <|-- Petroleum
+    MaterialEntity <|-- NaturalGas
+    Equipment <|-- MiningEquipment
+    MiningEquipment <|-- HeavyMachinery
+    HeavyMachinery <|-- Excavator
+    HeavyMachinery <|-- HaulTruck
+    HeavyMachinery <|-- DrillRig
+    MiningEquipment <|-- Crusher
+    MiningEquipment <|-- ConveyorBelt
+    Object <|-- ComputeNode
+    ComputeNode <|-- PhysicalServer
+    ComputeNode <|-- VirtualMachine
+    ComputeNode <|-- Container
+    Object <|-- KubernetesCluster
+    Object <|-- SoftwareComponent
+    SoftwareComponent <|-- MQTTBroker
+    SoftwareComponent <|-- AcmeEdgeGateway
+    SoftwareComponent <|-- AcmeCloudService
+    SoftwareComponent <|-- Database
+    SoftwareComponent <|-- LoadBalancer
+    SoftwareComponent <|-- Microservice
+    Role <|-- OperatorRole
+    Role <|-- SafetyRole
+    Role <|-- MaintenanceRole
+    Role <|-- DevOpsRole
+    Role <|-- SRERole
+    Role <|-- CISORole
+    Role <|-- SecurityAnalystRole
+    Role <|-- ExecutiveRole
+    InformationContentEntity <|-- Software
+    Software <|-- ControlLogic
+    InformationContentEntity <|-- SensorData
+    InformationContentEntity <|-- Contract
+    InformationContentEntity <|-- SLA
+    InformationContentEntity <|-- SecurityArtifact
+    SecurityArtifact <|-- DigitalCertificate
+    SecurityArtifact <|-- PrivateKey
+    SecurityArtifact <|-- SecurityPolicy
+    InformationContentEntity <|-- Alert
+    Process <|-- IndustrialProcess
+    IndustrialProcess <|-- ManufacturingProcess
+    IndustrialProcess <|-- ExtractionProcess
+    IndustrialProcess <|-- RefiningProcess
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- DeploymentProcess
+    ComputingProcess <|-- ScalingProcess
+    Process <|-- BusinessProcess
+    BusinessProcess <|-- SalesCycleProcess
+    Process <|-- SecurityProcess
+    SecurityProcess <|-- AuthenticationProcess
+    SecurityProcess <|-- EncryptionProcess
+    Object <|-- TrustedEntity
+    Equipment : +Boolean is_active
+    Equipment : +Integer temperature
+    MaterialEntity : +Integer has_pressure
+    Mixer : +Integer rpm
+    ComputeNode : +Integer cpu_usage
+    MQTTBroker : +Integer active_connections
+    SoftwareComponent : +Boolean is_healthy
+    SecurityArtifact : +Boolean encryption_enabled
+    Contract : +Integer contract_value
+    DigitalCertificate : +Boolean is_valid

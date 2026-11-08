@@ -1,0 +1,34 @@
+classDiagram
+    class Asset["Asset"]
+    class Machine["Machine"]
+    class Sensor["Sensor"]
+    class Mixer["Mixer"]
+    class Oven["Oven"]
+    class ProofingChamber["ProofingChamber"]
+    class CuttingMachine["CuttingMachine"]
+    class BaggingMachine["BaggingMachine"]
+    class PackagingMachine["PackagingMachine"]
+    class Refrigerator["Refrigerator"]
+    class Camera["Camera"]
+    class SecurityCamera["SecurityCamera"]
+    Asset <|-- Machine
+    Asset <|-- Sensor
+    Machine <|-- Mixer
+    Machine <|-- Oven
+    Machine <|-- ProofingChamber
+    Machine <|-- CuttingMachine
+    Machine <|-- BaggingMachine
+    Machine <|-- PackagingMachine
+    Machine <|-- Refrigerator
+    Sensor <|-- Camera
+    Camera <|-- SecurityCamera
+    Machine : +Boolean is_active
+    Machine : +Integer temperature
+    Machine : +Integer humidity
+    Mixer : +Integer rpm
+    Camera : +Boolean is_recording
+    PackagingMachine : +Integer items_per_minute
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+%%   forall m (Mixer(m) and is_active() implies gt(rpm, 0))

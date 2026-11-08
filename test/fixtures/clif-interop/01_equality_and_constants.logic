@@ -1,0 +1,12 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept OriginPoint)
+(def-individual origin OriginPoint)
+(def-individual center OriginPoint)
+
+(forall (x)
+  (implies (OriginPoint x)
+    (or (= x origin) (= x center))))
+
+(= origin center)

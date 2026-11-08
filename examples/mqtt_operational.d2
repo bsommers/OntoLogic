@@ -1,0 +1,89 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"OrganizationUnit": { shape: class }
+"EngineeringUnit": { shape: class }
+"SalesUnit": { shape: class }
+"CustomerSuccessUnit": { shape: class }
+"CloudOperationsUnit": { shape: class }
+"Product": { shape: class }
+"AcmeBroker": { shape: class }
+"AcmeEdgeGateway": { shape: class }
+"AcmeCloudService": { shape: class }
+"AcmeBrokerPlugin": { shape: class }
+"Customer": { shape: class }
+"AutomotiveCustomer": { shape: class }
+"EnergyCustomer": { shape: class }
+"ManufacturingCustomer": { shape: class }
+"LogisticsCustomer": { shape: class }
+"Environment": { shape: class }
+"OnPremisesEnvironment": { shape: class }
+"PublicCloudEnvironment": { shape: class }
+"HybridEnvironment": { shape: class }
+"BusinessProcess": { shape: class }
+"SoftwareDesignProcess": { shape: class }
+"SalesCycleProcess": { shape: class }
+"CustomerOnboardingProcess": { shape: class }
+"IncidentResolutionProcess": { shape: class }
+"CloudProvisioningProcess": { shape: class }
+"Contract": { shape: class }
+"SLA": { shape: class }
+"FeatureRequest": { shape: class }
+"SupportTicket": { shape: class }
+"ExecutiveRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"OrganizationUnit" -> "Object"
+"EngineeringUnit" -> "OrganizationUnit"
+"SalesUnit" -> "OrganizationUnit"
+"CustomerSuccessUnit" -> "OrganizationUnit"
+"CloudOperationsUnit" -> "OrganizationUnit"
+"Product" -> "Object"
+"AcmeBroker" -> "Product"
+"AcmeEdgeGateway" -> "Product"
+"AcmeCloudService" -> "Product"
+"AcmeBrokerPlugin" -> "Product"
+"Customer" -> "Object"
+"AutomotiveCustomer" -> "Customer"
+"EnergyCustomer" -> "Customer"
+"ManufacturingCustomer" -> "Customer"
+"LogisticsCustomer" -> "Customer"
+"Environment" -> "Object"
+"OnPremisesEnvironment" -> "Environment"
+"PublicCloudEnvironment" -> "Environment"
+"HybridEnvironment" -> "Environment"
+"BusinessProcess" -> "Process"
+"SoftwareDesignProcess" -> "BusinessProcess"
+"SalesCycleProcess" -> "BusinessProcess"
+"CustomerOnboardingProcess" -> "BusinessProcess"
+"IncidentResolutionProcess" -> "BusinessProcess"
+"CloudProvisioningProcess" -> "BusinessProcess"
+"Contract" -> "InformationContentEntity"
+"SLA" -> "InformationContentEntity"
+"FeatureRequest" -> "InformationContentEntity"
+"SupportTicket" -> "InformationContentEntity"
+"ExecutiveRole" -> "Role"
+"Contract"."contract_value": Integer
+"SLA"."sla_uptime_target": Integer
+"Customer"."customer_satisfaction": Integer
+"Product"."is_deployed": Boolean
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall c (Contract(c) and gt(contract_value, 100000) implies exists r (ExecutiveRole(r)))
+#   forall p (AcmeCloudService(p) implies exists e (PublicCloudEnvironment(e)))
+#   forall c (Customer(c) and lt(customer_satisfaction, 50) implies exists p (IncidentResolutionProcess(p)))
+#   forall f (FeatureRequest(f) implies exists p (SoftwareDesignProcess(p)))

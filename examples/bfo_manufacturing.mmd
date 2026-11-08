@@ -1,0 +1,70 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class GDC["GDC"]
+    class InformationContentEntity["InformationContentEntity"]
+    class SDC["SDC"]
+    class Quality["Quality"]
+    class RealizableEntity["RealizableEntity"]
+    class Role["Role"]
+    class Function["Function"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class ProcessBoundary["ProcessBoundary"]
+    class SpatiotemporalRegion["SpatiotemporalRegion"]
+    class Machine["Machine"]
+    class Robot["Robot"]
+    class Product["Product"]
+    class ManufacturingProcess["ManufacturingProcess"]
+    class AssemblyProcess["AssemblyProcess"]
+    class WeldingProcess["WeldingProcess"]
+    class ComputingProcess["ComputingProcess"]
+    class SoftwareProcess["SoftwareProcess"]
+    class OperatorRole["OperatorRole"]
+    class SafetyRole["SafetyRole"]
+    class SoftwareCode["SoftwareCode"]
+    class ControlLogic["ControlLogic"]
+    class WeldingFunction["WeldingFunction"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Occurrent <|-- ProcessBoundary
+    Occurrent <|-- SpatiotemporalRegion
+    Object <|-- Machine
+    Machine <|-- Robot
+    Object <|-- Product
+    Process <|-- ManufacturingProcess
+    ManufacturingProcess <|-- AssemblyProcess
+    ManufacturingProcess <|-- WeldingProcess
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- SoftwareProcess
+    Role <|-- OperatorRole
+    Role <|-- SafetyRole
+    InformationContentEntity <|-- SoftwareCode
+    SoftwareCode <|-- ControlLogic
+    Function <|-- WeldingFunction
+    Object : +Process participates_in
+    Object : +Role bearer_of
+    Process : +Function realizes
+    InformationContentEntity : +Process concretizes
+    Process : +Integer duration
+    ManufacturingProcess : +Boolean is_running
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall r (Robot(r) implies exists f (Function(f)))
+%%   forall p (WeldingProcess(p) implies exists m (Robot(m) and participates_in(m, p)))
+%%   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))
+%%   forall p (ManufacturingProcess(p) and is_running = True implies gt(duration, 0))

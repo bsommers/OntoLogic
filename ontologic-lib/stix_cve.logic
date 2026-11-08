@@ -1,0 +1,74 @@
+;; ============================================================================
+;; TIER 3.1: STIX 2.1, CAPEC, CWE & CVE Vulnerability Ontology
+;; Grounded in OASIS CTI STIX 2.1 Standard and BFO/CCO/UCO Hierarchy
+;; ============================================================================
+
+(import "uco_observables.logic")
+
+(namespace stix "http://docs.oasis-open.org/cti/ns/stix#")
+
+;; ----------------------------------------------------------------------------
+;; STIX 2.1 Domain Objects (SDOs)
+;; ----------------------------------------------------------------------------
+(def-concept stix:SDO bfo:InformationContentEntity)
+
+(def-concept stix:AttackPattern stix:SDO)
+(def-concept stix:Campaign stix:SDO)
+(def-concept stix:CourseOfAction cco:DirectiveICE)
+(def-concept stix:Grouping stix:SDO)
+(def-concept stix:Identity cco:Agent)
+(def-concept stix:Indicator stix:SDO)
+(def-concept stix:Infrastructure cco:EngineeredSystem)
+(def-concept stix:IntrusionSet stix:SDO)
+(def-concept stix:Location bfo:Site)
+(def-concept stix:Malware cco:SoftwareArtifact)
+(def-concept stix:ObservedData stix:SDO)
+(def-concept stix:Report stix:SDO)
+(def-concept stix:ThreatActor cco:Agent)
+(def-concept stix:Tool cco:SoftwareArtifact)
+(def-concept stix:Vulnerability stix:SDO)
+(def-concept stix:Weakness stix:SDO)
+
+;; ----------------------------------------------------------------------------
+;; STIX, CVE & CWE Properties
+;; ----------------------------------------------------------------------------
+(def-property stix:cve_id stix:Vulnerability String)
+(def-property stix:cvss_score stix:Vulnerability Double)
+(def-property stix:epss_score stix:Vulnerability Double)
+(def-property stix:cwe_id stix:Weakness String)
+(def-property stix:capec_id stix:AttackPattern String)
+(def-property stix:confidence stix:SDO Integer)
+(def-property stix:is_revoked stix:SDO Boolean)
+(def-property stix:spec_version stix:SDO String)
+(def-property stix:threat_actor_alias stix:ThreatActor String)
+
+;; ----------------------------------------------------------------------------
+;; STIX 2.1 Relationship Objects (SROs) & Relational Axioms
+;; ----------------------------------------------------------------------------
+(def-relation stix:indicates stix:Indicator stix:SDO)
+(def-relation stix:targets stix:SDO bfo:Entity)
+(def-relation stix:mitigates stix:CourseOfAction stix:AttackPattern)
+(def-relation stix:uses_tool stix:ThreatActor stix:Tool)
+(def-relation stix:uses_malware stix:ThreatActor stix:Malware)
+(def-relation stix:has_vulnerability cco:Artifact stix:Vulnerability)
+(def-relation stix:has_weakness stix:Vulnerability stix:Weakness)
+(def-relation stix:observed_observable stix:ObservedData uco-obs:CyberObservable)
+
+;; ----------------------------------------------------------------------------
+;; First-Order Logic Semantic Rules for Threat Intelligence & Vulnerabilities
+;; ----------------------------------------------------------------------------
+
+(forall (v)
+  (implies (stix:Vulnerability v)
+           (and (gte stix:cvss_score 0.0)
+                (lte stix:cvss_score 10.0))))
+
+(forall (v)
+  (implies (stix:Vulnerability v)
+           (and (gte stix:epss_score 0.0)
+                (lte stix:epss_score 1.0))))
+
+(forall (s)
+  (implies (stix:SDO s)
+           (and (gte stix:confidence 0)
+                (lte stix:confidence 100))))

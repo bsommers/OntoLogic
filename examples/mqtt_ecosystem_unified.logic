@@ -1,0 +1,178 @@
+; --- Basic Formal Ontology (BFO) Upper Level ---
+(def-concept Entity)
+
+; Continuants (Objects, qualities, roles that persist in time)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept ObjectAggregate MaterialEntity)
+
+(def-concept ImmaterialEntity IndependentContinuant)
+(def-concept Site ImmaterialEntity)
+(def-concept SpatialRegion ImmaterialEntity)
+
+(def-concept GDC Continuant) ; Generically Dependent Continuant
+(def-concept InformationContentEntity GDC)
+
+(def-concept SDC Continuant) ; Specifically Dependent Continuant
+(def-concept Quality SDC)
+(def-concept RealizableEntity SDC)
+(def-concept Role RealizableEntity)
+(def-concept Disposition RealizableEntity)
+(def-concept Capability Disposition)
+(def-concept Function RealizableEntity)
+
+; Occurrents (Processes, events that unfold in time)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept TemporalRegion Occurrent)
+(def-concept SpatiotemporalRegion Occurrent)
+
+; --- Unified Domain Extensions ---
+
+; Infrastructure & Equipment (Common)
+(def-concept Infrastructure Object)
+(def-concept Equipment Object)
+(def-concept Machine Equipment)
+(def-concept Sensor Equipment)
+
+; --- 1. Manufacturing Domain ---
+(def-concept Robot Machine)
+(def-concept WeldingRobot Robot)
+(def-concept PaintingRobot Robot)
+(def-concept AssemblyRobot Robot)
+(def-concept Mixer Machine)
+(def-concept Oven Machine)
+(def-concept PackagingMachine Machine)
+(def-concept Product Object)
+
+; --- 2. Energy / Oil & Gas Domain ---
+(def-concept Pipeline Infrastructure)
+(def-concept Refinery Infrastructure)
+(def-concept OffshorePlatform Infrastructure)
+(def-concept Wellhead Infrastructure)
+(def-concept Pump Equipment)
+(def-concept Valve Equipment)
+(def-concept Compressor Equipment)
+(def-concept PLC Equipment)
+(def-concept Petroleum MaterialEntity)
+(def-concept NaturalGas MaterialEntity)
+
+; --- 3. Mining Domain ---
+(def-concept MiningEquipment Equipment)
+(def-concept HeavyMachinery MiningEquipment)
+(def-concept Excavator HeavyMachinery)
+(def-concept HaulTruck HeavyMachinery)
+(def-concept DrillRig HeavyMachinery)
+(def-concept Crusher MiningEquipment)
+(def-concept ConveyorBelt MiningEquipment)
+
+; --- 4. Cloud & Datacenter Domain ---
+(def-concept ComputeNode Object)
+(def-concept PhysicalServer ComputeNode)
+(def-concept VirtualMachine ComputeNode)
+(def-concept Container ComputeNode)
+(def-concept KubernetesCluster Object)
+(def-concept CloudRegion Site) ; e.g. us-east-1
+
+; Capabilities
+(def-concept AutoscalingCapability Capability)
+(def-concept DisasterRecoveryCapability Capability)
+
+; Software Components
+(def-concept SoftwareComponent Object)
+(def-concept MQTTBroker SoftwareComponent) ; Acme Broker
+(def-concept AcmeEdgeGateway SoftwareComponent) ; Edge Gateway
+(def-concept AcmeCloudService SoftwareComponent) ; Managed Service
+(def-concept Database SoftwareComponent)
+(def-concept LoadBalancer SoftwareComponent)
+(def-concept Microservice SoftwareComponent)
+
+; --- 5. Roles (Unified) ---
+(def-concept OperatorRole Role)
+(def-concept SafetyRole Role)
+(def-concept MaintenanceRole Role)
+(def-concept DevOpsRole Role)
+(def-concept SRERole Role)
+(def-concept CISORole Role)
+(def-concept SecurityAnalystRole Role)
+(def-concept ExecutiveRole Role)
+
+; --- 6. Information (Unified) ---
+(def-concept SoftwareCode InformationContentEntity) ; The Code (ICE)
+(def-concept ControlLogic SoftwareCode)
+(def-concept SensorData InformationContentEntity)
+(def-concept Contract InformationContentEntity)
+(def-concept SLA InformationContentEntity)
+(def-concept SecurityArtifact InformationContentEntity)
+(def-concept DigitalCertificate SecurityArtifact)
+(def-concept PrivateKey SecurityArtifact)
+(def-concept SecurityPolicy SecurityArtifact)
+(def-concept Alert InformationContentEntity)
+
+; --- 7. Processes (Unified) ---
+(def-concept IndustrialProcess Process)
+(def-concept ManufacturingProcess IndustrialProcess)
+(def-concept ExtractionProcess IndustrialProcess)
+(def-concept RefiningProcess IndustrialProcess)
+(def-concept ComputingProcess Process)
+(def-concept SoftwareProcess ComputingProcess) ; The Running Program (Process)
+(def-concept DeploymentProcess ComputingProcess)
+(def-concept ScalingProcess ComputingProcess)
+(def-concept BusinessProcess Process)
+(def-concept SalesCycleProcess BusinessProcess)
+(def-concept SecurityProcess Process)
+(def-concept AuthenticationProcess SecurityProcess)
+(def-concept EncryptionProcess SecurityProcess)
+
+; --- 8. Unified Properties ---
+(def-property is_active Equipment Boolean)
+(def-property temperature Equipment Integer)
+(def-property has_pressure MaterialEntity Integer)
+(def-property rpm Mixer Integer)
+(def-property cpu_usage ComputeNode Integer)
+(def-property active_connections MQTTBroker Integer)
+(def-property is_healthy SoftwareComponent Boolean)
+(def-property encryption_enabled SecurityArtifact Boolean)
+(def-property contract_value Contract Integer)
+
+; --- BFO Relations ---
+(def-property participates_in Object Process) ; Object participates in Process
+(def-property concretizes InformationContentEntity Process) ; ICE concretized in a Process
+(def-property bearer_of Object Role) ; Object bears Role
+(def-property realizes Process Role) ; Process realizes Role (or Function)
+
+; --- Axioms (Cross-Domain Highlights) ---
+
+; 1. Acme edge gateway Deployment: Edge Broker runs on Compute Node (e.g. Industrial PC)
+; (Simplified relation via property/predicate proxy if needed, or just type check)
+
+; 2. Security: Valid Certificate implies TrustedRole
+(def-concept TrustedRole Role)
+(def-property is_valid DigitalCertificate Boolean)
+(forall (c)
+    (implies (and (DigitalCertificate c) (eq is_valid True))
+             (exists (r) (TrustedRole r))))
+
+; 3. Auto-Scaling: High CPU usage in VM triggers Scaling Process
+(forall (vm)
+    (implies (and (VirtualMachine vm) (gt cpu_usage 80))
+             (exists (p) (and (ScalingProcess p)
+                              (participates_in vm p)))))
+
+; 4. Safety: Active Oven (Manufacturing) must be hot
+(forall (o)
+    (implies (and (Oven o) (is_active)) (gt temperature 100)))
+
+; 5. Business: High Value Contract triggers Executive Review
+(forall (c)
+    (implies (and (Contract c) (gt contract_value 100000))
+             (exists (r) (and (ExecutiveRole r)
+                              (exists (o) (bearer_of o r))))))
+
+; 6. Software Execution: Running SoftwareProcess implies existence of SoftwareCode
+(forall (p)
+    (implies (SoftwareProcess p)
+             (exists (c) (and (SoftwareCode c)
+                              (concretizes c p))))) ; Abstracting: Code concretized in process execution (or via intermediate)

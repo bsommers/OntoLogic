@@ -1,0 +1,28 @@
+.stack-work/
+dist/
+dist-newstyle/
+*.o
+*.hi
+*.chi
+*.chs.h
+.gradle/
+build/
+!src/
+src/Main
+models-java/src/generated/
+.worktrees/
+.superpowers/
+
+# Scratch dir for renderer tests that cannot read /tmp (snap-confined mmdc)
+.test-tmp/
+
+# Haskell Program Coverage
+*.tix
+.hpc/
+
+
+# Private planning/session notes (kept locally, not published)
+.planning/
+.agents/
+agy-evaluation/
+.claude/worktrees/

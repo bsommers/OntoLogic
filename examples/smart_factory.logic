@@ -1,0 +1,18 @@
+; --- Taxonomy ---
+(def-concept IndustrialEntity)
+(def-concept Controller IndustrialEntity)
+(def-concept PLC Controller)
+(def-concept RobotArm IndustrialEntity)
+
+; --- Properties ---
+(def-property safety_status IndustrialEntity Boolean)
+(def-property axis_count RobotArm Integer)
+
+; --- Axioms ---
+; All RobotArms must have exactly 6 axes for this specific factory line
+(forall (r) 
+    (implies (RobotArm r) (eq axis_count 6)))
+
+; A Controller cannot be active if its safety_status is False
+(forall (c) 
+    (implies (and (Controller c) (eq safety_status False)) (eq active False)))

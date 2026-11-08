@@ -1,0 +1,11 @@
+(def-concept Asset)
+(def-concept Device Asset)
+(def-concept Sensor Device)
+(def-concept Gateway Device)
+
+(def-property serial_number Asset String)
+(def-property firmware_ver Device String)
+(def-property temperature Sensor Integer)
+(def-property max_connections Gateway Integer)
+
+(forall (g) (implies (Gateway g) (gte max_connections 5)))

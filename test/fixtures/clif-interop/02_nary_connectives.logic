@@ -1,0 +1,13 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept Sensor)
+(def-individual sensor1 Sensor)
+
+(forall (x)
+  (implies (Sensor x)
+    (and (active x) (calibrated x) (certified x) (online x))))
+
+(forall (x)
+  (implies (Sensor x)
+    (or (mode_low x) (mode_medium x) (mode_high x))))

@@ -1,0 +1,92 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"GDC": { shape: class }
+"InformationContentEntity": { shape: class }
+"SDC": { shape: class }
+"RealizableEntity": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"SoftwareComponent": { shape: class }
+"SoftwareCode": { shape: class }
+"SecurityArtifact": { shape: class }
+"DigitalCertificate": { shape: class }
+"PrivateKey": { shape: class }
+"PublicKey": { shape: class }
+"AccessControlList": { shape: class }
+"SecurityPolicy": { shape: class }
+"AuditLog": { shape: class }
+"ThreatModelEntity": { shape: class }
+"Vulnerability": { shape: class }
+"AttackVector": { shape: class }
+"Mitigation": { shape: class }
+"SecurityProcess": { shape: class }
+"AuthenticationProcess": { shape: class }
+"AuthorizationProcess": { shape: class }
+"EncryptionProcess": { shape: class }
+"KeyRotationProcess": { shape: class }
+"PenetrationTestingProcess": { shape: class }
+"ComputingProcess": { shape: class }
+"SoftwareProcess": { shape: class }
+"SecurityRole": { shape: class }
+"CISORole": { shape: class }
+"SecurityAnalystRole": { shape: class }
+"AttackerRole": { shape: class }
+"TrustedRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"GDC" -> "Continuant"
+"InformationContentEntity" -> "GDC"
+"SDC" -> "Continuant"
+"RealizableEntity" -> "SDC"
+"Role" -> "RealizableEntity"
+"Function" -> "RealizableEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"SoftwareComponent" -> "Object"
+"SoftwareCode" -> "InformationContentEntity"
+"SecurityArtifact" -> "InformationContentEntity"
+"DigitalCertificate" -> "SecurityArtifact"
+"PrivateKey" -> "SecurityArtifact"
+"PublicKey" -> "SecurityArtifact"
+"AccessControlList" -> "SecurityArtifact"
+"SecurityPolicy" -> "SecurityArtifact"
+"AuditLog" -> "SecurityArtifact"
+"ThreatModelEntity" -> "InformationContentEntity"
+"Vulnerability" -> "ThreatModelEntity"
+"AttackVector" -> "ThreatModelEntity"
+"Mitigation" -> "ThreatModelEntity"
+"SecurityProcess" -> "Process"
+"AuthenticationProcess" -> "SecurityProcess"
+"AuthorizationProcess" -> "SecurityProcess"
+"EncryptionProcess" -> "SecurityProcess"
+"KeyRotationProcess" -> "SecurityProcess"
+"PenetrationTestingProcess" -> "SecurityProcess"
+"ComputingProcess" -> "Process"
+"SoftwareProcess" -> "ComputingProcess"
+"SecurityRole" -> "Role"
+"CISORole" -> "SecurityRole"
+"SecurityAnalystRole" -> "SecurityRole"
+"AttackerRole" -> "SecurityRole"
+"TrustedRole" -> "Role"
+"DigitalCertificate"."is_valid": Boolean
+"PrivateKey"."key_length": Integer
+"SoftwareComponent"."has_vulnerability": Boolean
+"SecurityArtifact"."encryption_enabled": Boolean
+"Vulnerability"."risk_score": Integer
+"Object"."participates_in": Process
+"Object"."bearer_of": Role
+"Process"."realizes": RealizableEntity
+"InformationContentEntity"."concretizes": Process
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall c (DigitalCertificate(c) and is_valid = True implies exists r (TrustedRole(r)))
+#   forall v (Vulnerability(v) and gt(risk_score, 7) implies exists m (Mitigation(m)))
+#   forall p (AuthorizationProcess(p) implies exists pol (SecurityPolicy(pol)))
+#   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

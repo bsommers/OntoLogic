@@ -1,0 +1,71 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"MiningEquipment": { shape: class }
+"HeavyMachinery": { shape: class }
+"Excavator": { shape: class }
+"HaulTruck": { shape: class }
+"DrillRig": { shape: class }
+"Crusher": { shape: class }
+"ConveyorBelt": { shape: class }
+"Sensor": { shape: class }
+"LoadSensor": { shape: class }
+"VibrationSensor": { shape: class }
+"GasSensor": { shape: class }
+"MiningProcess": { shape: class }
+"ExtractionProcess": { shape: class }
+"BlastingProcess": { shape: class }
+"HaulingProcess": { shape: class }
+"CrushingProcess": { shape: class }
+"TelemetryData": { shape: class }
+"ProductionReport": { shape: class }
+"SafetyAlert": { shape: class }
+"OperatorRole": { shape: class }
+"SafetyOfficerRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"MiningEquipment" -> "Object"
+"HeavyMachinery" -> "MiningEquipment"
+"Excavator" -> "HeavyMachinery"
+"HaulTruck" -> "HeavyMachinery"
+"DrillRig" -> "HeavyMachinery"
+"Crusher" -> "MiningEquipment"
+"ConveyorBelt" -> "MiningEquipment"
+"Sensor" -> "Object"
+"LoadSensor" -> "Sensor"
+"VibrationSensor" -> "Sensor"
+"GasSensor" -> "Sensor"
+"MiningProcess" -> "Process"
+"ExtractionProcess" -> "MiningProcess"
+"BlastingProcess" -> "MiningProcess"
+"HaulingProcess" -> "MiningProcess"
+"CrushingProcess" -> "MiningProcess"
+"TelemetryData" -> "InformationContentEntity"
+"ProductionReport" -> "InformationContentEntity"
+"SafetyAlert" -> "InformationContentEntity"
+"OperatorRole" -> "Role"
+"SafetyOfficerRole" -> "Role"
+"HaulTruck"."payload_weight": Integer
+"HeavyMachinery"."engine_temp": Integer
+"Crusher"."vibration_level": Integer
+"GasSensor"."methane_level": Integer
+"HeavyMachinery"."is_autonomous": Boolean
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall s (GasSensor(s) and gt(methane_level, 5) implies exists a (SafetyAlert(a)))
+#   forall c (Crusher(c) and gt(vibration_level, 80) implies exists a (SafetyAlert(a)))
+#   forall t (HaulTruck(t) and is_autonomous = True implies exists d (TelemetryData(d)))

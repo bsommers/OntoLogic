@@ -1,0 +1,107 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class ObjectAggregate["ObjectAggregate"]
+    class GDC["GDC"]
+    class InformationContentEntity["InformationContentEntity"]
+    class SDC["SDC"]
+    class Quality["Quality"]
+    class RealizableEntity["RealizableEntity"]
+    class Role["Role"]
+    class Function["Function"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Infrastructure["Infrastructure"]
+    class Pipeline["Pipeline"]
+    class Refinery["Refinery"]
+    class OffshorePlatform["OffshorePlatform"]
+    class Wellhead["Wellhead"]
+    class Equipment["Equipment"]
+    class Pump["Pump"]
+    class Valve["Valve"]
+    class Compressor["Compressor"]
+    class Sensor["Sensor"]
+    class PressureSensor["PressureSensor"]
+    class TemperatureSensor["TemperatureSensor"]
+    class VibrationSensor["VibrationSensor"]
+    class PLC["PLC"]
+    class Substance["Substance"]
+    class Petroleum["Petroleum"]
+    class NaturalGas["NaturalGas"]
+    class Water["Water"]
+    class OperatorRole["OperatorRole"]
+    class SafetyRole["SafetyRole"]
+    class MaintenanceRole["MaintenanceRole"]
+    class PumpingFunction["PumpingFunction"]
+    class RefiningFunction["RefiningFunction"]
+    class SensingFunction["SensingFunction"]
+    class IndustrialProcess["IndustrialProcess"]
+    class ExtractionProcess["ExtractionProcess"]
+    class RefiningProcess["RefiningProcess"]
+    class TransportProcess["TransportProcess"]
+    class MaintenanceProcess["MaintenanceProcess"]
+    class SensorData["SensorData"]
+    class SafetyProtocol["SafetyProtocol"]
+    class LimitBreachEvent["LimitBreachEvent"]
+    class FailureRisk["FailureRisk"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    MaterialEntity <|-- ObjectAggregate
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Object <|-- Infrastructure
+    Infrastructure <|-- Pipeline
+    Infrastructure <|-- Refinery
+    Infrastructure <|-- OffshorePlatform
+    Infrastructure <|-- Wellhead
+    Object <|-- Equipment
+    Equipment <|-- Pump
+    Equipment <|-- Valve
+    Equipment <|-- Compressor
+    Equipment <|-- Sensor
+    Sensor <|-- PressureSensor
+    Sensor <|-- TemperatureSensor
+    Sensor <|-- VibrationSensor
+    Equipment <|-- PLC
+    MaterialEntity <|-- Substance
+    Substance <|-- Petroleum
+    Substance <|-- NaturalGas
+    Substance <|-- Water
+    Role <|-- OperatorRole
+    Role <|-- SafetyRole
+    Role <|-- MaintenanceRole
+    Function <|-- PumpingFunction
+    Function <|-- RefiningFunction
+    Function <|-- SensingFunction
+    Process <|-- IndustrialProcess
+    IndustrialProcess <|-- ExtractionProcess
+    IndustrialProcess <|-- RefiningProcess
+    IndustrialProcess <|-- TransportProcess
+    IndustrialProcess <|-- MaintenanceProcess
+    InformationContentEntity <|-- SensorData
+    InformationContentEntity <|-- SafetyProtocol
+    InformationContentEntity <|-- LimitBreachEvent
+    InformationContentEntity <|-- FailureRisk
+    MaterialEntity : +Integer has_pressure
+    MaterialEntity : +Integer has_temperature
+    MaterialEntity : +Integer has_vibration_level
+    Valve : +Integer valve_position
+    Equipment : +Boolean is_active
+    Pipeline : +Integer flow_rate
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall p (Pipeline(p) and gt(has_pressure, 1000) implies exists e (LimitBreachEvent(e)))
+%%   forall p (Pump(p) and gt(has_vibration_level, 50) implies exists r (FailureRisk(r)))
+%%   forall r (RefiningProcess(r) implies exists s (Petroleum(s) or NaturalGas(s)))

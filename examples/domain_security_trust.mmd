@@ -1,0 +1,93 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class GDC["GDC"]
+    class InformationContentEntity["InformationContentEntity"]
+    class SDC["SDC"]
+    class RealizableEntity["RealizableEntity"]
+    class Role["Role"]
+    class Function["Function"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class SoftwareComponent["SoftwareComponent"]
+    class SoftwareCode["SoftwareCode"]
+    class SecurityArtifact["SecurityArtifact"]
+    class DigitalCertificate["DigitalCertificate"]
+    class PrivateKey["PrivateKey"]
+    class PublicKey["PublicKey"]
+    class AccessControlList["AccessControlList"]
+    class SecurityPolicy["SecurityPolicy"]
+    class AuditLog["AuditLog"]
+    class ThreatModelEntity["ThreatModelEntity"]
+    class Vulnerability["Vulnerability"]
+    class AttackVector["AttackVector"]
+    class Mitigation["Mitigation"]
+    class SecurityProcess["SecurityProcess"]
+    class AuthenticationProcess["AuthenticationProcess"]
+    class AuthorizationProcess["AuthorizationProcess"]
+    class EncryptionProcess["EncryptionProcess"]
+    class KeyRotationProcess["KeyRotationProcess"]
+    class PenetrationTestingProcess["PenetrationTestingProcess"]
+    class ComputingProcess["ComputingProcess"]
+    class SoftwareProcess["SoftwareProcess"]
+    class SecurityRole["SecurityRole"]
+    class CISORole["CISORole"]
+    class SecurityAnalystRole["SecurityAnalystRole"]
+    class AttackerRole["AttackerRole"]
+    class TrustedRole["TrustedRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Object <|-- SoftwareComponent
+    InformationContentEntity <|-- SoftwareCode
+    InformationContentEntity <|-- SecurityArtifact
+    SecurityArtifact <|-- DigitalCertificate
+    SecurityArtifact <|-- PrivateKey
+    SecurityArtifact <|-- PublicKey
+    SecurityArtifact <|-- AccessControlList
+    SecurityArtifact <|-- SecurityPolicy
+    SecurityArtifact <|-- AuditLog
+    InformationContentEntity <|-- ThreatModelEntity
+    ThreatModelEntity <|-- Vulnerability
+    ThreatModelEntity <|-- AttackVector
+    ThreatModelEntity <|-- Mitigation
+    Process <|-- SecurityProcess
+    SecurityProcess <|-- AuthenticationProcess
+    SecurityProcess <|-- AuthorizationProcess
+    SecurityProcess <|-- EncryptionProcess
+    SecurityProcess <|-- KeyRotationProcess
+    SecurityProcess <|-- PenetrationTestingProcess
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- SoftwareProcess
+    Role <|-- SecurityRole
+    SecurityRole <|-- CISORole
+    SecurityRole <|-- SecurityAnalystRole
+    SecurityRole <|-- AttackerRole
+    Role <|-- TrustedRole
+    DigitalCertificate : +Boolean is_valid
+    PrivateKey : +Integer key_length
+    SoftwareComponent : +Boolean has_vulnerability
+    SecurityArtifact : +Boolean encryption_enabled
+    Vulnerability : +Integer risk_score
+    Object : +Process participates_in
+    Object : +Role bearer_of
+    Process : +RealizableEntity realizes
+    InformationContentEntity : +Process concretizes
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall c (DigitalCertificate(c) and is_valid = True implies exists r (TrustedRole(r)))
+%%   forall v (Vulnerability(v) and gt(risk_score, 7) implies exists m (Mitigation(m)))
+%%   forall p (AuthorizationProcess(p) implies exists pol (SecurityPolicy(pol)))
+%%   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

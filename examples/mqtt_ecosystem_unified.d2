@@ -1,0 +1,216 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"ObjectAggregate": { shape: class }
+"ImmaterialEntity": { shape: class }
+"Site": { shape: class }
+"SpatialRegion": { shape: class }
+"GDC": { shape: class }
+"InformationContentEntity": { shape: class }
+"SDC": { shape: class }
+"Quality": { shape: class }
+"RealizableEntity": { shape: class }
+"Role": { shape: class }
+"Disposition": { shape: class }
+"Capability": { shape: class }
+"Function": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"TemporalRegion": { shape: class }
+"SpatiotemporalRegion": { shape: class }
+"Infrastructure": { shape: class }
+"Equipment": { shape: class }
+"Machine": { shape: class }
+"Sensor": { shape: class }
+"Robot": { shape: class }
+"WeldingRobot": { shape: class }
+"PaintingRobot": { shape: class }
+"AssemblyRobot": { shape: class }
+"Mixer": { shape: class }
+"Oven": { shape: class }
+"PackagingMachine": { shape: class }
+"Product": { shape: class }
+"Pipeline": { shape: class }
+"Refinery": { shape: class }
+"OffshorePlatform": { shape: class }
+"Wellhead": { shape: class }
+"Pump": { shape: class }
+"Valve": { shape: class }
+"Compressor": { shape: class }
+"PLC": { shape: class }
+"Petroleum": { shape: class }
+"NaturalGas": { shape: class }
+"MiningEquipment": { shape: class }
+"HeavyMachinery": { shape: class }
+"Excavator": { shape: class }
+"HaulTruck": { shape: class }
+"DrillRig": { shape: class }
+"Crusher": { shape: class }
+"ConveyorBelt": { shape: class }
+"ComputeNode": { shape: class }
+"PhysicalServer": { shape: class }
+"VirtualMachine": { shape: class }
+"Container": { shape: class }
+"KubernetesCluster": { shape: class }
+"CloudRegion": { shape: class }
+"AutoscalingCapability": { shape: class }
+"DisasterRecoveryCapability": { shape: class }
+"SoftwareComponent": { shape: class }
+"MQTTBroker": { shape: class }
+"AcmeEdgeGateway": { shape: class }
+"AcmeCloudService": { shape: class }
+"Database": { shape: class }
+"LoadBalancer": { shape: class }
+"Microservice": { shape: class }
+"OperatorRole": { shape: class }
+"SafetyRole": { shape: class }
+"MaintenanceRole": { shape: class }
+"DevOpsRole": { shape: class }
+"SRERole": { shape: class }
+"CISORole": { shape: class }
+"SecurityAnalystRole": { shape: class }
+"ExecutiveRole": { shape: class }
+"SoftwareCode": { shape: class }
+"ControlLogic": { shape: class }
+"SensorData": { shape: class }
+"Contract": { shape: class }
+"SLA": { shape: class }
+"SecurityArtifact": { shape: class }
+"DigitalCertificate": { shape: class }
+"PrivateKey": { shape: class }
+"SecurityPolicy": { shape: class }
+"Alert": { shape: class }
+"IndustrialProcess": { shape: class }
+"ManufacturingProcess": { shape: class }
+"ExtractionProcess": { shape: class }
+"RefiningProcess": { shape: class }
+"ComputingProcess": { shape: class }
+"SoftwareProcess": { shape: class }
+"DeploymentProcess": { shape: class }
+"ScalingProcess": { shape: class }
+"BusinessProcess": { shape: class }
+"SalesCycleProcess": { shape: class }
+"SecurityProcess": { shape: class }
+"AuthenticationProcess": { shape: class }
+"EncryptionProcess": { shape: class }
+"TrustedRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"ObjectAggregate" -> "MaterialEntity"
+"ImmaterialEntity" -> "IndependentContinuant"
+"Site" -> "ImmaterialEntity"
+"SpatialRegion" -> "ImmaterialEntity"
+"GDC" -> "Continuant"
+"InformationContentEntity" -> "GDC"
+"SDC" -> "Continuant"
+"Quality" -> "SDC"
+"RealizableEntity" -> "SDC"
+"Role" -> "RealizableEntity"
+"Disposition" -> "RealizableEntity"
+"Capability" -> "Disposition"
+"Function" -> "RealizableEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"TemporalRegion" -> "Occurrent"
+"SpatiotemporalRegion" -> "Occurrent"
+"Infrastructure" -> "Object"
+"Equipment" -> "Object"
+"Machine" -> "Equipment"
+"Sensor" -> "Equipment"
+"Robot" -> "Machine"
+"WeldingRobot" -> "Robot"
+"PaintingRobot" -> "Robot"
+"AssemblyRobot" -> "Robot"
+"Mixer" -> "Machine"
+"Oven" -> "Machine"
+"PackagingMachine" -> "Machine"
+"Product" -> "Object"
+"Pipeline" -> "Infrastructure"
+"Refinery" -> "Infrastructure"
+"OffshorePlatform" -> "Infrastructure"
+"Wellhead" -> "Infrastructure"
+"Pump" -> "Equipment"
+"Valve" -> "Equipment"
+"Compressor" -> "Equipment"
+"PLC" -> "Equipment"
+"Petroleum" -> "MaterialEntity"
+"NaturalGas" -> "MaterialEntity"
+"MiningEquipment" -> "Equipment"
+"HeavyMachinery" -> "MiningEquipment"
+"Excavator" -> "HeavyMachinery"
+"HaulTruck" -> "HeavyMachinery"
+"DrillRig" -> "HeavyMachinery"
+"Crusher" -> "MiningEquipment"
+"ConveyorBelt" -> "MiningEquipment"
+"ComputeNode" -> "Object"
+"PhysicalServer" -> "ComputeNode"
+"VirtualMachine" -> "ComputeNode"
+"Container" -> "ComputeNode"
+"KubernetesCluster" -> "Object"
+"CloudRegion" -> "Site"
+"AutoscalingCapability" -> "Capability"
+"DisasterRecoveryCapability" -> "Capability"
+"SoftwareComponent" -> "Object"
+"MQTTBroker" -> "SoftwareComponent"
+"AcmeEdgeGateway" -> "SoftwareComponent"
+"AcmeCloudService" -> "SoftwareComponent"
+"Database" -> "SoftwareComponent"
+"LoadBalancer" -> "SoftwareComponent"
+"Microservice" -> "SoftwareComponent"
+"OperatorRole" -> "Role"
+"SafetyRole" -> "Role"
+"MaintenanceRole" -> "Role"
+"DevOpsRole" -> "Role"
+"SRERole" -> "Role"
+"CISORole" -> "Role"
+"SecurityAnalystRole" -> "Role"
+"ExecutiveRole" -> "Role"
+"SoftwareCode" -> "InformationContentEntity"
+"ControlLogic" -> "SoftwareCode"
+"SensorData" -> "InformationContentEntity"
+"Contract" -> "InformationContentEntity"
+"SLA" -> "InformationContentEntity"
+"SecurityArtifact" -> "InformationContentEntity"
+"DigitalCertificate" -> "SecurityArtifact"
+"PrivateKey" -> "SecurityArtifact"
+"SecurityPolicy" -> "SecurityArtifact"
+"Alert" -> "InformationContentEntity"
+"IndustrialProcess" -> "Process"
+"ManufacturingProcess" -> "IndustrialProcess"
+"ExtractionProcess" -> "IndustrialProcess"
+"RefiningProcess" -> "IndustrialProcess"
+"ComputingProcess" -> "Process"
+"SoftwareProcess" -> "ComputingProcess"
+"DeploymentProcess" -> "ComputingProcess"
+"ScalingProcess" -> "ComputingProcess"
+"BusinessProcess" -> "Process"
+"SalesCycleProcess" -> "BusinessProcess"
+"SecurityProcess" -> "Process"
+"AuthenticationProcess" -> "SecurityProcess"
+"EncryptionProcess" -> "SecurityProcess"
+"TrustedRole" -> "Role"
+"Equipment"."is_active": Boolean
+"Equipment"."temperature": Integer
+"MaterialEntity"."has_pressure": Integer
+"Mixer"."rpm": Integer
+"ComputeNode"."cpu_usage": Integer
+"MQTTBroker"."active_connections": Integer
+"SoftwareComponent"."is_healthy": Boolean
+"SecurityArtifact"."encryption_enabled": Boolean
+"Contract"."contract_value": Integer
+"Object"."participates_in": Process
+"InformationContentEntity"."concretizes": Process
+"Object"."bearer_of": Role
+"Process"."realizes": Role
+"DigitalCertificate"."is_valid": Boolean
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall c (DigitalCertificate(c) and is_valid = True implies exists r (TrustedRole(r)))
+#   forall vm (VirtualMachine(vm) and gt(cpu_usage, 80) implies exists p (ScalingProcess(p) and participates_in(vm, p)))
+#   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+#   forall c (Contract(c) and gt(contract_value, 100000) implies exists r (ExecutiveRole(r) and exists o (bearer_of(o, r))))
+#   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

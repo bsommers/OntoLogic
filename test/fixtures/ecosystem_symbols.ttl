@@ -1,0 +1,17 @@
+# Synthetic sample of the ecosystem symbol data layer (illustrative only).
+# rows: 5
+# symbols: 4
+# repositories: 2
+@prefix sys: <http://bsommers.github.io/ecosystem#> .
+
+sys:sample\-app\-a a sys:Repository .
+sys:sample\-app\-b a sys:Repository .
+
+sys:sample\-app\-a\/Broker a sys:CodeSymbol ;
+    sys:definedIn sys:sample\-app\-a .
+sys:sample\-app\-a\/Session a sys:CodeSymbol ;
+    sys:definedIn sys:sample\-app\-a .
+sys:sample\-app\-b\/Topic a sys:CodeSymbol ;
+    sys:definedIn sys:sample\-app\-b .
+sys:sample\-app\-b\/Subscription a sys:CodeSymbol ;
+    sys:definedIn sys:sample\-app\-b .

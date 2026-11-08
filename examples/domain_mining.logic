@@ -1,0 +1,67 @@
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Mining Domain ---
+
+; Equipment
+(def-concept MiningEquipment Object)
+(def-concept HeavyMachinery MiningEquipment)
+(def-concept Excavator HeavyMachinery)
+(def-concept HaulTruck HeavyMachinery)
+(def-concept DrillRig HeavyMachinery)
+(def-concept Crusher MiningEquipment)
+(def-concept ConveyorBelt MiningEquipment)
+
+(def-concept Sensor Object)
+(def-concept LoadSensor Sensor)
+(def-concept VibrationSensor Sensor)
+(def-concept GasSensor Sensor) ; For underground safety
+
+; Processes
+(def-concept MiningProcess Process)
+(def-concept ExtractionProcess MiningProcess)
+(def-concept BlastingProcess MiningProcess)
+(def-concept HaulingProcess MiningProcess)
+(def-concept CrushingProcess MiningProcess)
+
+; Information
+(def-concept TelemetryData InformationContentEntity)
+(def-concept ProductionReport InformationContentEntity)
+(def-concept SafetyAlert InformationContentEntity)
+
+; Roles
+(def-concept OperatorRole Role)
+(def-concept SafetyOfficerRole Role)
+
+; Properties
+(def-property payload_weight HaulTruck Integer) ; tons
+(def-property engine_temp HeavyMachinery Integer)
+(def-property vibration_level Crusher Integer)
+(def-property methane_level GasSensor Integer)
+(def-property is_autonomous HeavyMachinery Boolean)
+
+; Axioms
+; 1. Safety: High Methane in underground mine implies immediate evacuation alert
+(forall (s)
+    (implies (and (GasSensor s) (gt methane_level 5))
+             (exists (a) (SafetyAlert a))))
+
+; 2. Predictive Maintenance: High vibration in crusher
+(forall (c)
+    (implies (and (Crusher c) (gt vibration_level 80))
+             (exists (a) (SafetyAlert a))))
+
+; 3. Autonomous Truck Restrictions (Simplified)
+; Autonomous trucks must have active telemetry
+(forall (t)
+    (implies (and (HaulTruck t) (eq is_autonomous True))
+             (exists (d) (TelemetryData d))))

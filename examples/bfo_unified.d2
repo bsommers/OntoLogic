@@ -1,0 +1,173 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"ObjectAggregate": { shape: class }
+"GDC": { shape: class }
+"InformationContentEntity": { shape: class }
+"SDC": { shape: class }
+"Quality": { shape: class }
+"RealizableEntity": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"ProcessBoundary": { shape: class }
+"SpatiotemporalRegion": { shape: class }
+"Infrastructure": { shape: class }
+"Equipment": { shape: class }
+"Machine": { shape: class }
+"Sensor": { shape: class }
+"Robot": { shape: class }
+"WeldingRobot": { shape: class }
+"PaintingRobot": { shape: class }
+"AssemblyRobot": { shape: class }
+"Mixer": { shape: class }
+"Oven": { shape: class }
+"ProofingChamber": { shape: class }
+"CuttingMachine": { shape: class }
+"BaggingMachine": { shape: class }
+"PackagingMachine": { shape: class }
+"Refrigerator": { shape: class }
+"Product": { shape: class }
+"Pipeline": { shape: class }
+"Refinery": { shape: class }
+"OffshorePlatform": { shape: class }
+"Wellhead": { shape: class }
+"Pump": { shape: class }
+"Valve": { shape: class }
+"Compressor": { shape: class }
+"PLC": { shape: class }
+"PressureSensor": { shape: class }
+"TemperatureSensor": { shape: class }
+"VibrationSensor": { shape: class }
+"Scanner": { shape: class }
+"OpticalScanner": { shape: class }
+"LaserScanner": { shape: class }
+"BluewristScanner": { shape: class }
+"Substance": { shape: class }
+"Petroleum": { shape: class }
+"NaturalGas": { shape: class }
+"Water": { shape: class }
+"OperatorRole": { shape: class }
+"SafetyRole": { shape: class }
+"MaintenanceRole": { shape: class }
+"ManufacturingFunction": { shape: class }
+"PumpingFunction": { shape: class }
+"RefiningFunction": { shape: class }
+"SensingFunction": { shape: class }
+"WeldingFunction": { shape: class }
+"IndustrialProcess": { shape: class }
+"ManufacturingProcess": { shape: class }
+"AssemblyProcess": { shape: class }
+"WeldingProcess": { shape: class }
+"BakingProcess": { shape: class }
+"ExtractionProcess": { shape: class }
+"RefiningProcess": { shape: class }
+"TransportProcess": { shape: class }
+"MaintenanceProcess": { shape: class }
+"ComputingProcess": { shape: class }
+"SoftwareProcess": { shape: class }
+"SoftwareCode": { shape: class }
+"ControlLogic": { shape: class }
+"SensorData": { shape: class }
+"SafetyProtocol": { shape: class }
+"LimitBreachEvent": { shape: class }
+"FailureRisk": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"ObjectAggregate" -> "MaterialEntity"
+"GDC" -> "Continuant"
+"InformationContentEntity" -> "GDC"
+"SDC" -> "Continuant"
+"Quality" -> "SDC"
+"RealizableEntity" -> "SDC"
+"Role" -> "RealizableEntity"
+"Function" -> "RealizableEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"ProcessBoundary" -> "Occurrent"
+"SpatiotemporalRegion" -> "Occurrent"
+"Infrastructure" -> "Object"
+"Equipment" -> "Object"
+"Machine" -> "Equipment"
+"Sensor" -> "Equipment"
+"Robot" -> "Machine"
+"WeldingRobot" -> "Robot"
+"PaintingRobot" -> "Robot"
+"AssemblyRobot" -> "Robot"
+"Mixer" -> "Machine"
+"Oven" -> "Machine"
+"ProofingChamber" -> "Machine"
+"CuttingMachine" -> "Machine"
+"BaggingMachine" -> "Machine"
+"PackagingMachine" -> "Machine"
+"Refrigerator" -> "Machine"
+"Product" -> "Object"
+"Pipeline" -> "Infrastructure"
+"Refinery" -> "Infrastructure"
+"OffshorePlatform" -> "Infrastructure"
+"Wellhead" -> "Infrastructure"
+"Pump" -> "Equipment"
+"Valve" -> "Equipment"
+"Compressor" -> "Equipment"
+"PLC" -> "Equipment"
+"PressureSensor" -> "Sensor"
+"TemperatureSensor" -> "Sensor"
+"VibrationSensor" -> "Sensor"
+"Scanner" -> "Equipment"
+"OpticalScanner" -> "Scanner"
+"LaserScanner" -> "Scanner"
+"BluewristScanner" -> "LaserScanner"
+"Substance" -> "MaterialEntity"
+"Petroleum" -> "Substance"
+"NaturalGas" -> "Substance"
+"Water" -> "Substance"
+"OperatorRole" -> "Role"
+"SafetyRole" -> "Role"
+"MaintenanceRole" -> "Role"
+"ManufacturingFunction" -> "Function"
+"PumpingFunction" -> "Function"
+"RefiningFunction" -> "Function"
+"SensingFunction" -> "Function"
+"WeldingFunction" -> "Function"
+"IndustrialProcess" -> "Process"
+"ManufacturingProcess" -> "IndustrialProcess"
+"AssemblyProcess" -> "ManufacturingProcess"
+"WeldingProcess" -> "ManufacturingProcess"
+"BakingProcess" -> "ManufacturingProcess"
+"ExtractionProcess" -> "IndustrialProcess"
+"RefiningProcess" -> "IndustrialProcess"
+"TransportProcess" -> "IndustrialProcess"
+"MaintenanceProcess" -> "IndustrialProcess"
+"ComputingProcess" -> "Process"
+"SoftwareProcess" -> "ComputingProcess"
+"SoftwareCode" -> "InformationContentEntity"
+"ControlLogic" -> "SoftwareCode"
+"SensorData" -> "InformationContentEntity"
+"SafetyProtocol" -> "InformationContentEntity"
+"LimitBreachEvent" -> "InformationContentEntity"
+"FailureRisk" -> "InformationContentEntity"
+"Equipment"."is_active": Boolean
+"Equipment"."temperature": Integer
+"MaterialEntity"."has_pressure": Integer
+"MaterialEntity"."has_vibration_level": Integer
+"Pipeline"."flow_rate": Integer
+"Mixer"."rpm": Integer
+"PackagingMachine"."items_per_minute": Integer
+"Scanner"."defect_detected": Boolean
+"Scanner"."scan_resolution_microns": Integer
+"Object"."participates_in": Process
+"Object"."bearer_of": Role
+"Process"."realizes": Function
+"InformationContentEntity"."concretizes": Process
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+#   forall p (Pipeline(p) and gt(has_pressure, 1000) implies exists e (LimitBreachEvent(e)))
+#   forall m (Mixer(m) and is_active() implies gt(rpm, 0))
+#   forall p (Pump(p) and gt(has_vibration_level, 50) implies exists r (FailureRisk(r)))
+#   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

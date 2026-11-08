@@ -1,0 +1,158 @@
+; --- Basic Formal Ontology (BFO) Upper Level ---
+(def-concept Entity)
+
+; Continuants (Objects, qualities, roles that persist in time)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept ObjectAggregate MaterialEntity)
+
+(def-concept GDC Continuant) ; Generically Dependent Continuant
+(def-concept InformationContentEntity GDC)
+
+(def-concept SDC Continuant) ; Specifically Dependent Continuant
+(def-concept Quality SDC)
+(def-concept RealizableEntity SDC)
+(def-concept Role RealizableEntity)
+(def-concept Function RealizableEntity)
+
+; Occurrents (Processes, events that unfold in time)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept ProcessBoundary Occurrent)
+(def-concept SpatiotemporalRegion Occurrent)
+
+; --- Unified Domain Extensions ---
+
+; Infrastructure & Equipment (Common)
+(def-concept Infrastructure Object)
+(def-concept Equipment Object)
+(def-concept Machine Equipment) ; Unified: Machine is a type of Equipment
+(def-concept Sensor Equipment)
+
+; Manufacturing Specifics
+(def-concept Robot Machine)
+(def-concept WeldingRobot Robot)
+(def-concept PaintingRobot Robot)
+(def-concept AssemblyRobot Robot)
+
+(def-concept Mixer Machine)
+(def-concept Oven Machine)
+(def-concept ProofingChamber Machine)
+(def-concept CuttingMachine Machine)
+(def-concept BaggingMachine Machine)
+(def-concept PackagingMachine Machine)
+(def-concept Refrigerator Machine)
+
+(def-concept Product Object)
+
+; Energy / O&G Specifics
+(def-concept Pipeline Infrastructure)
+(def-concept Refinery Infrastructure)
+(def-concept OffshorePlatform Infrastructure)
+(def-concept Wellhead Infrastructure)
+
+(def-concept Pump Equipment)
+(def-concept Valve Equipment)
+(def-concept Compressor Equipment)
+(def-concept PLC Equipment)
+
+(def-concept PressureSensor Sensor)
+(def-concept TemperatureSensor Sensor)
+(def-concept VibrationSensor Sensor)
+
+; Scanners (from automotive)
+(def-concept Scanner Equipment)
+(def-concept OpticalScanner Scanner)
+(def-concept LaserScanner Scanner)
+(def-concept BluewristScanner LaserScanner)
+
+(def-concept Substance MaterialEntity)
+(def-concept Petroleum Substance)
+(def-concept NaturalGas Substance)
+(def-concept Water Substance)
+
+; Roles (Unified)
+(def-concept OperatorRole Role)
+(def-concept SafetyRole Role)
+(def-concept MaintenanceRole Role)
+
+; Functions (Unified)
+(def-concept ManufacturingFunction Function)
+(def-concept PumpingFunction Function)
+(def-concept RefiningFunction Function)
+(def-concept SensingFunction Function)
+(def-concept WeldingFunction Function)
+
+; Processes (Unified)
+(def-concept IndustrialProcess Process)
+
+(def-concept ManufacturingProcess IndustrialProcess)
+(def-concept AssemblyProcess ManufacturingProcess)
+(def-concept WeldingProcess ManufacturingProcess)
+(def-concept BakingProcess ManufacturingProcess) ; Added for Dough Factory
+
+(def-concept ExtractionProcess IndustrialProcess)
+(def-concept RefiningProcess IndustrialProcess)
+(def-concept TransportProcess IndustrialProcess)
+(def-concept MaintenanceProcess IndustrialProcess)
+(def-concept ComputingProcess Process)
+(def-concept SoftwareProcess ComputingProcess) ; Running program execution (Occurrent)
+
+; Information (Unified)
+(def-concept SoftwareCode InformationContentEntity) ; Software code specification (ICE)
+(def-concept ControlLogic SoftwareCode)
+(def-concept SensorData InformationContentEntity)
+(def-concept SafetyProtocol InformationContentEntity)
+(def-concept LimitBreachEvent InformationContentEntity)
+(def-concept FailureRisk InformationContentEntity)
+
+; --- Properties (Unified) ---
+(def-property is_active Equipment Boolean)
+(def-property temperature Equipment Integer)
+(def-property has_pressure MaterialEntity Integer)
+(def-property has_vibration_level MaterialEntity Integer)
+(def-property flow_rate Pipeline Integer)
+(def-property rpm Mixer Integer)
+(def-property items_per_minute PackagingMachine Integer)
+
+(def-property defect_detected Scanner Boolean)
+(def-property scan_resolution_microns Scanner Integer)
+
+; --- BFO Relations ---
+(def-property participates_in Object Process)
+(def-property bearer_of Object Role)
+(def-property realizes Process Function)
+(def-property concretizes InformationContentEntity Process)
+
+; --- Axioms (Selected Highlights) ---
+
+; 1. Safety: Active Oven must be hot
+(forall (o)
+    (implies (and (Oven o) (is_active)) (gt temperature 100)))
+
+; 2. Safety: High Pressure Pipeline needs monitoring
+(forall (p)
+    (implies (and (Pipeline p) (gt has_pressure 1000)) 
+             (exists (e) (LimitBreachEvent e))))
+
+; 3. Quality: Bluewrist Scanner High Precision
+(forall (s)
+    (implies (BluewristScanner s) (lt scan_resolution_microns 50)))
+
+; 4. Mixing: Active mixers must spin
+(forall (m)
+    (implies (and (Mixer m) (is_active)) (gt rpm 0)))
+
+; 5. Pump Vibration Risk
+(forall (p)
+    (implies (and (Pump p) (gt has_vibration_level 50))
+             (exists (r) (FailureRisk r))))
+
+; 6. Software Execution: Running SoftwareProcess concretizes SoftwareCode
+(forall (p)
+    (implies (SoftwareProcess p)
+             (exists (c) (and (SoftwareCode c)
+                              (concretizes c p)))))
+

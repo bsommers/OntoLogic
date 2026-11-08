@@ -1,0 +1,38 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class SDC["SDC"]
+    class Quality["Quality"]
+    class PressureQuality["PressureQuality"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class PlantEntity["PlantEntity"]
+    class PlantEquipment["PlantEquipment"]
+    class Boiler["Boiler"]
+    class Pump["Pump"]
+    class PlantSensor["PlantSensor"]
+    class PressureSensor["PressureSensor"]
+    class CriticalBoiler["CriticalBoiler"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    Quality <|-- PressureQuality
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    MaterialEntity <|-- PlantEntity
+    PlantEntity <|-- PlantEquipment
+    PlantEquipment <|-- Boiler
+    PlantEquipment <|-- Pump
+    PlantEntity <|-- PlantSensor
+    PlantSensor <|-- PressureSensor
+    Boiler <|-- CriticalBoiler
+    PlantSensor : +String has_mqtt_source
+    PlantEntity : +String located_in
+    PlantEquipment : +String has_status
+    MaterialEntity --> Quality : measures
+    Boiler --> Pump : is_fed_by
+    Pump --> CriticalBoiler : feeds_critical

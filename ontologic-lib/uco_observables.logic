@@ -1,0 +1,81 @@
+;; ============================================================================
+;; TIER 2.5: Unified Cybersecurity Ontology (UCO / CASE Digital Observables)
+;; Based on OASIS UCO / Cyber-investigation Analysis Standard Expression
+;; ============================================================================
+
+(import "cco_core.logic")
+
+(namespace uco "https://unifiedcybersecurityontology.org/ontology/uco/uco#")
+(namespace uco-obs "https://unifiedcybersecurityontology.org/ontology/uco/observable#")
+
+;; ----------------------------------------------------------------------------
+;; Cyber Observable Core Taxonomy
+;; ----------------------------------------------------------------------------
+(def-concept uco:CyberItem bfo:InformationContentEntity)
+(def-concept uco-obs:CyberObservable uco:CyberItem)
+
+;; Network & Address Observables
+(def-concept uco-obs:NetworkAddress uco-obs:CyberObservable)
+(def-concept uco-obs:IPAddress uco-obs:NetworkAddress)
+(def-concept uco-obs:IPv4Address uco-obs:IPAddress)
+(def-concept uco-obs:IPv6Address uco-obs:IPAddress)
+(def-concept uco-obs:MACAddress uco-obs:NetworkAddress)
+(def-concept uco-obs:Port uco-obs:CyberObservable)
+(def-concept uco-obs:SocketAddress uco-obs:CyberObservable)
+(def-concept uco-obs:NetworkFlow uco-obs:CyberObservable)
+(def-concept uco-obs:HTTPConnection uco-obs:CyberObservable)
+
+;; System & Host Observables
+(def-concept uco-obs:DigitalProcess cco:PlannedProcess)
+(def-concept uco-obs:UserAccount uco-obs:CyberObservable)
+(def-concept uco-obs:FileSystemObject uco-obs:CyberObservable)
+(def-concept uco-obs:File uco-obs:FileSystemObject)
+(def-concept uco-obs:Directory uco-obs:FileSystemObject)
+(def-concept uco-obs:DigitalCertificate uco-obs:CyberObservable)
+
+;; ----------------------------------------------------------------------------
+;; Cyber Observable Properties
+;; ----------------------------------------------------------------------------
+(def-property uco-obs:ip_value uco-obs:IPAddress String)
+(def-property uco-obs:mac_value uco-obs:MACAddress String)
+(def-property uco-obs:port_number uco-obs:Port Integer)
+(def-property uco-obs:username uco-obs:UserAccount String)
+(def-property uco-obs:is_service_account uco-obs:UserAccount Boolean)
+(def-property uco-obs:pid uco-obs:DigitalProcess Integer)
+(def-property uco-obs:process_name uco-obs:DigitalProcess String)
+(def-property uco-obs:file_path uco-obs:File String)
+(def-property uco-obs:file_size_bytes uco-obs:File Integer)
+(def-property uco-obs:md5_hash uco-obs:File String)
+(def-property uco-obs:sha256_hash uco-obs:File String)
+(def-property uco-obs:bytes_transferred uco-obs:NetworkFlow Integer)
+
+;; ----------------------------------------------------------------------------
+;; Cyber Observable Relations
+;; ----------------------------------------------------------------------------
+(def-relation uco-obs:source_ip uco-obs:NetworkFlow uco-obs:IPAddress)
+(def-relation uco-obs:destination_ip uco-obs:NetworkFlow uco-obs:IPAddress)
+(def-relation uco-obs:destination_port uco-obs:NetworkFlow uco-obs:Port)
+(def-relation uco-obs:executed_by uco-obs:DigitalProcess uco-obs:UserAccount)
+(def-relation uco-obs:parent_process uco-obs:DigitalProcess uco-obs:DigitalProcess)
+(def-relation uco-obs:allocated_socket uco-obs:DigitalProcess uco-obs:SocketAddress)
+
+;; ----------------------------------------------------------------------------
+;; First-Order Logic Constraints & Semantic Rules
+;; ----------------------------------------------------------------------------
+
+(forall (p)
+  (implies (uco-obs:Port p)
+           (and (gte uco-obs:port_number 0)
+                (lte uco-obs:port_number 65535))))
+
+(forall (f)
+  (implies (uco-obs:File f)
+           (gte uco-obs:file_size_bytes 0)))
+
+(forall (proc)
+  (implies (uco-obs:DigitalProcess proc)
+           (gte uco-obs:pid 0)))
+
+(forall (flow)
+  (implies (uco-obs:NetworkFlow flow)
+           (gte uco-obs:bytes_transferred 0)))

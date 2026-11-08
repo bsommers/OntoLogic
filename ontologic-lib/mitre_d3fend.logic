@@ -1,0 +1,51 @@
+;; ============================================================================
+;; TIER 3.3: MITRE D3FEND Cybersecurity Countermeasures Matrix Ontology
+;; Grounded in MITRE D3FEND Knowledge Graph & MITRE ATT&CK Mapping
+;; ============================================================================
+
+(import "mitre_attack.logic")
+
+(namespace d3f "https://d3fend.mitre.org/ontologies/d3fend.owl#")
+
+;; ----------------------------------------------------------------------------
+;; D3FEND Defensive Tactics
+;; ----------------------------------------------------------------------------
+(def-concept d3f:DefensiveTactic cco:DirectiveICE)
+
+(def-concept d3f:Model d3f:DefensiveTactic)
+(def-concept d3f:Harden d3f:DefensiveTactic)
+(def-concept d3f:Detect d3f:DefensiveTactic)
+(def-concept d3f:Isolate d3f:DefensiveTactic)
+(def-concept d3f:Deceive d3f:DefensiveTactic)
+(def-concept d3f:Evict d3f:DefensiveTactic)
+
+;; ----------------------------------------------------------------------------
+;; D3FEND Defensive Techniques
+;; ----------------------------------------------------------------------------
+(def-concept d3f:DefensiveTechnique attack:AttackMitigation)
+
+(def-concept d3f:ProcessIsolation d3f:DefensiveTechnique)
+(def-concept d3f:MemoryHardening d3f:DefensiveTechnique)
+(def-concept d3f:NetworkSegmentation d3f:DefensiveTechnique)
+(def-concept d3f:CredentialEviction d3f:DefensiveTechnique)
+(def-concept d3f:SystemCallFiltering d3f:DefensiveTechnique)
+(def-concept d3f:FileEncryption d3f:DefensiveTechnique)
+(def-concept d3f:TrafficAnalysis d3f:DefensiveTechnique)
+(def-concept d3f:AccessControlPolicyEnforcement d3f:DefensiveTechnique)
+
+;; ----------------------------------------------------------------------------
+;; D3FEND Properties
+;; ----------------------------------------------------------------------------
+(def-property d3f:d3fend_id d3f:DefensiveTechnique String)
+(def-property d3f:definition d3f:DefensiveTechnique String)
+
+;; ----------------------------------------------------------------------------
+;; D3FEND Countermeasure Relations
+;; ----------------------------------------------------------------------------
+(def-relation d3f:counters d3f:DefensiveTechnique attack:AttackTechnique)
+(def-relation d3f:monitors d3f:DefensiveTechnique uco-obs:CyberObservable)
+(def-relation d3f:detects d3f:DefensiveTechnique attack:AttackTechnique)
+(def-relation d3f:isolates d3f:DefensiveTechnique uco-obs:CyberObservable)
+(def-relation d3f:evicts d3f:DefensiveTechnique attack:ThreatGroup)
+(def-relation d3f:hardens d3f:DefensiveTechnique cco:Artifact)
+(def-relation d3f:has_defensive_tactic d3f:DefensiveTechnique d3f:DefensiveTactic)

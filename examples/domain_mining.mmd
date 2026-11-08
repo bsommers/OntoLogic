@@ -1,0 +1,72 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class MiningEquipment["MiningEquipment"]
+    class HeavyMachinery["HeavyMachinery"]
+    class Excavator["Excavator"]
+    class HaulTruck["HaulTruck"]
+    class DrillRig["DrillRig"]
+    class Crusher["Crusher"]
+    class ConveyorBelt["ConveyorBelt"]
+    class Sensor["Sensor"]
+    class LoadSensor["LoadSensor"]
+    class VibrationSensor["VibrationSensor"]
+    class GasSensor["GasSensor"]
+    class MiningProcess["MiningProcess"]
+    class ExtractionProcess["ExtractionProcess"]
+    class BlastingProcess["BlastingProcess"]
+    class HaulingProcess["HaulingProcess"]
+    class CrushingProcess["CrushingProcess"]
+    class TelemetryData["TelemetryData"]
+    class ProductionReport["ProductionReport"]
+    class SafetyAlert["SafetyAlert"]
+    class OperatorRole["OperatorRole"]
+    class SafetyOfficerRole["SafetyOfficerRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    Object <|-- MiningEquipment
+    MiningEquipment <|-- HeavyMachinery
+    HeavyMachinery <|-- Excavator
+    HeavyMachinery <|-- HaulTruck
+    HeavyMachinery <|-- DrillRig
+    MiningEquipment <|-- Crusher
+    MiningEquipment <|-- ConveyorBelt
+    Object <|-- Sensor
+    Sensor <|-- LoadSensor
+    Sensor <|-- VibrationSensor
+    Sensor <|-- GasSensor
+    Process <|-- MiningProcess
+    MiningProcess <|-- ExtractionProcess
+    MiningProcess <|-- BlastingProcess
+    MiningProcess <|-- HaulingProcess
+    MiningProcess <|-- CrushingProcess
+    InformationContentEntity <|-- TelemetryData
+    InformationContentEntity <|-- ProductionReport
+    InformationContentEntity <|-- SafetyAlert
+    Role <|-- OperatorRole
+    Role <|-- SafetyOfficerRole
+    HaulTruck : +Integer payload_weight
+    HeavyMachinery : +Integer engine_temp
+    Crusher : +Integer vibration_level
+    GasSensor : +Integer methane_level
+    HeavyMachinery : +Boolean is_autonomous
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall s (GasSensor(s) and gt(methane_level, 5) implies exists a (SafetyAlert(a)))
+%%   forall c (Crusher(c) and gt(vibration_level, 80) implies exists a (SafetyAlert(a)))
+%%   forall t (HaulTruck(t) and is_autonomous = True implies exists d (TelemetryData(d)))

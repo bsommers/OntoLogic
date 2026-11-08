@@ -1,0 +1,96 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "OntoLogic",
+  "scopeName": "source.ontologic",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#operators" },
+    { "include": "#types" },
+    { "include": "#concepts" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.semicolon.ontologic",
+          "match": ";.*$"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.ontologic",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.ontologic",
+          "match": "\\\\."
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.float.ontologic",
+          "match": "-?\\b[0-9]+\\.[0-9]+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.ontologic",
+          "match": "-?\\b[0-9]+\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.declaration.ontologic",
+          "match": "\\b(def-concept|def-relation|axiom|import|subclass-of)\\b"
+        },
+        {
+          "name": "keyword.control.quantifier.ontologic",
+          "match": "\\b(forall|exists)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.logical.ontologic",
+          "match": "\\b(and|or|not|implies|iff)\\b|=>|<=>"
+        },
+        {
+          "name": "keyword.operator.comparison.ontologic",
+          "match": "\\b(gt|gte|lt|lte|eq|neq|between|in)\\b|>|>=|<|<=|=|!="
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "support.type.primitive.ontologic",
+          "match": "\\b(String|Integer|Float|Double|Boolean|DateTime|Decimal|URI)\\b"
+        }
+      ]
+    },
+    "concepts": {
+      "patterns": [
+        {
+          "name": "entity.name.type.class.ontologic",
+          "match": "\\b[A-Z][a-zA-Z0-9_]*\\b"
+        }
+      ]
+    },
+    "identifiers": {
+      "patterns": [
+        {
+          "name": "variable.other.property.ontologic",
+          "match": "\\b[a-z][a-zA-Z0-9_\\-]*\\b"
+        }
+      ]
+    }
+  }
+}

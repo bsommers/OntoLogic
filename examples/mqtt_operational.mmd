@@ -1,0 +1,90 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class InformationContentEntity["InformationContentEntity"]
+    class OrganizationUnit["OrganizationUnit"]
+    class EngineeringUnit["EngineeringUnit"]
+    class SalesUnit["SalesUnit"]
+    class CustomerSuccessUnit["CustomerSuccessUnit"]
+    class CloudOperationsUnit["CloudOperationsUnit"]
+    class Product["Product"]
+    class AcmeBroker["AcmeBroker"]
+    class AcmeEdgeGateway["AcmeEdgeGateway"]
+    class AcmeCloudService["AcmeCloudService"]
+    class AcmeBrokerPlugin["AcmeBrokerPlugin"]
+    class Customer["Customer"]
+    class AutomotiveCustomer["AutomotiveCustomer"]
+    class EnergyCustomer["EnergyCustomer"]
+    class ManufacturingCustomer["ManufacturingCustomer"]
+    class LogisticsCustomer["LogisticsCustomer"]
+    class Environment["Environment"]
+    class OnPremisesEnvironment["OnPremisesEnvironment"]
+    class PublicCloudEnvironment["PublicCloudEnvironment"]
+    class HybridEnvironment["HybridEnvironment"]
+    class BusinessProcess["BusinessProcess"]
+    class SoftwareDesignProcess["SoftwareDesignProcess"]
+    class SalesCycleProcess["SalesCycleProcess"]
+    class CustomerOnboardingProcess["CustomerOnboardingProcess"]
+    class IncidentResolutionProcess["IncidentResolutionProcess"]
+    class CloudProvisioningProcess["CloudProvisioningProcess"]
+    class Contract["Contract"]
+    class SLA["SLA"]
+    class FeatureRequest["FeatureRequest"]
+    class SupportTicket["SupportTicket"]
+    class ExecutiveRole["ExecutiveRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- InformationContentEntity
+    Object <|-- OrganizationUnit
+    OrganizationUnit <|-- EngineeringUnit
+    OrganizationUnit <|-- SalesUnit
+    OrganizationUnit <|-- CustomerSuccessUnit
+    OrganizationUnit <|-- CloudOperationsUnit
+    Object <|-- Product
+    Product <|-- AcmeBroker
+    Product <|-- AcmeEdgeGateway
+    Product <|-- AcmeCloudService
+    Product <|-- AcmeBrokerPlugin
+    Object <|-- Customer
+    Customer <|-- AutomotiveCustomer
+    Customer <|-- EnergyCustomer
+    Customer <|-- ManufacturingCustomer
+    Customer <|-- LogisticsCustomer
+    Object <|-- Environment
+    Environment <|-- OnPremisesEnvironment
+    Environment <|-- PublicCloudEnvironment
+    Environment <|-- HybridEnvironment
+    Process <|-- BusinessProcess
+    BusinessProcess <|-- SoftwareDesignProcess
+    BusinessProcess <|-- SalesCycleProcess
+    BusinessProcess <|-- CustomerOnboardingProcess
+    BusinessProcess <|-- IncidentResolutionProcess
+    BusinessProcess <|-- CloudProvisioningProcess
+    InformationContentEntity <|-- Contract
+    InformationContentEntity <|-- SLA
+    InformationContentEntity <|-- FeatureRequest
+    InformationContentEntity <|-- SupportTicket
+    Role <|-- ExecutiveRole
+    Contract : +Integer contract_value
+    SLA : +Integer sla_uptime_target
+    Customer : +Integer customer_satisfaction
+    Product : +Boolean is_deployed
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall c (Contract(c) and gt(contract_value, 100000) implies exists r (ExecutiveRole(r)))
+%%   forall p (AcmeCloudService(p) implies exists e (PublicCloudEnvironment(e)))
+%%   forall c (Customer(c) and lt(customer_satisfaction, 50) implies exists p (IncidentResolutionProcess(p)))
+%%   forall f (FeatureRequest(f) implies exists p (SoftwareDesignProcess(p)))

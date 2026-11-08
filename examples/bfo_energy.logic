@@ -1,0 +1,105 @@
+; --- Basic Formal Ontology (BFO) Upper Level ---
+(def-concept Entity)
+
+; Continuants (Objects, qualities, roles that persist in time)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept ObjectAggregate MaterialEntity) ; e.g., A fleet of pumps
+
+(def-concept GDC Continuant) ; Generically Dependent Continuant
+(def-concept InformationContentEntity GDC)
+
+(def-concept SDC Continuant) ; Specifically Dependent Continuant
+(def-concept Quality SDC)
+(def-concept RealizableEntity SDC)
+(def-concept Role RealizableEntity)
+(def-concept Function RealizableEntity)
+
+; Occurrents (Processes, events that unfold in time)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+
+; --- Energy / Oil & Gas Domain Extensions ---
+
+; Material Entities (Equipment, Infrastructure)
+(def-concept Infrastructure Object)
+(def-concept Pipeline Infrastructure)
+(def-concept Refinery Infrastructure)
+(def-concept OffshorePlatform Infrastructure)
+(def-concept Wellhead Infrastructure)
+
+(def-concept Equipment Object)
+(def-concept Pump Equipment)
+(def-concept Valve Equipment)
+(def-concept Compressor Equipment)
+(def-concept Sensor Equipment)
+(def-concept PressureSensor Sensor)
+(def-concept TemperatureSensor Sensor)
+(def-concept VibrationSensor Sensor)
+(def-concept PLC Equipment) ; Programmable Logic Controller
+
+(def-concept Substance MaterialEntity)
+(def-concept Petroleum Substance)
+(def-concept NaturalGas Substance)
+(def-concept Water Substance)
+
+; Roles
+(def-concept OperatorRole Role)
+(def-concept SafetyRole Role)
+(def-concept MaintenanceRole Role)
+
+; Functions
+(def-concept PumpingFunction Function)
+(def-concept RefiningFunction Function)
+(def-concept SensingFunction Function)
+
+; Processes
+(def-concept IndustrialProcess Process)
+(def-concept ExtractionProcess IndustrialProcess)
+(def-concept RefiningProcess IndustrialProcess)
+(def-concept TransportProcess IndustrialProcess)
+(def-concept MaintenanceProcess IndustrialProcess)
+
+; Information
+(def-concept SensorData InformationContentEntity)
+(def-concept SafetyProtocol InformationContentEntity)
+(def-concept LimitBreachEvent InformationContentEntity) ; Information about the event
+
+; --- Properties ---
+(def-property has_pressure MaterialEntity Integer)  ; Pressure in PSI/Bar
+(def-property has_temperature MaterialEntity Integer)
+(def-property has_vibration_level MaterialEntity Integer)
+(def-property valve_position Valve Integer) ; 0-100% open
+(def-property is_active Equipment Boolean)
+(def-property flow_rate Pipeline Integer)
+
+; --- Axioms / Logic ---
+
+; 1. Safety High Pressure Logic: 
+; If a pipeline has pressure > 1000, and there is a connected relief valve (simplified existence check),
+; The system implies a safety hazard or need for action.
+(forall (p)
+    (implies (and (Pipeline p) (gt has_pressure 1000)) 
+             (exists (e) (LimitBreachEvent e)))) 
+
+; 2. Pump Vibration:
+; High vibration in a pump (> 50mm/s) implies failure risk
+(def-concept FailureRisk InformationContentEntity)
+(forall (p)
+    (implies (and (Pump p) (gt has_vibration_level 50))
+             (exists (r) (FailureRisk r))))
+
+; 3. Valve Logic:
+; If a valve is 0% open (Closed), flow rate in the pipeline should be 0 
+; (Simplification: assuming 1:1 relation for this axiom context)
+; (forall (v) (implies (and (Valve v) (eq valve_position 0)) ...)) - Hard to link to specific pipeline without relation properties
+
+; 4. Active Compressors must have temperature monitoring
+; (forall (c) (implies (and (Compressor c) (is_active)) (exists (s) (TemperatureSensor s))))
+
+; 5. Refining implies presence of Petroleum or Gas
+(forall (r)
+    (implies (RefiningProcess r) 
+             (exists (s) (or (Petroleum s) (NaturalGas s)))))

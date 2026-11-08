@@ -1,0 +1,8 @@
+(def-concept NetworkNode)
+(def-concept TrustedNode NetworkNode)
+(def-concept UntrustedNode NetworkNode)
+
+; Logic: UntrustedNodes cannot communicate with the AdminPanel
+(forall (n) 
+    (implies (UntrustedNode n) 
+        (not (can_access n AdminPanel))))

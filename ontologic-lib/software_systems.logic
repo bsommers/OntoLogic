@@ -1,0 +1,102 @@
+;; ============================================================================
+;; TIER 3: Software Engineering & Systems Programming Domain Ontology
+;; Grounded in BFO 2020 (ISO/IEC 21838-2) and Common Core Ontologies (CCO)
+;; ============================================================================
+
+(import "cco_core.logic")
+
+(namespace se "http://bsommers.github.io/ontologic/software_systems#")
+
+;; ----------------------------------------------------------------------------
+;; 1. Repositories, Workspaces & Version Control
+;; ----------------------------------------------------------------------------
+(def-concept se:Repository cco:InformationBearingArtifact)
+(def-concept se:GitRepository se:Repository)
+(def-concept se:Workspace cco:InformationBearingArtifact)
+(def-concept se:Branch cco:DesignativeICE)
+(def-concept se:Commit cco:DescriptiveICE)
+(def-concept se:PullRequest cco:DirectiveICE)
+(def-concept se:ReleaseTag cco:DesignativeICE)
+
+;; ----------------------------------------------------------------------------
+;; 2. Code Artifacts, AST & Modular Structure (Generically Dependent Continuants)
+;; ----------------------------------------------------------------------------
+(def-concept se:SourceFile cco:SoftwareArtifact)
+(def-concept se:SourceModule cco:SoftwareArtifact)
+(def-concept se:CompilationUnit cco:SoftwareArtifact)
+(def-concept se:ASTNode cco:DescriptiveICE)
+(def-concept se:FunctionDefinition cco:SoftwareArtifact)
+(def-concept se:ClassDefinition cco:SoftwareArtifact)
+(def-concept se:InterfaceDefinition cco:SoftwareArtifact)
+(def-concept se:DependencySpecification cco:DirectiveICE)
+(def-concept se:SoftwarePackage cco:SoftwareArtifact)
+
+;; ----------------------------------------------------------------------------
+;; 3. Systems, Runtimes & Execution Environments (Material Entities)
+;; ----------------------------------------------------------------------------
+(def-concept se:HostMachine cco:EngineeredSystem)
+(def-concept se:VirtualMachine cco:EngineeredSystem)
+(def-concept se:ContainerImage cco:SoftwareArtifact)
+(def-concept se:ContainerInstance cco:EngineeredSystem)
+(def-concept se:ExecutionRuntime cco:EngineeredSystem)
+
+;; ----------------------------------------------------------------------------
+;; 4. Build, Pipeline & Verification Processes (Occurrents)
+;; ----------------------------------------------------------------------------
+(def-concept se:BuildProcess cco:PlannedProcess)
+(def-concept se:CompilationProcess se:BuildProcess)
+(def-concept se:TestExecutionProcess cco:ActOfVerification)
+(def-concept se:CIPipelineExecution cco:PlannedProcess)
+(def-concept se:DeploymentProcess cco:PlannedProcess)
+(def-concept se:StaticAnalysisProcess cco:ActOfVerification)
+
+;; ----------------------------------------------------------------------------
+;; 5. Diagnostics, Metrics & Deliverables
+;; ----------------------------------------------------------------------------
+(def-concept se:TestReport cco:DescriptiveICE)
+(def-concept se:CoverageMetric cco:MeasurementICE)
+(def-concept se:CompilerDiagnostic cco:DescriptiveICE)
+(def-concept se:BinaryExecutable cco:SoftwareArtifact)
+
+;; ----------------------------------------------------------------------------
+;; 6. Domain Relations
+;; ----------------------------------------------------------------------------
+(def-relation se:contains_file se:Repository se:SourceFile)
+(def-relation se:has_branch se:Repository se:Branch)
+(def-relation se:records_commit se:Branch se:Commit)
+(def-relation se:proposes_merge se:PullRequest se:Branch)
+(def-relation se:declares_dependency se:SoftwarePackage se:SoftwarePackage)
+(def-relation se:defines_module se:SourceFile se:SourceModule)
+(def-relation se:compiled_by se:CompilationUnit se:CompilationProcess)
+(def-relation se:executes_in se:BuildProcess se:ContainerInstance)
+(def-relation se:verified_by se:BinaryExecutable se:TestExecutionProcess)
+(def-relation se:measured_by se:TestExecutionProcess se:CoverageMetric)
+
+;; ----------------------------------------------------------------------------
+;; 7. Properties & Quantifiable Measurements
+;; ----------------------------------------------------------------------------
+(def-property se:repo_url se:Repository String)
+(def-property se:commit_hash se:Commit String)
+(def-property se:lines_of_code se:SourceFile Integer)
+(def-property se:exit_code se:BuildProcess Integer)
+(def-property se:coverage_percent se:CoverageMetric Float)
+(def-property se:duration_seconds se:CIPipelineExecution Integer)
+
+;; ----------------------------------------------------------------------------
+;; 8. First-Order Logic Axioms & Operational Bounds
+;; ----------------------------------------------------------------------------
+(def-axiom "SourceFile must have positive line count"
+  (forall (f)
+    (implies (se:SourceFile f)
+             (gt se:lines_of_code 0))))
+
+(def-axiom "CIPipelineExecution duration must be non-negative"
+  (forall (p)
+    (implies (se:CIPipelineExecution p)
+             (gte se:duration_seconds 0))))
+
+(def-axiom "Coverage metric percent must be bounded between 0 and 100"
+  (forall (m)
+    (implies (se:CoverageMetric m)
+             (and (gte se:coverage_percent 0.0)
+                  (lte se:coverage_percent 100.0)))))

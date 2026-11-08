@@ -1,0 +1,13 @@
+classDiagram
+    class IndustrialEntity["IndustrialEntity"]
+    class Controller["Controller"]
+    class PLC["PLC"]
+    class RobotArm["RobotArm"]
+    IndustrialEntity <|-- Controller
+    Controller <|-- PLC
+    IndustrialEntity <|-- RobotArm
+    IndustrialEntity : +Boolean safety_status
+    RobotArm : +Integer axis_count
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall c (Controller(c) and safety_status = False implies active = False)

@@ -1,0 +1,85 @@
+;; ============================================================================
+;; TIER 3.5: NIST AI RMF 1.0 (Artificial Intelligence Risk Management Framework)
+;; Grounded in NIST AI 100-1 Core Functions, Trustworthy AI, and Metrics
+;; ============================================================================
+
+(import "mitre_atlas.logic")
+
+(namespace nist-ai "https://airc.nist.gov/AI_RMF/")
+
+;; ----------------------------------------------------------------------------
+;; NIST AI RMF Core Functions
+;; ----------------------------------------------------------------------------
+(def-concept nist-ai:AIRMFFunction cco:DirectiveICE)
+
+(def-concept nist-ai:Govern nist-ai:AIRMFFunction)
+(def-concept nist-ai:Map nist-ai:AIRMFFunction)
+(def-concept nist-ai:Measure nist-ai:AIRMFFunction)
+(def-concept nist-ai:Manage nist-ai:AIRMFFunction)
+
+;; ----------------------------------------------------------------------------
+;; Trustworthy AI Characteristics
+;; ----------------------------------------------------------------------------
+(def-concept nist-ai:TrustworthyCharacteristic bfo:Quality)
+
+(def-concept nist-ai:ValidAndReliable nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:Safe nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:SecureAndResilient nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:AccountableAndTransparent nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:ExplainableAndInterpretable nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:PrivacyEnhanced nist-ai:TrustworthyCharacteristic)
+(def-concept nist-ai:FairHarmfulBiasManaged nist-ai:TrustworthyCharacteristic)
+
+;; ----------------------------------------------------------------------------
+;; AI System & Evaluation Metric Entities
+;; ----------------------------------------------------------------------------
+(def-concept nist-ai:AISystem cco:EngineeredSystem)
+(def-concept nist-ai:LLMFoundationModel atlas:AIModel)
+(def-concept nist-ai:AIModelEvaluationMetric cco:MeasurementICE)
+(def-concept nist-ai:AIRiskProfile cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; AI Evaluation & Quantitative Metric Properties
+;; ----------------------------------------------------------------------------
+(def-property nist-ai:hallucination_rate nist-ai:AIModelEvaluationMetric Double)
+(def-property nist-ai:toxicity_score nist-ai:AIModelEvaluationMetric Double)
+(def-property nist-ai:jailbreak_resistance_score nist-ai:AIModelEvaluationMetric Double)
+(def-property nist-ai:demographic_parity_gap nist-ai:AIModelEvaluationMetric Double)
+(def-property nist-ai:latency_p99_ms nist-ai:AISystem Integer)
+(def-property nist-ai:system_name nist-ai:AISystem String)
+
+;; ----------------------------------------------------------------------------
+;; NIST AI RMF Relations
+;; ----------------------------------------------------------------------------
+(def-relation nist-ai:governed_by nist-ai:AISystem nist-ai:AIRMFFunction)
+(def-relation nist-ai:measured_by nist-ai:AISystem nist-ai:AIModelEvaluationMetric)
+(def-relation nist-ai:exhibits_characteristic nist-ai:AISystem nist-ai:TrustworthyCharacteristic)
+(def-relation nist-ai:deploys_model nist-ai:AISystem atlas:AIModel)
+
+;; ----------------------------------------------------------------------------
+;; Quantitative Metric Constraints in First-Order Logic
+;; ----------------------------------------------------------------------------
+
+(forall (m)
+  (implies (nist-ai:AIModelEvaluationMetric m)
+           (and (gte nist-ai:hallucination_rate 0.0)
+                (lte nist-ai:hallucination_rate 1.0))))
+
+(forall (m)
+  (implies (nist-ai:AIModelEvaluationMetric m)
+           (and (gte nist-ai:toxicity_score 0.0)
+                (lte nist-ai:toxicity_score 1.0))))
+
+(forall (m)
+  (implies (nist-ai:AIModelEvaluationMetric m)
+           (and (gte nist-ai:jailbreak_resistance_score 0.0)
+                (lte nist-ai:jailbreak_resistance_score 1.0))))
+
+(forall (m)
+  (implies (nist-ai:AIModelEvaluationMetric m)
+           (and (gte nist-ai:demographic_parity_gap 0.0)
+                (lte nist-ai:demographic_parity_gap 1.0))))
+
+(forall (s)
+  (implies (nist-ai:AISystem s)
+           (gte nist-ai:latency_p99_ms 0)))

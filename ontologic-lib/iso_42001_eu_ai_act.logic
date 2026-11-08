@@ -1,0 +1,58 @@
+;; ============================================================================
+;; TIER 3.6: ISO/IEC 42001:2023 (AIMS) & EU AI Act Risk Governance Ontology
+;; Grounded in ISO 42001 AI Management System & EU AI Act Legal Framework
+;; ============================================================================
+
+(import "nist_ai_rmf.logic")
+
+(namespace iso42001 "https://www.iso.org/standard/81230.html#")
+(namespace aiact "https://artificialintelligenceact.eu/#")
+
+;; ----------------------------------------------------------------------------
+;; EU AI Act Risk Tiers
+;; ----------------------------------------------------------------------------
+(def-concept aiact:AIRiskTier cco:DirectiveICE)
+
+(def-concept aiact:ProhibitedRisk aiact:AIRiskTier)
+(def-concept aiact:HighRisk aiact:AIRiskTier)
+(def-concept aiact:TransparencyRisk aiact:AIRiskTier)
+(def-concept aiact:MinimalRisk aiact:AIRiskTier)
+
+;; ----------------------------------------------------------------------------
+;; ISO/IEC 42001:2023 AI Lifecycle Stages & Oversight
+;; ----------------------------------------------------------------------------
+(def-concept iso42001:AILifecycleStage cco:PlannedProcess)
+
+(def-concept iso42001:DataCurationStage iso42001:AILifecycleStage)
+(def-concept iso42001:ModelTrainingStage iso42001:AILifecycleStage)
+(def-concept iso42001:SafetyEvaluationStage iso42001:AILifecycleStage)
+(def-concept iso42001:DeploymentOversightStage iso42001:AILifecycleStage)
+(def-concept iso42001:PostMarketMonitoringStage iso42001:AILifecycleStage)
+
+(def-concept iso42001:HumanOversightRole cco:OperatorRole)
+(def-concept iso42001:AIAuditRecord cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; Regulatory Compliance & Audit Properties
+;; ----------------------------------------------------------------------------
+(def-property iso42001:standard_version iso42001:AIAuditRecord String)
+(def-property iso42001:compliance_score iso42001:AIAuditRecord Double)
+(def-property aiact:conformity_declared aiact:AIRiskTier Boolean)
+(def-property aiact:market_authorization_id aiact:AIRiskTier String)
+
+;; ----------------------------------------------------------------------------
+;; Regulatory & Lifecycle Relations
+;; ----------------------------------------------------------------------------
+(def-relation aiact:classified_as_risk_tier nist-ai:AISystem aiact:AIRiskTier)
+(def-relation iso42001:undergoes_lifecycle_stage nist-ai:AISystem iso42001:AILifecycleStage)
+(def-relation iso42001:overseen_by nist-ai:AISystem iso42001:HumanOversightRole)
+(def-relation iso42001:produces_audit_record iso42001:AILifecycleStage iso42001:AIAuditRecord)
+
+;; ----------------------------------------------------------------------------
+;; Compliance Metric Constraints in First-Order Logic
+;; ----------------------------------------------------------------------------
+
+(forall (a)
+  (implies (iso42001:AIAuditRecord a)
+           (and (gte iso42001:compliance_score 0.0)
+                (lte iso42001:compliance_score 100.0))))

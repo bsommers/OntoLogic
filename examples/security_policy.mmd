@@ -1,0 +1,9 @@
+classDiagram
+    class NetworkNode["NetworkNode"]
+    class TrustedNode["TrustedNode"]
+    class UntrustedNode["UntrustedNode"]
+    NetworkNode <|-- TrustedNode
+    NetworkNode <|-- UntrustedNode
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall n (UntrustedNode(n) implies not can_access(n, AdminPanel))

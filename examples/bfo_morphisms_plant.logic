@@ -1,0 +1,38 @@
+; --- Basic Formal Ontology (BFO) Upper Level ---
+(def-concept Entity)
+
+; Continuants (Objects, qualities that persist in time)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+
+; Specifically Dependent Continuants
+(def-concept SDC Continuant)
+(def-concept Quality SDC)
+(def-concept PressureQuality Quality)
+
+; Occurrents (Processes unfolding in time)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+
+; Upper Level Relations
+(def-relation measures MaterialEntity Quality)
+
+; --- BFO Plant Domain Extension (Morphisms Topology) ---
+(def-concept PlantEntity MaterialEntity)
+(def-concept PlantEquipment PlantEntity)
+(def-concept Boiler PlantEquipment)
+(def-concept Pump PlantEquipment)
+(def-concept PlantSensor PlantEntity)
+
+(def-property has_mqtt_source PlantSensor String)
+(def-property located_in PlantEntity String)
+(def-property has_status PlantEquipment String)
+
+(def-relation is_fed_by Boiler Pump)
+
+; --- Domain Specific Application Layer ---
+(def-concept PressureSensor PlantSensor)
+(def-concept CriticalBoiler Boiler)
+
+(def-relation feeds_critical Pump CriticalBoiler)

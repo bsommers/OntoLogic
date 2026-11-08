@@ -1,0 +1,33 @@
+"Asset": { shape: class }
+"Machine": { shape: class }
+"Sensor": { shape: class }
+"Mixer": { shape: class }
+"Oven": { shape: class }
+"ProofingChamber": { shape: class }
+"CuttingMachine": { shape: class }
+"BaggingMachine": { shape: class }
+"PackagingMachine": { shape: class }
+"Refrigerator": { shape: class }
+"Camera": { shape: class }
+"SecurityCamera": { shape: class }
+
+"Machine" -> "Asset"
+"Sensor" -> "Asset"
+"Mixer" -> "Machine"
+"Oven" -> "Machine"
+"ProofingChamber" -> "Machine"
+"CuttingMachine" -> "Machine"
+"BaggingMachine" -> "Machine"
+"PackagingMachine" -> "Machine"
+"Refrigerator" -> "Machine"
+"Camera" -> "Sensor"
+"SecurityCamera" -> "Camera"
+"Machine"."is_active": Boolean
+"Machine"."temperature": Integer
+"Machine"."humidity": Integer
+"Mixer"."rpm": Integer
+"Camera"."is_recording": Boolean
+"PackagingMachine"."items_per_minute": Integer
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+#   forall m (Mixer(m) and is_active() implies gt(rpm, 0))

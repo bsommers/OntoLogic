@@ -1,0 +1,155 @@
+{
+  "name": "ontologic",
+  "displayName": "OntoLogic",
+  "description": "Rich Language Server Protocol, syntax highlighting, snippets, and SMT solver tooling for OntoLogic DSL.",
+  "version": "1.3.0",
+  "publisher": "bsommers",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bsommers/OntoLogic"
+  },
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Snippets"
+  ],
+  "keywords": [
+    "ontology",
+    "first-order-logic",
+    "smt",
+    "z3",
+    "cvc5",
+    "bfo",
+    "lsp"
+  ],
+  "main": "./out/extension.js",
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Binary paths and the solver backend come from settings, so they are restricted in untrusted workspaces.",
+      "restrictedConfigurations": [
+        "ontologic.lsp.path",
+        "ontologic.cli.path",
+        "ontologic.solver.prover"
+      ]
+    }
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "ontologic",
+        "aliases": [
+          "OntoLogic",
+          "ontologic"
+        ],
+        "extensions": [
+          ".logic"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "ontologic",
+        "scopeName": "source.ontologic",
+        "path": "./syntaxes/ontologic.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "ontologic",
+        "path": "./snippets/ontologic.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "ontologic.restartServer",
+        "title": "OntoLogic: Restart Language Server",
+        "category": "OntoLogic"
+      },
+      {
+        "command": "ontologic.checkConsistency",
+        "title": "OntoLogic: Check SMT Consistency & Satisfiability",
+        "category": "OntoLogic"
+      },
+      {
+        "command": "ontologic.findUnsat",
+        "title": "OntoLogic: Check Concept Satisfiability",
+        "category": "OntoLogic"
+      },
+      {
+        "command": "ontologic.solve",
+        "title": "OntoLogic: Verify SMT Consistency (AutoProver)",
+        "category": "OntoLogic"
+      },
+      {
+        "command": "ontologic.explainUnsat",
+        "title": "OntoLogic: Explain SMT Unsatisfiable Core",
+        "category": "OntoLogic"
+      },
+      {
+        "command": "ontologic.inspectModel",
+        "title": "OntoLogic: Inspect SMT Satisfying Model",
+        "category": "OntoLogic"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "OntoLogic Configuration",
+      "properties": {
+        "ontologic.lsp.path": {
+          "type": "string",
+          "default": "ontologic-lsp",
+          "scope": "machine",
+          "description": "Path to the ontologic-lsp binary executable."
+        },
+        "ontologic.cli.path": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Path to the ontologic CLI (ontologic or ontologic-exe). Empty = look next to the LSP binary, then the stack build, then PATH."
+        },
+        "ontologic.solver.prover": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "z3",
+            "cvc5",
+            "vampire"
+          ],
+          "default": "auto",
+          "description": "Automated SMT theorem prover backend."
+        },
+        "ontologic.trace.server": {
+          "type": "string",
+          "enum": [
+            "off",
+            "messages",
+            "verbose"
+          ],
+          "default": "off",
+          "description": "Trace level for LSP JSON-RPC communication."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.75.0",
+    "@vscode/vsce": "^3.2.1",
+    "typescript": "^5.3.3"
+  }
+}

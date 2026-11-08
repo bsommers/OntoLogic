@@ -1,0 +1,217 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class ObjectAggregate["ObjectAggregate"]
+    class ImmaterialEntity["ImmaterialEntity"]
+    class Site["Site"]
+    class SpatialRegion["SpatialRegion"]
+    class GDC["GDC"]
+    class InformationContentEntity["InformationContentEntity"]
+    class SDC["SDC"]
+    class Quality["Quality"]
+    class RealizableEntity["RealizableEntity"]
+    class Role["Role"]
+    class Disposition["Disposition"]
+    class Capability["Capability"]
+    class Function["Function"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class TemporalRegion["TemporalRegion"]
+    class SpatiotemporalRegion["SpatiotemporalRegion"]
+    class Infrastructure["Infrastructure"]
+    class Equipment["Equipment"]
+    class Machine["Machine"]
+    class Sensor["Sensor"]
+    class Robot["Robot"]
+    class WeldingRobot["WeldingRobot"]
+    class PaintingRobot["PaintingRobot"]
+    class AssemblyRobot["AssemblyRobot"]
+    class Mixer["Mixer"]
+    class Oven["Oven"]
+    class PackagingMachine["PackagingMachine"]
+    class Product["Product"]
+    class Pipeline["Pipeline"]
+    class Refinery["Refinery"]
+    class OffshorePlatform["OffshorePlatform"]
+    class Wellhead["Wellhead"]
+    class Pump["Pump"]
+    class Valve["Valve"]
+    class Compressor["Compressor"]
+    class PLC["PLC"]
+    class Petroleum["Petroleum"]
+    class NaturalGas["NaturalGas"]
+    class MiningEquipment["MiningEquipment"]
+    class HeavyMachinery["HeavyMachinery"]
+    class Excavator["Excavator"]
+    class HaulTruck["HaulTruck"]
+    class DrillRig["DrillRig"]
+    class Crusher["Crusher"]
+    class ConveyorBelt["ConveyorBelt"]
+    class ComputeNode["ComputeNode"]
+    class PhysicalServer["PhysicalServer"]
+    class VirtualMachine["VirtualMachine"]
+    class Container["Container"]
+    class KubernetesCluster["KubernetesCluster"]
+    class CloudRegion["CloudRegion"]
+    class AutoscalingCapability["AutoscalingCapability"]
+    class DisasterRecoveryCapability["DisasterRecoveryCapability"]
+    class SoftwareComponent["SoftwareComponent"]
+    class MQTTBroker["MQTTBroker"]
+    class AcmeEdgeGateway["AcmeEdgeGateway"]
+    class AcmeCloudService["AcmeCloudService"]
+    class Database["Database"]
+    class LoadBalancer["LoadBalancer"]
+    class Microservice["Microservice"]
+    class OperatorRole["OperatorRole"]
+    class SafetyRole["SafetyRole"]
+    class MaintenanceRole["MaintenanceRole"]
+    class DevOpsRole["DevOpsRole"]
+    class SRERole["SRERole"]
+    class CISORole["CISORole"]
+    class SecurityAnalystRole["SecurityAnalystRole"]
+    class ExecutiveRole["ExecutiveRole"]
+    class SoftwareCode["SoftwareCode"]
+    class ControlLogic["ControlLogic"]
+    class SensorData["SensorData"]
+    class Contract["Contract"]
+    class SLA["SLA"]
+    class SecurityArtifact["SecurityArtifact"]
+    class DigitalCertificate["DigitalCertificate"]
+    class PrivateKey["PrivateKey"]
+    class SecurityPolicy["SecurityPolicy"]
+    class Alert["Alert"]
+    class IndustrialProcess["IndustrialProcess"]
+    class ManufacturingProcess["ManufacturingProcess"]
+    class ExtractionProcess["ExtractionProcess"]
+    class RefiningProcess["RefiningProcess"]
+    class ComputingProcess["ComputingProcess"]
+    class SoftwareProcess["SoftwareProcess"]
+    class DeploymentProcess["DeploymentProcess"]
+    class ScalingProcess["ScalingProcess"]
+    class BusinessProcess["BusinessProcess"]
+    class SalesCycleProcess["SalesCycleProcess"]
+    class SecurityProcess["SecurityProcess"]
+    class AuthenticationProcess["AuthenticationProcess"]
+    class EncryptionProcess["EncryptionProcess"]
+    class TrustedRole["TrustedRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    MaterialEntity <|-- ObjectAggregate
+    IndependentContinuant <|-- ImmaterialEntity
+    ImmaterialEntity <|-- Site
+    ImmaterialEntity <|-- SpatialRegion
+    Continuant <|-- GDC
+    GDC <|-- InformationContentEntity
+    Continuant <|-- SDC
+    SDC <|-- Quality
+    SDC <|-- RealizableEntity
+    RealizableEntity <|-- Role
+    RealizableEntity <|-- Disposition
+    Disposition <|-- Capability
+    RealizableEntity <|-- Function
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Occurrent <|-- TemporalRegion
+    Occurrent <|-- SpatiotemporalRegion
+    Object <|-- Infrastructure
+    Object <|-- Equipment
+    Equipment <|-- Machine
+    Equipment <|-- Sensor
+    Machine <|-- Robot
+    Robot <|-- WeldingRobot
+    Robot <|-- PaintingRobot
+    Robot <|-- AssemblyRobot
+    Machine <|-- Mixer
+    Machine <|-- Oven
+    Machine <|-- PackagingMachine
+    Object <|-- Product
+    Infrastructure <|-- Pipeline
+    Infrastructure <|-- Refinery
+    Infrastructure <|-- OffshorePlatform
+    Infrastructure <|-- Wellhead
+    Equipment <|-- Pump
+    Equipment <|-- Valve
+    Equipment <|-- Compressor
+    Equipment <|-- PLC
+    MaterialEntity <|-- Petroleum
+    MaterialEntity <|-- NaturalGas
+    Equipment <|-- MiningEquipment
+    MiningEquipment <|-- HeavyMachinery
+    HeavyMachinery <|-- Excavator
+    HeavyMachinery <|-- HaulTruck
+    HeavyMachinery <|-- DrillRig
+    MiningEquipment <|-- Crusher
+    MiningEquipment <|-- ConveyorBelt
+    Object <|-- ComputeNode
+    ComputeNode <|-- PhysicalServer
+    ComputeNode <|-- VirtualMachine
+    ComputeNode <|-- Container
+    Object <|-- KubernetesCluster
+    Site <|-- CloudRegion
+    Capability <|-- AutoscalingCapability
+    Capability <|-- DisasterRecoveryCapability
+    Object <|-- SoftwareComponent
+    SoftwareComponent <|-- MQTTBroker
+    SoftwareComponent <|-- AcmeEdgeGateway
+    SoftwareComponent <|-- AcmeCloudService
+    SoftwareComponent <|-- Database
+    SoftwareComponent <|-- LoadBalancer
+    SoftwareComponent <|-- Microservice
+    Role <|-- OperatorRole
+    Role <|-- SafetyRole
+    Role <|-- MaintenanceRole
+    Role <|-- DevOpsRole
+    Role <|-- SRERole
+    Role <|-- CISORole
+    Role <|-- SecurityAnalystRole
+    Role <|-- ExecutiveRole
+    InformationContentEntity <|-- SoftwareCode
+    SoftwareCode <|-- ControlLogic
+    InformationContentEntity <|-- SensorData
+    InformationContentEntity <|-- Contract
+    InformationContentEntity <|-- SLA
+    InformationContentEntity <|-- SecurityArtifact
+    SecurityArtifact <|-- DigitalCertificate
+    SecurityArtifact <|-- PrivateKey
+    SecurityArtifact <|-- SecurityPolicy
+    InformationContentEntity <|-- Alert
+    Process <|-- IndustrialProcess
+    IndustrialProcess <|-- ManufacturingProcess
+    IndustrialProcess <|-- ExtractionProcess
+    IndustrialProcess <|-- RefiningProcess
+    Process <|-- ComputingProcess
+    ComputingProcess <|-- SoftwareProcess
+    ComputingProcess <|-- DeploymentProcess
+    ComputingProcess <|-- ScalingProcess
+    Process <|-- BusinessProcess
+    BusinessProcess <|-- SalesCycleProcess
+    Process <|-- SecurityProcess
+    SecurityProcess <|-- AuthenticationProcess
+    SecurityProcess <|-- EncryptionProcess
+    Role <|-- TrustedRole
+    Equipment : +Boolean is_active
+    Equipment : +Integer temperature
+    MaterialEntity : +Integer has_pressure
+    Mixer : +Integer rpm
+    ComputeNode : +Integer cpu_usage
+    MQTTBroker : +Integer active_connections
+    SoftwareComponent : +Boolean is_healthy
+    SecurityArtifact : +Boolean encryption_enabled
+    Contract : +Integer contract_value
+    Object : +Process participates_in
+    InformationContentEntity : +Process concretizes
+    Object : +Role bearer_of
+    Process : +Role realizes
+    DigitalCertificate : +Boolean is_valid
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall c (DigitalCertificate(c) and is_valid = True implies exists r (TrustedRole(r)))
+%%   forall vm (VirtualMachine(vm) and gt(cpu_usage, 80) implies exists p (ScalingProcess(p) and participates_in(vm, p)))
+%%   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+%%   forall c (Contract(c) and gt(contract_value, 100000) implies exists r (ExecutiveRole(r) and exists o (bearer_of(o, r))))
+%%   forall p (SoftwareProcess(p) implies exists c (SoftwareCode(c) and concretizes(c, p)))

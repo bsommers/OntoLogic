@@ -1,0 +1,106 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"ObjectAggregate": { shape: class }
+"GDC": { shape: class }
+"InformationContentEntity": { shape: class }
+"SDC": { shape: class }
+"Quality": { shape: class }
+"RealizableEntity": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Infrastructure": { shape: class }
+"Pipeline": { shape: class }
+"Refinery": { shape: class }
+"OffshorePlatform": { shape: class }
+"Wellhead": { shape: class }
+"Equipment": { shape: class }
+"Pump": { shape: class }
+"Valve": { shape: class }
+"Compressor": { shape: class }
+"Sensor": { shape: class }
+"PressureSensor": { shape: class }
+"TemperatureSensor": { shape: class }
+"VibrationSensor": { shape: class }
+"PLC": { shape: class }
+"Substance": { shape: class }
+"Petroleum": { shape: class }
+"NaturalGas": { shape: class }
+"Water": { shape: class }
+"OperatorRole": { shape: class }
+"SafetyRole": { shape: class }
+"MaintenanceRole": { shape: class }
+"PumpingFunction": { shape: class }
+"RefiningFunction": { shape: class }
+"SensingFunction": { shape: class }
+"IndustrialProcess": { shape: class }
+"ExtractionProcess": { shape: class }
+"RefiningProcess": { shape: class }
+"TransportProcess": { shape: class }
+"MaintenanceProcess": { shape: class }
+"SensorData": { shape: class }
+"SafetyProtocol": { shape: class }
+"LimitBreachEvent": { shape: class }
+"FailureRisk": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"ObjectAggregate" -> "MaterialEntity"
+"GDC" -> "Continuant"
+"InformationContentEntity" -> "GDC"
+"SDC" -> "Continuant"
+"Quality" -> "SDC"
+"RealizableEntity" -> "SDC"
+"Role" -> "RealizableEntity"
+"Function" -> "RealizableEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Infrastructure" -> "Object"
+"Pipeline" -> "Infrastructure"
+"Refinery" -> "Infrastructure"
+"OffshorePlatform" -> "Infrastructure"
+"Wellhead" -> "Infrastructure"
+"Equipment" -> "Object"
+"Pump" -> "Equipment"
+"Valve" -> "Equipment"
+"Compressor" -> "Equipment"
+"Sensor" -> "Equipment"
+"PressureSensor" -> "Sensor"
+"TemperatureSensor" -> "Sensor"
+"VibrationSensor" -> "Sensor"
+"PLC" -> "Equipment"
+"Substance" -> "MaterialEntity"
+"Petroleum" -> "Substance"
+"NaturalGas" -> "Substance"
+"Water" -> "Substance"
+"OperatorRole" -> "Role"
+"SafetyRole" -> "Role"
+"MaintenanceRole" -> "Role"
+"PumpingFunction" -> "Function"
+"RefiningFunction" -> "Function"
+"SensingFunction" -> "Function"
+"IndustrialProcess" -> "Process"
+"ExtractionProcess" -> "IndustrialProcess"
+"RefiningProcess" -> "IndustrialProcess"
+"TransportProcess" -> "IndustrialProcess"
+"MaintenanceProcess" -> "IndustrialProcess"
+"SensorData" -> "InformationContentEntity"
+"SafetyProtocol" -> "InformationContentEntity"
+"LimitBreachEvent" -> "InformationContentEntity"
+"FailureRisk" -> "InformationContentEntity"
+"MaterialEntity"."has_pressure": Integer
+"MaterialEntity"."has_temperature": Integer
+"MaterialEntity"."has_vibration_level": Integer
+"Valve"."valve_position": Integer
+"Equipment"."is_active": Boolean
+"Pipeline"."flow_rate": Integer
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall p (Pipeline(p) and gt(has_pressure, 1000) implies exists e (LimitBreachEvent(e)))
+#   forall p (Pump(p) and gt(has_vibration_level, 50) implies exists r (FailureRisk(r)))
+#   forall r (RefiningProcess(r) implies exists s (Petroleum(s) or NaturalGas(s)))

@@ -1,0 +1,16 @@
+;; ============================================================================
+;; AUTO-GENERATED ECOSYSTEM ONTOLOGY (class layer)
+;; Code symbols are instances, not classes: see test/fixtures/ecosystem_symbols.ttl for the data shape.
+;; ============================================================================
+(namespace sys "http://bsommers.github.io/ecosystem")
+(import "bfo_2020.logic")
+
+;; Bridge Classes
+(def-concept sys:InformationArtifact bfo:GenericallyDependentContinuant)
+(def-concept sys:AgentRole bfo:Role)
+(def-concept sys:AgentProcess bfo:Process)
+(def-concept sys:CodeSymbol sys:InformationArtifact)
+(def-concept sys:Repository sys:InformationArtifact)
+
+;; Provenance: which repository defines a symbol
+(def-relation sys:definedIn sys:CodeSymbol sys:Repository)

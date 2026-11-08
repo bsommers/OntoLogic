@@ -1,0 +1,76 @@
+; --- Taxonomy ---
+(def-concept Asset)
+(def-concept Vehicle Asset)
+(def-concept SUV Vehicle)
+(def-concept Sedan Vehicle)
+(def-concept Truck Vehicle)
+
+(def-concept Equipment Asset)
+(def-concept Station Equipment)
+(def-concept Robot Equipment)
+(def-concept WeldingRobot Robot)
+(def-concept PaintingRobot Robot)
+(def-concept AssemblyRobot Robot)
+
+(def-concept Scanner Equipment)
+(def-concept OpticalScanner Scanner)
+(def-concept LaserScanner Scanner)
+(def-concept BluewristScanner LaserScanner) ; "Bluewrist" style high-end scanner
+
+(def-concept SafetySystem Equipment)
+(def-concept LightCurtain SafetySystem)
+
+; --- Properties ---
+(def-property vin Vehicle String)
+(def-property model_year Vehicle Integer)
+(def-property weld_count Vehicle Integer)
+(def-property is_painted Vehicle Boolean)
+(def-property is_quality_approved Vehicle Boolean) ; Added for scanner output
+(def-property paint_color Vehicle String)
+
+(def-property station_id Station String)
+(def-property is_active Equipment Boolean)
+(def-property temperature Equipment Integer)
+(def-property current_job Robot String)
+
+(def-property defect_detected Scanner Boolean)
+(def-property scan_resolution_microns Scanner Integer)
+
+(def-property barrier_active SafetySystem Boolean)
+
+; --- Axioms ---
+
+; 1. Welding Integrity: SUVs require more welds than Sedans due to size
+(forall (v)
+    (implies (SUV v) (gte weld_count 5000)))
+
+(forall (v)
+    (implies (Sedan v) (gte weld_count 3000)))
+
+; 2. Paint Process: A vehicle cannot be marked painted if it has no color
+(forall (v)
+    (implies (and (Vehicle v) (is_painted)) (not (eq paint_color "None"))))
+
+; 3. Robot Safety: Robots can only be active if the safety light curtain is active
+(forall (r)
+    (implies (and (Robot r) (is_active)) 
+             (exists (s) (and (LightCurtain s) (eq barrier_active True)))))
+
+; 4. Equipment Overheat: If a welding robot is too hot, it must stop (inactive)
+(forall (w)
+    (implies (and (WeldingRobot w) (gt temperature 200)) (eq is_active False)))
+
+; 5. Quality Control: If a Bluewrist scanner detects a defect, the vehicle is NOT approved
+; (Note: This is a simplified rule assuming the scanner is scanning 'something' related to a vehicle)
+(forall (s)
+    (implies (and (BluewristScanner s) (eq defect_detected True)) 
+             (forall (v) (not (eq is_quality_approved True))))) 
+             ; NOTE: This logic is slightly loose as it doesn't link Scanner -> Vehicle directly yet. 
+             ; Ideally we'd have (scans Scanner Vehicle). keeping it simple for property-heavy logic.
+
+; 6. High Precision: Bluewrist scanners always have resolution better than 50 microns
+(forall (s)
+    (implies (BluewristScanner s) (lt scan_resolution_microns 50)))
+
+; 5. Assembly Sequence: Painting robots should not work on un-welded vehicles (simplified check)
+; (Predicate logic for sequence is harder here without time/state, using property proxy)

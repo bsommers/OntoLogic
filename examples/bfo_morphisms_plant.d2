@@ -1,0 +1,38 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"SDC": { shape: class }
+"Quality": { shape: class }
+"PressureQuality": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"PlantEntity": { shape: class }
+"PlantEquipment": { shape: class }
+"Boiler": { shape: class }
+"Pump": { shape: class }
+"PlantSensor": { shape: class }
+"PressureSensor": { shape: class }
+"CriticalBoiler": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"SDC" -> "Continuant"
+"Quality" -> "SDC"
+"PressureQuality" -> "Quality"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"PlantEntity" -> "MaterialEntity"
+"PlantEquipment" -> "PlantEntity"
+"Boiler" -> "PlantEquipment"
+"Pump" -> "PlantEquipment"
+"PlantSensor" -> "PlantEntity"
+"PressureSensor" -> "PlantSensor"
+"CriticalBoiler" -> "Boiler"
+"PlantSensor"."has_mqtt_source": String
+"PlantEntity"."located_in": String
+"PlantEquipment"."has_status": String
+"MaterialEntity" -> "Quality": measures
+"Boiler" -> "Pump": is_fed_by
+"Pump" -> "CriticalBoiler": feeds_critical

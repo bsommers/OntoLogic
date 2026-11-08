@@ -1,0 +1,82 @@
+;; ============================================================================
+;; TIER 3.8: NIST SP 800-53 Rev 5 & OSCAL Automated Compliance-as-Code
+;; Grounded in NIST SP 800-53 Catalogs, OSCAL Baselines, and CCO Hierarchy
+;; ============================================================================
+
+(import "nist_csf.logic")
+(import "stix_cve.logic")
+
+(namespace nist80053 "https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final#")
+(namespace oscal "http://csrc.nist.gov/ns/oscal/1.0#")
+
+;; ----------------------------------------------------------------------------
+;; NIST SP 800-53 Control Families
+;; ----------------------------------------------------------------------------
+(def-concept nist80053:ControlFamily cco:DirectiveICE)
+
+(def-concept nist80053:AccessControlFamily nist80053:ControlFamily)
+(def-concept nist80053:AuditAccountabilityFamily nist80053:ControlFamily)
+(def-concept nist80053:ConfigurationManagementFamily nist80053:ControlFamily)
+(def-concept nist80053:IdentificationAuthenticationFamily nist80053:ControlFamily)
+(def-concept nist80053:SystemCommunicationsProtectionFamily nist80053:ControlFamily)
+(def-concept nist80053:SystemInformationIntegrityFamily nist80053:ControlFamily)
+
+;; ----------------------------------------------------------------------------
+;; NIST SP 800-53 Security Controls
+;; ----------------------------------------------------------------------------
+(def-concept nist80053:SecurityControl cco:DirectiveICE)
+
+(def-concept nist80053:AC_2_AccountManagement nist80053:SecurityControl)
+(def-concept nist80053:AC_3_AccessEnforcement nist80053:SecurityControl)
+(def-concept nist80053:AU_2_EventLogging nist80053:SecurityControl)
+(def-concept nist80053:CM_2_BaselineConfiguration nist80053:SecurityControl)
+(def-concept nist80053:IA_2_IdentificationAuthentication nist80053:SecurityControl)
+(def-concept nist80053:SC_7_BoundaryProtection nist80053:SecurityControl)
+(def-concept nist80053:SC_13_CryptographicProtection nist80053:SecurityControl)
+(def-concept nist80053:SI_4_InformationSystemMonitoring nist80053:SecurityControl)
+
+;; ----------------------------------------------------------------------------
+;; OSCAL Machine-Readable Compliance Models & Baselines
+;; ----------------------------------------------------------------------------
+(def-concept oscal:ControlBaseline cco:DirectiveICE)
+
+(def-concept oscal:LowBaseline oscal:ControlBaseline)
+(def-concept oscal:ModerateBaseline oscal:ControlBaseline)
+(def-concept oscal:HighBaseline oscal:ControlBaseline)
+
+(def-concept oscal:SystemSecurityPlan cco:DescriptiveICE)
+(def-concept oscal:AssessmentFinding cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; Control & Compliance Properties
+;; ----------------------------------------------------------------------------
+(def-property nist80053:control_id nist80053:SecurityControl String)
+(def-property nist80053:control_title nist80053:SecurityControl String)
+(def-property nist80053:family_code nist80053:ControlFamily String)
+(def-property nist80053:is_implemented nist80053:SecurityControl Boolean)
+(def-property nist80053:compliance_score nist80053:SecurityControl Double)
+(def-property nist80053:audit_frequency_days nist80053:SecurityControl Integer)
+(def-property oscal:ssp_version oscal:SystemSecurityPlan String)
+
+;; ----------------------------------------------------------------------------
+;; Compliance & Traceability Relations
+;; ----------------------------------------------------------------------------
+(def-relation nist80053:belongs_to_family nist80053:SecurityControl nist80053:ControlFamily)
+(def-relation nist80053:implements_control cco:Artifact nist80053:SecurityControl)
+(def-relation nist80053:maps_to_csf nist80053:SecurityControl csf:CSFCategory)
+(def-relation nist80053:mitigates_vulnerability nist80053:SecurityControl stix:Vulnerability)
+(def-relation oscal:included_in_baseline nist80053:SecurityControl oscal:ControlBaseline)
+(def-relation oscal:documents_system oscal:SystemSecurityPlan cco:EngineeredSystem)
+
+;; ----------------------------------------------------------------------------
+;; First-Order Logic Compliance Rules & Constraints
+;; ----------------------------------------------------------------------------
+
+(forall (c)
+  (implies (nist80053:SecurityControl c)
+           (and (gte nist80053:compliance_score 0.0)
+                (lte nist80053:compliance_score 100.0))))
+
+(forall (c)
+  (implies (nist80053:SecurityControl c)
+           (gte nist80053:audit_frequency_days 1)))

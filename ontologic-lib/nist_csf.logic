@@ -1,0 +1,45 @@
+;; ============================================================================
+;; TIER 3.7: NIST Cybersecurity Framework (CSF 2.0) Ontology
+;; Grounded in NIST CSF 2.0 Functions, Categories, and CCO Hierarchy
+;; ============================================================================
+
+(import "cco_core.logic")
+
+(namespace csf "https://csrc.nist.gov/projects/cybersecurity-framework/")
+
+;; ----------------------------------------------------------------------------
+;; NIST CSF 2.0 Core Functions
+;; ----------------------------------------------------------------------------
+(def-concept csf:CSFFunction cco:DirectiveICE)
+
+(def-concept csf:Govern csf:CSFFunction)
+(def-concept csf:Identify csf:CSFFunction)
+(def-concept csf:Protect csf:CSFFunction)
+(def-concept csf:Detect csf:CSFFunction)
+(def-concept csf:Respond csf:CSFFunction)
+(def-concept csf:Recover csf:CSFFunction)
+
+;; ----------------------------------------------------------------------------
+;; NIST CSF 2.0 Categories
+;; ----------------------------------------------------------------------------
+(def-concept csf:CSFCategory cco:DirectiveICE)
+
+(def-concept csf:AssetManagement csf:CSFCategory)
+(def-concept csf:RiskAssessment csf:CSFCategory)
+(def-concept csf:IdentityManagementAccessControl csf:CSFCategory)
+(def-concept csf:DataSecurity csf:CSFCategory)
+(def-concept csf:ContinuousMonitoring csf:CSFCategory)
+(def-concept csf:IncidentManagement csf:CSFCategory)
+
+;; ----------------------------------------------------------------------------
+;; CSF Properties
+;; ----------------------------------------------------------------------------
+(def-property csf:function_id csf:CSFFunction String)
+(def-property csf:category_id csf:CSFCategory String)
+(def-property csf:category_name csf:CSFCategory String)
+
+;; ----------------------------------------------------------------------------
+;; CSF Relations
+;; ----------------------------------------------------------------------------
+(def-relation csf:has_category csf:CSFFunction csf:CSFCategory)
+(def-relation csf:applies_to_system csf:CSFCategory cco:EngineeredSystem)

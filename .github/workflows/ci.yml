@@ -1,0 +1,179 @@
+name: CI
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+on:
+  push:
+    # Feature branches are covered by their pull_request run; also pushing them
+    # here ran CI twice per change (the two refs never share a concurrency group).
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '**.svg'
+      - '.codegraph/**'
+      - 'LICENSE'
+  pull_request:
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - '**.svg'
+      - '.codegraph/**'
+      - 'LICENSE'
+
+permissions:
+  contents: read
+
+jobs:
+  haskell-test:
+    name: Haskell Build & Test
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, vm]  # self-hosted runner in a KVM guest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install SMT solvers & Vampire ATP
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y z3
+          sudo apt-get install -y cvc5 || {
+            curl -fsSL -o /tmp/cvc5.zip https://github.com/cvc5/cvc5/releases/download/cvc5-1.2.0/cvc5-Linux-x86_64-static.zip
+            unzip -q /tmp/cvc5.zip -d /tmp/cvc5
+            sudo install -m 0755 "$(find /tmp/cvc5 -type f -name cvc5 | head -1)" /usr/local/bin/cvc5
+          }
+          curl -fsSL -o /tmp/vampire https://github.com/vprover/vampire/releases/download/v4.9casc2024/vampire || true
+          if [ -s /tmp/vampire ]; then
+            sudo install -m 0755 /tmp/vampire /usr/local/bin/vampire
+            vampire --version || true
+          fi
+          z3 --version
+          cvc5 --version
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Set up Python 3
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python Dependencies
+        run: |
+          # rdflib: IriSpec resolves the OWL and SHACL output with a real RDF parser (#49)
+          pip install pydantic rdflib
+
+      - name: Set up Node for the TypeScript check
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Set up Go for the Go check
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Set up Rust for the Rust check
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install the d2 CLI for the diagram check
+        run: |
+          curl -fsSL -o /tmp/d2.tar.gz \
+            https://github.com/terrastruct/d2/releases/download/v0.9.0/d2-v0.9.0-linux-amd64.tar.gz
+          tar -xzf /tmp/d2.tar.gz -C /tmp
+          sudo install -m 0755 "$(find /tmp -type f -name d2 -perm -u+x | head -1)" /usr/local/bin/d2
+
+      - name: Toolchain versions for generated-code tests
+        run: |
+          go version
+          rustc --version
+          node --version && npm --version
+          d2 --version
+          python3 -c "import pydantic; print('pydantic', pydantic.VERSION)"
+          python3 -c "import rdflib; print('rdflib', rdflib.__version__)"
+
+      - name: Cache Stack dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.stack
+            .stack-work
+          key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml', 'package.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-stack-
+
+      # Every stack call in this workflow (both jobs) passes the same
+      # --ghc-options: stack recompiles the package whenever they change, and
+      # the two jobs share one .stack-work cache.
+      - name: Install Stack dependencies & Build
+        run: |
+          stack build --test --no-run-tests --ghc-options="-Wall -Werror"
+
+      - name: Warm Gradle dependencies for Java validation smoke test
+        run: |
+          chmod +x gradlew
+          ./gradlew :models-java:compileJava
+
+      - name: Run Haskell Test Suite
+        env:
+          # Turn a missing toolchain into a failure: the generated-code checks in
+          # CompileSpec must actually run here, not silently report PENDING. This covers
+          # go, rustc, pydantic, npm, d2 and rdflib — the ones installed above. The genuinely
+          # optional checks (mmdc, which pulls chromium, and the neo4j service) use
+          # withOptionalTool and always skip when absent.
+          ONTOLOGIC_REQUIRE_TOOLCHAINS: '1'
+        run: |
+          stack test --ghc-options="-Wall -Werror"
+
+  java-gradle-test:
+    name: Java & Gradle Verification
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: [self-hosted, linux, vm]  # self-hosted runner in a KVM guest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Cache Stack dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.stack
+            .stack-work
+          key: ${{ runner.os }}-stack-${{ hashFiles('stack.yaml', 'package.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-stack-
+
+      - name: Build OntoLogic CLI
+        run: |
+          stack build --ghc-options="-Wall -Werror"
+
+      - name: Run Gradle Build & Verification
+        run: |
+          chmod +x gradlew
+          ./gradlew clean build test

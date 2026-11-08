@@ -1,0 +1,115 @@
+;; ============================================================================
+;; TIER 3: Autonomous AI & Multi-Agent Swarm Ontology (AI-MAS)
+;; Grounded in BFO 2020 (ISO/IEC 21838-2) and Common Core Ontologies (CCO)
+;; ============================================================================
+
+(import "cco_core.logic")
+
+(namespace ai "http://bsommers.github.io/ontologic/autonomous_ai#")
+
+;; ----------------------------------------------------------------------------
+;; 1. Agents, Swarms & Roles
+;; ----------------------------------------------------------------------------
+(def-concept ai:AutonomousAgent cco:AutonomousSoftwareAgent)
+(def-concept ai:Subagent ai:AutonomousAgent)
+(def-concept ai:AgentSwarm cco:AgentSwarm)
+
+(def-concept ai:AgentRole cco:AgentRole)
+(def-concept ai:PlannerRole ai:AgentRole)
+(def-concept ai:CoderRole ai:AgentRole)
+(def-concept ai:ReviewerRole ai:AgentRole)
+(def-concept ai:AuditorRole ai:AgentRole)
+(def-concept ai:CoordinatorRole ai:AgentRole)
+
+;; ----------------------------------------------------------------------------
+;; 2. Foundation Models, Runtimes & Inference
+;; ----------------------------------------------------------------------------
+(def-concept ai:FoundationModel cco:SoftwareArtifact)
+(def-concept ai:ModelFamily cco:DescriptiveICE)
+(def-concept ai:ContextWindow cco:MeasurementICE)
+(def-concept ai:TokenLimit cco:MeasurementICE)
+
+;; ----------------------------------------------------------------------------
+;; 3. Prompts, Directives & Transcripts
+;; ----------------------------------------------------------------------------
+(def-concept ai:Prompt cco:DirectiveICE)
+(def-concept ai:SystemPrompt ai:Prompt)
+(def-concept ai:UserPrompt ai:Prompt)
+(def-concept ai:FewShotExample cco:DescriptiveICE)
+(def-concept ai:ConversationTranscript cco:DescriptiveICE)
+(def-concept ai:ReasoningTrace cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; 4. Tools, Capabilities & MCP Infrastructure
+;; ----------------------------------------------------------------------------
+(def-concept ai:Tool cco:SoftwareArtifact)
+(def-concept ai:MCPTool ai:Tool)
+(def-concept ai:MCPServer cco:EngineeredSystem)
+(def-concept ai:ToolDefinition cco:DirectiveICE)
+(def-concept ai:ToolCall cco:Act)
+(def-concept ai:ToolResult cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; 5. Execution Processes (Occurrents)
+;; ----------------------------------------------------------------------------
+(def-concept ai:AgentTaskExecution cco:PlannedProcess)
+(def-concept ai:LLMInference cco:PlannedProcess)
+(def-concept ai:ToolExecution cco:PlannedProcess)
+(def-concept ai:SwarmCoordinationProcess cco:PlannedProcess)
+
+;; ----------------------------------------------------------------------------
+;; 6. Evaluations, Benchmarks & Quality Gates
+;; ----------------------------------------------------------------------------
+(def-concept ai:EvaluationSuite cco:DirectiveICE)
+(def-concept ai:EvaluationTask cco:ActOfVerification)
+(def-concept ai:QualityGate cco:ActOfVerification)
+(def-concept ai:BenchmarkScore cco:MeasurementICE)
+(def-concept ai:AssertionVerdict cco:DescriptiveICE)
+
+;; ----------------------------------------------------------------------------
+;; 7. Domain Relations
+;; ----------------------------------------------------------------------------
+(def-relation ai:belongs_to_swarm ai:AutonomousAgent ai:AgentSwarm)
+(def-relation ai:spawns_subagent ai:AutonomousAgent ai:Subagent)
+(def-relation ai:executes_task ai:AutonomousAgent ai:AgentTaskExecution)
+(def-relation ai:uses_model ai:AutonomousAgent ai:FoundationModel)
+(def-relation ai:guided_by_prompt ai:AgentTaskExecution ai:Prompt)
+(def-relation ai:invokes_tool ai:AgentTaskExecution ai:Tool)
+(def-relation ai:hosted_on_server ai:MCPTool ai:MCPServer)
+(def-relation ai:evaluated_by ai:AutonomousAgent ai:EvaluationTask)
+(def-relation ai:produces_score ai:EvaluationTask ai:BenchmarkScore)
+(def-relation ai:enforces_gate ai:AgentSwarm ai:QualityGate)
+
+;; ----------------------------------------------------------------------------
+;; 8. Properties & Quantifiable Measurements
+;; ----------------------------------------------------------------------------
+(def-property ai:agent_identifier ai:AutonomousAgent String)
+(def-property ai:max_tokens ai:FoundationModel Integer)
+(def-property ai:context_window_size ai:FoundationModel Integer)
+(def-property ai:timeout_seconds ai:AgentTaskExecution Integer)
+(def-property ai:score_percent ai:BenchmarkScore Float)
+(def-property ai:is_sandboxed ai:ToolExecution Boolean)
+
+;; ----------------------------------------------------------------------------
+;; 9. First-Order Logic Axioms & Operational Bounds
+;; ----------------------------------------------------------------------------
+(def-axiom "FoundationModel has positive token capacity"
+  (forall (m)
+    (implies (ai:FoundationModel m)
+             (gt ai:max_tokens 0))))
+
+(def-axiom "Context window size must be positive"
+  (forall (m)
+    (implies (ai:FoundationModel m)
+             (gt ai:context_window_size 0))))
+
+(def-axiom "Task execution timeout must be positive"
+  (forall (t)
+    (implies (ai:AgentTaskExecution t)
+             (gt ai:timeout_seconds 0))))
+
+(def-axiom "Benchmark score is percentage bounded between 0 and 100"
+  (forall (s)
+    (implies (ai:BenchmarkScore s)
+             (and (gte ai:score_percent 0.0)
+                  (lte ai:score_percent 100.0)))))

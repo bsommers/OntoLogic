@@ -1,0 +1,57 @@
+;; ============================================================================
+;; TIER 3.4: MITRE ATLAS Adversarial Machine Learning & AI Threat Matrix
+;; Grounded in MITRE ATLAS Matrix, MITRE ATT&CK, and CCO Hierarchy
+;; ============================================================================
+
+(import "mitre_attack.logic")
+
+(namespace atlas "https://atlas.mitre.org/")
+
+;; ----------------------------------------------------------------------------
+;; AI Models & Inference System Concepts
+;; ----------------------------------------------------------------------------
+(def-concept atlas:AIModel cco:SoftwareArtifact)
+(def-concept atlas:AIInferenceProcess cco:PlannedProcess)
+(def-concept atlas:AITrainingProcess cco:PlannedProcess)
+
+;; ----------------------------------------------------------------------------
+;; ATLAS Adversarial AI Techniques (Specializing ATT&CK Techniques)
+;; ----------------------------------------------------------------------------
+(def-concept atlas:ATLASTechnique attack:AttackTechnique)
+
+(def-concept atlas:LLMPromptInjection atlas:ATLASTechnique)
+(def-concept atlas:DirectPromptInjection atlas:LLMPromptInjection)
+(def-concept atlas:IndirectPromptInjection atlas:LLMPromptInjection)
+(def-concept atlas:AdversarialEvasion atlas:ATLASTechnique)
+(def-concept atlas:TrainingDataPoisoning atlas:ATLASTechnique)
+(def-concept atlas:ModelInversion atlas:ATLASTechnique)
+(def-concept atlas:ModelExtraction atlas:ATLASTechnique)
+(def-concept atlas:LLMHallucinationExploitation atlas:ATLASTechnique)
+(def-concept atlas:RAGRetrievalInjection atlas:ATLASTechnique)
+(def-concept atlas:ModelDenialOfService atlas:ATLASTechnique)
+
+;; ----------------------------------------------------------------------------
+;; AI Guardrails & Mitigations (Specializing ATT&CK Mitigations)
+;; ----------------------------------------------------------------------------
+(def-concept atlas:AIGuardrailMitigation attack:AttackMitigation)
+(def-concept atlas:InputFilterGuardrail atlas:AIGuardrailMitigation)
+(def-concept atlas:OutputSanitizerGuardrail atlas:AIGuardrailMitigation)
+(def-concept atlas:VectorDBSanitizer atlas:AIGuardrailMitigation)
+(def-concept atlas:DifferentialPrivacyEnforcer atlas:AIGuardrailMitigation)
+
+;; ----------------------------------------------------------------------------
+;; ATLAS Properties
+;; ----------------------------------------------------------------------------
+(def-property atlas:atlas_id atlas:ATLASTechnique String)
+(def-property atlas:model_name atlas:AIModel String)
+(def-property atlas:model_version atlas:AIModel String)
+(def-property atlas:context_window_tokens atlas:AIModel Integer)
+(def-property atlas:parameter_count_billions atlas:AIModel Double)
+
+;; ----------------------------------------------------------------------------
+;; ATLAS Relations
+;; ----------------------------------------------------------------------------
+(def-relation atlas:targets_model atlas:ATLASTechnique atlas:AIModel)
+(def-relation atlas:executes_inference atlas:AIModel atlas:AIInferenceProcess)
+(def-relation atlas:mitigated_by_guardrail atlas:ATLASTechnique atlas:AIGuardrailMitigation)
+(def-relation atlas:protects_model atlas:AIGuardrailMitigation atlas:AIModel)

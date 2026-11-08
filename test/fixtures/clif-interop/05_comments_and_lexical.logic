@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 OntoLogic Contributors
+ * SPDX-License-Identifier: Apache-2.0
+ * Multi-line C-style block comment header
+ */
+
+// C-style line comment
+; Lisp-style line comment
+
+#|
+  Scheme and Common Logic (CLIF) style
+  nested block comment block
+|#
+
+(def-concept Component)
+(def-individual cpu Component)
+
+(forall (x)
+  (implies (Component x)
+    (active x)))

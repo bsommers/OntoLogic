@@ -1,0 +1,12 @@
+; Copyright (c) 2026 OntoLogic Contributors
+; SPDX-License-Identifier: Apache-2.0
+
+(def-concept MathEntity)
+(def-individual val1 MathEntity)
+(def-individual val2 MathEntity)
+
+(+ val1 val2)
+(< val1 val2)
+(prop.data/field*x val1)
+(forall-elements val1)
+(android-kernel val2)

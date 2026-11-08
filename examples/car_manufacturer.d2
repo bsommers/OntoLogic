@@ -1,0 +1,52 @@
+"Asset": { shape: class }
+"Vehicle": { shape: class }
+"SUV": { shape: class }
+"Sedan": { shape: class }
+"Truck": { shape: class }
+"Equipment": { shape: class }
+"Station": { shape: class }
+"Robot": { shape: class }
+"WeldingRobot": { shape: class }
+"PaintingRobot": { shape: class }
+"AssemblyRobot": { shape: class }
+"Scanner": { shape: class }
+"OpticalScanner": { shape: class }
+"LaserScanner": { shape: class }
+"BluewristScanner": { shape: class }
+"SafetySystem": { shape: class }
+"LightCurtain": { shape: class }
+
+"Vehicle" -> "Asset"
+"SUV" -> "Vehicle"
+"Sedan" -> "Vehicle"
+"Truck" -> "Vehicle"
+"Equipment" -> "Asset"
+"Station" -> "Equipment"
+"Robot" -> "Equipment"
+"WeldingRobot" -> "Robot"
+"PaintingRobot" -> "Robot"
+"AssemblyRobot" -> "Robot"
+"Scanner" -> "Equipment"
+"OpticalScanner" -> "Scanner"
+"LaserScanner" -> "Scanner"
+"BluewristScanner" -> "LaserScanner"
+"SafetySystem" -> "Equipment"
+"LightCurtain" -> "SafetySystem"
+"Vehicle"."vin": String
+"Vehicle"."model_year": Integer
+"Vehicle"."weld_count": Integer
+"Vehicle"."is_painted": Boolean
+"Vehicle"."is_quality_approved": Boolean
+"Vehicle"."paint_color": String
+"Station"."station_id": String
+"Equipment"."is_active": Boolean
+"Equipment"."temperature": Integer
+"Robot"."current_job": String
+"Scanner"."defect_detected": Boolean
+"Scanner"."scan_resolution_microns": Integer
+"SafetySystem"."barrier_active": Boolean
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall v (Vehicle(v) and is_painted() implies not paint_color = None)
+#   forall r (Robot(r) and is_active() implies exists s (LightCurtain(s) and barrier_active = True))
+#   forall w (WeldingRobot(w) and gt(temperature, 200) implies is_active = False)
+#   forall s (BluewristScanner(s) and defect_detected = True implies forall v (not is_quality_approved = True))

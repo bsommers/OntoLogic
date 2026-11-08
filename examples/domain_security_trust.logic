@@ -1,0 +1,94 @@
+; --- BFO Upper Level ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+
+(def-concept GDC Continuant) ; Generically Dependent Continuant
+(def-concept InformationContentEntity GDC)
+
+(def-concept SDC Continuant) ; Specifically Dependent Continuant
+(def-concept RealizableEntity SDC)
+(def-concept Role RealizableEntity)
+(def-concept Function RealizableEntity)
+
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+
+; --- Digital Trust & Security Domain ---
+
+(def-concept SoftwareComponent Object) ; Software component host / runtime container
+(def-concept SoftwareCode InformationContentEntity) ; The Code specification (ICE)
+
+; Security Artifacts (Information)
+(def-concept SecurityArtifact InformationContentEntity)
+(def-concept DigitalCertificate SecurityArtifact)
+(def-concept PrivateKey SecurityArtifact)
+(def-concept PublicKey SecurityArtifact)
+(def-concept AccessControlList SecurityArtifact)
+(def-concept SecurityPolicy SecurityArtifact)
+(def-concept AuditLog SecurityArtifact)
+
+; Threat Modeling
+(def-concept ThreatModelEntity InformationContentEntity)
+(def-concept Vulnerability ThreatModelEntity)
+(def-concept AttackVector ThreatModelEntity)
+(def-concept Mitigation ThreatModelEntity)
+
+; Processes
+(def-concept SecurityProcess Process)
+(def-concept AuthenticationProcess SecurityProcess)
+(def-concept AuthorizationProcess SecurityProcess)
+(def-concept EncryptionProcess SecurityProcess)
+(def-concept KeyRotationProcess SecurityProcess)
+(def-concept PenetrationTestingProcess SecurityProcess)
+(def-concept ComputingProcess Process)
+(def-concept SoftwareProcess ComputingProcess) ; Running program execution (Occurrent)
+
+; Roles
+(def-concept SecurityRole Role)
+(def-concept CISORole SecurityRole)
+(def-concept SecurityAnalystRole SecurityRole)
+(def-concept AttackerRole SecurityRole)
+(def-concept TrustedRole Role)
+
+; Properties & Relations
+(def-property is_valid DigitalCertificate Boolean)
+(def-property key_length PrivateKey Integer) ; bits
+(def-property has_vulnerability SoftwareComponent Boolean) ; Cross-domain property
+(def-property encryption_enabled SecurityArtifact Boolean) 
+(def-property risk_score Vulnerability Integer) ; 1-10 (CVSS proxy)
+
+; BFO Relations
+(def-property participates_in Object Process)
+(def-property bearer_of Object Role)
+(def-property realizes Process RealizableEntity)
+(def-property concretizes InformationContentEntity Process)
+
+; Axioms
+
+; 1. Trust: Valid Certificate implies TrustedRole
+(forall (c)
+    (implies (and (DigitalCertificate c) (eq is_valid True))
+             (exists (r) (TrustedRole r))))
+
+; 2. Compliance: High Risk Vulnerability requires Mitigation
+(forall (v)
+    (implies (and (Vulnerability v) (gt risk_score 7))
+             (exists (m) (Mitigation m))))
+
+; 3. Encryption: Private Keys must be strong (> 2048 bits)
+(forall (k)
+    (implies (PrivateKey k) (gte key_length 2048)))
+
+; 4. Access Control: Authorization requires a Policy
+(forall (p)
+    (implies (AuthorizationProcess p) 
+             (exists (pol) (SecurityPolicy pol))))
+
+; 5. Software Execution: Running SoftwareProcess concretizes SoftwareCode
+(forall (p)
+    (implies (SoftwareProcess p)
+             (exists (c) (and (SoftwareCode c) (concretizes c p)))))
+

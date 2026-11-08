@@ -1,0 +1,53 @@
+classDiagram
+    class Asset["Asset"]
+    class Vehicle["Vehicle"]
+    class SUV["SUV"]
+    class Sedan["Sedan"]
+    class Truck["Truck"]
+    class Equipment["Equipment"]
+    class Station["Station"]
+    class Robot["Robot"]
+    class WeldingRobot["WeldingRobot"]
+    class PaintingRobot["PaintingRobot"]
+    class AssemblyRobot["AssemblyRobot"]
+    class Scanner["Scanner"]
+    class OpticalScanner["OpticalScanner"]
+    class LaserScanner["LaserScanner"]
+    class BluewristScanner["BluewristScanner"]
+    class SafetySystem["SafetySystem"]
+    class LightCurtain["LightCurtain"]
+    Asset <|-- Vehicle
+    Vehicle <|-- SUV
+    Vehicle <|-- Sedan
+    Vehicle <|-- Truck
+    Asset <|-- Equipment
+    Equipment <|-- Station
+    Equipment <|-- Robot
+    Robot <|-- WeldingRobot
+    Robot <|-- PaintingRobot
+    Robot <|-- AssemblyRobot
+    Equipment <|-- Scanner
+    Scanner <|-- OpticalScanner
+    Scanner <|-- LaserScanner
+    LaserScanner <|-- BluewristScanner
+    Equipment <|-- SafetySystem
+    SafetySystem <|-- LightCurtain
+    Vehicle : +String vin
+    Vehicle : +Integer model_year
+    Vehicle : +Integer weld_count
+    Vehicle : +Boolean is_painted
+    Vehicle : +Boolean is_quality_approved
+    Vehicle : +String paint_color
+    Station : +String station_id
+    Equipment : +Boolean is_active
+    Equipment : +Integer temperature
+    Robot : +String current_job
+    Scanner : +Boolean defect_detected
+    Scanner : +Integer scan_resolution_microns
+    SafetySystem : +Boolean barrier_active
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall v (Vehicle(v) and is_painted() implies not paint_color = None)
+%%   forall r (Robot(r) and is_active() implies exists s (LightCurtain(s) and barrier_active = True))
+%%   forall w (WeldingRobot(w) and gt(temperature, 200) implies is_active = False)
+%%   forall s (BluewristScanner(s) and defect_detected = True implies forall v (not is_quality_approved = True))
