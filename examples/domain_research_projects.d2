@@ -1,0 +1,205 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Organization": { shape: class }
+"University": { shape: class }
+"ResearchInstitute": { shape: class }
+"FundingAgency": { shape: class }
+"PublicFunder": { shape: class }
+"PrivateFoundation": { shape: class }
+"Publisher": { shape: class }
+"EthicsCommittee": { shape: class }
+"Department": { shape: class }
+"ResearchGroup": { shape: class }
+"Investigator": { shape: class }
+"PrincipalInvestigator": { shape: class }
+"CoInvestigator": { shape: class }
+"PostdoctoralResearcher": { shape: class }
+"DoctoralStudent": { shape: class }
+"ResearchParticipant": { shape: class }
+"Reviewer": { shape: class }
+"Author": { shape: class }
+"FundingInstrument": { shape: class }
+"Grant": { shape: class }
+"ProjectGrant": { shape: class }
+"FellowshipGrant": { shape: class }
+"ProposalDocument": { shape: class }
+"Budget": { shape: class }
+"BudgetLine": { shape: class }
+"DataManagementPlan": { shape: class }
+"ProgressReport": { shape: class }
+"FinalReport": { shape: class }
+"ConflictOfInterestDeclaration": { shape: class }
+"ResearchProject": { shape: class }
+"Study": { shape: class }
+"ObservationalStudy": { shape: class }
+"ClinicalTrial": { shape: class }
+"SurveyStudy": { shape: class }
+"ComputationalStudy": { shape: class }
+"HumanSubjectsStudy": { shape: class }
+"Experiment": { shape: class }
+"Enrolment": { shape: class }
+"PeerReview": { shape: class }
+"EthicsReview": { shape: class }
+"EthicsApproval": { shape: class }
+"InformedConsent": { shape: class }
+"StudyProtocol": { shape: class }
+"PreRegistration": { shape: class }
+"AdverseEventReport": { shape: class }
+"Dataset": { shape: class }
+"RawDataset": { shape: class }
+"ProcessedDataset": { shape: class }
+"SensitiveDataset": { shape: class }
+"OpenDataset": { shape: class }
+"Metadata": { shape: class }
+"Codebook": { shape: class }
+"Software": { shape: class }
+"Publication": { shape: class }
+"JournalArticle": { shape: class }
+"ConferencePaper": { shape: class }
+"Preprint": { shape: class }
+"Thesis": { shape: class }
+"Citation": { shape: class }
+"Journal": { shape: class }
+"Repository": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Object"
+"Organization" -> "Object"
+"University" -> "Organization"
+"ResearchInstitute" -> "Organization"
+"FundingAgency" -> "Organization"
+"PublicFunder" -> "FundingAgency"
+"PrivateFoundation" -> "FundingAgency"
+"Publisher" -> "Organization"
+"EthicsCommittee" -> "Organization"
+"Department" -> "Organization"
+"ResearchGroup" -> "Organization"
+"Investigator" -> "Role"
+"PrincipalInvestigator" -> "Investigator"
+"CoInvestigator" -> "Investigator"
+"PostdoctoralResearcher" -> "Role"
+"DoctoralStudent" -> "Role"
+"ResearchParticipant" -> "Role"
+"Reviewer" -> "Role"
+"Author" -> "Role"
+"FundingInstrument" -> "InformationContentEntity"
+"Grant" -> "FundingInstrument"
+"ProjectGrant" -> "Grant"
+"FellowshipGrant" -> "Grant"
+"ProposalDocument" -> "InformationContentEntity"
+"Budget" -> "InformationContentEntity"
+"BudgetLine" -> "Budget"
+"DataManagementPlan" -> "InformationContentEntity"
+"ProgressReport" -> "InformationContentEntity"
+"FinalReport" -> "InformationContentEntity"
+"ConflictOfInterestDeclaration" -> "InformationContentEntity"
+"ResearchProject" -> "Process"
+"Study" -> "Process"
+"ObservationalStudy" -> "Study"
+"ClinicalTrial" -> "Study"
+"SurveyStudy" -> "Study"
+"ComputationalStudy" -> "Study"
+"HumanSubjectsStudy" -> "Study"
+"Experiment" -> "Process"
+"Enrolment" -> "Process"
+"PeerReview" -> "Process"
+"EthicsReview" -> "Process"
+"EthicsApproval" -> "InformationContentEntity"
+"InformedConsent" -> "InformationContentEntity"
+"StudyProtocol" -> "InformationContentEntity"
+"PreRegistration" -> "InformationContentEntity"
+"AdverseEventReport" -> "InformationContentEntity"
+"Dataset" -> "InformationContentEntity"
+"RawDataset" -> "Dataset"
+"ProcessedDataset" -> "Dataset"
+"SensitiveDataset" -> "Dataset"
+"OpenDataset" -> "Dataset"
+"Metadata" -> "InformationContentEntity"
+"Codebook" -> "Metadata"
+"Software" -> "InformationContentEntity"
+"Publication" -> "InformationContentEntity"
+"JournalArticle" -> "Publication"
+"ConferencePaper" -> "Publication"
+"Preprint" -> "Publication"
+"Thesis" -> "Publication"
+"Citation" -> "InformationContentEntity"
+"Journal" -> "Object"
+"Repository" -> "Object"
+"Grant"."grant_number": String
+"Grant"."award_amount": Integer
+"Budget"."budget_total": Integer
+"Grant"."grant_active": Boolean
+"ResearchProject"."duration_months": Integer
+"Study"."sample_size": Integer
+"Study"."enrolled_count": Integer
+"Study"."study_started": Boolean
+"Study"."is_preregistered": Boolean
+"EthicsApproval"."approval_valid": Boolean
+"Enrolment"."consent_obtained": Boolean
+"Dataset"."data_is_personal": Boolean
+"Dataset"."data_is_anonymised": Boolean
+"Dataset"."data_is_public": Boolean
+"Dataset"."has_metadata": Boolean
+"Publication"."doi": String
+"Publication"."is_peer_reviewed": Boolean
+"Publication"."author_count": Integer
+"Publication"."has_coi_declared": Boolean
+"Person"."h_index": Integer
+"Grant" -> "FundingAgency": awarded_by
+"Grant" -> "Organization": held_by
+"Grant" -> "PrincipalInvestigator": led_by
+"ResearchProject" -> "Grant": funds
+"Grant" -> "Budget": has_budget
+"Budget" -> "BudgetLine": includes_line
+"ProposalDocument" -> "ResearchProject": proposes
+"Person" -> "Organization": employed_by
+"Person" -> "ResearchGroup": member_of
+"Investigator" -> "Study": conducts
+"Study" -> "ResearchProject": part_of_project
+"Study" -> "StudyProtocol": governed_by
+"Study" -> "EthicsApproval": approved_by_ethics
+"EthicsApproval" -> "EthicsCommittee": issued_by
+"Enrolment" -> "ResearchParticipant": enrols
+"Enrolment" -> "Study": enrolment_in
+"Enrolment" -> "InformedConsent": has_consent
+"Study" -> "Dataset": generates
+"ProcessedDataset" -> "RawDataset": derived_from_dataset
+"Dataset" -> "Metadata": described_by
+"Dataset" -> "Repository": deposited_in
+"ResearchProject" -> "DataManagementPlan": governed_by_plan
+"Publication" -> "Study": reports_on
+"Publication" -> "Dataset": uses_dataset
+"Publication" -> "Author": authored_by
+"Publication" -> "Journal": published_in
+"Publication" -> "Publication": cites
+"Publication" -> "Grant": acknowledges
+"Publication" -> "Reviewer": reviewed_by
+"ConflictOfInterestDeclaration" -> "Author": declares
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall s (HumanSubjectsStudy(s) and study_started = True implies exists a (approved_by_ethics(s, a)))
+#   forall e (Enrolment(e) implies exists c (has_consent(e, c)))
+#   forall g (Grant(g) and grant_active = True implies exists b (has_budget(g, b)))
+#   forall d (Dataset(d) and data_is_personal = True and data_is_public = True implies data_is_anonymised = True)
+#   forall d (Dataset(d) and data_is_public = True implies has_metadata = True)
+#   forall p (Publication(p) and is_peer_reviewed = True implies exists r (reviewed_by(p, r)))
+#   forall p (Publication(p) and is_peer_reviewed = True implies has_coi_declared = True)
+#   forall x (not Study(x) and Publication(x))
+#   forall x (not Organization(x) and Person(x))
+#   forall x (not RawDataset(x) and ProcessedDataset(x))

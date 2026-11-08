@@ -1,0 +1,197 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"Requirement": { shape: class }
+"StakeholderNeed": { shape: class }
+"SystemRequirement": { shape: class }
+"FunctionalRequirement": { shape: class }
+"PerformanceRequirement": { shape: class }
+"InterfaceRequirement": { shape: class }
+"SafetyRequirement": { shape: class }
+"SecurityRequirement": { shape: class }
+"ReliabilityRequirement": { shape: class }
+"ConstraintRequirement": { shape: class }
+"DerivedRequirement": { shape: class }
+"ComponentRequirement": { shape: class }
+"AcceptanceCriterion": { shape: class }
+"SystemElement": { shape: class }
+"System": { shape: class }
+"Subsystem": { shape: class }
+"Assembly": { shape: class }
+"Component": { shape: class }
+"HardwareComponent": { shape: class }
+"SoftwareComponent": { shape: class }
+"COTSComponent": { shape: class }
+"Interface": { shape: class }
+"ElectricalInterface": { shape: class }
+"MechanicalInterface": { shape: class }
+"DataInterface": { shape: class }
+"Port": { shape: class }
+"DesignArtifact": { shape: class }
+"ArchitectureModel": { shape: class }
+"InterfaceControlDocument": { shape: class }
+"Specification": { shape: class }
+"Baseline": { shape: class }
+"FunctionalBaseline": { shape: class }
+"AllocatedBaseline": { shape: class }
+"ProductBaseline": { shape: class }
+"VerificationActivity": { shape: class }
+"Inspection": { shape: class }
+"Analysis": { shape: class }
+"Demonstration": { shape: class }
+"Test": { shape: class }
+"UnitTest": { shape: class }
+"IntegrationTest": { shape: class }
+"SystemQualificationTest": { shape: class }
+"ValidationActivity": { shape: class }
+"VerificationEvidence": { shape: class }
+"TestProcedure": { shape: class }
+"TestResult": { shape: class }
+"Nonconformance": { shape: class }
+"ChangeRequest": { shape: class }
+"EngineeringChangeProposal": { shape: class }
+"WaiverRequest": { shape: class }
+"ChangeBoard": { shape: class }
+"ChangeImpactAssessment": { shape: class }
+"ChangeImplementation": { shape: class }
+"Stakeholder": { shape: class }
+"SystemsEngineer": { shape: class }
+"RequirementOwner": { shape: class }
+"VerificationEngineer": { shape: class }
+"ConfigurationManager": { shape: class }
+"LifecycleStage": { shape: class }
+"ConceptStage": { shape: class }
+"DevelopmentStage": { shape: class }
+"ProductionStage": { shape: class }
+"DesignReview": { shape: class }
+"TraceabilityLink": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Requirement" -> "InformationContentEntity"
+"StakeholderNeed" -> "Requirement"
+"SystemRequirement" -> "Requirement"
+"FunctionalRequirement" -> "SystemRequirement"
+"PerformanceRequirement" -> "SystemRequirement"
+"InterfaceRequirement" -> "SystemRequirement"
+"SafetyRequirement" -> "SystemRequirement"
+"SecurityRequirement" -> "SystemRequirement"
+"ReliabilityRequirement" -> "SystemRequirement"
+"ConstraintRequirement" -> "SystemRequirement"
+"DerivedRequirement" -> "SystemRequirement"
+"ComponentRequirement" -> "Requirement"
+"AcceptanceCriterion" -> "InformationContentEntity"
+"SystemElement" -> "Object"
+"System" -> "SystemElement"
+"Subsystem" -> "SystemElement"
+"Assembly" -> "SystemElement"
+"Component" -> "SystemElement"
+"HardwareComponent" -> "Component"
+"SoftwareComponent" -> "Component"
+"COTSComponent" -> "Component"
+"Interface" -> "Object"
+"ElectricalInterface" -> "Interface"
+"MechanicalInterface" -> "Interface"
+"DataInterface" -> "Interface"
+"Port" -> "Object"
+"DesignArtifact" -> "InformationContentEntity"
+"ArchitectureModel" -> "DesignArtifact"
+"InterfaceControlDocument" -> "DesignArtifact"
+"Specification" -> "DesignArtifact"
+"Baseline" -> "InformationContentEntity"
+"FunctionalBaseline" -> "Baseline"
+"AllocatedBaseline" -> "Baseline"
+"ProductBaseline" -> "Baseline"
+"VerificationActivity" -> "Process"
+"Inspection" -> "VerificationActivity"
+"Analysis" -> "VerificationActivity"
+"Demonstration" -> "VerificationActivity"
+"Test" -> "VerificationActivity"
+"UnitTest" -> "Test"
+"IntegrationTest" -> "Test"
+"SystemQualificationTest" -> "Test"
+"ValidationActivity" -> "Process"
+"VerificationEvidence" -> "InformationContentEntity"
+"TestProcedure" -> "InformationContentEntity"
+"TestResult" -> "VerificationEvidence"
+"Nonconformance" -> "InformationContentEntity"
+"ChangeRequest" -> "InformationContentEntity"
+"EngineeringChangeProposal" -> "ChangeRequest"
+"WaiverRequest" -> "ChangeRequest"
+"ChangeBoard" -> "Object"
+"ChangeImpactAssessment" -> "InformationContentEntity"
+"ChangeImplementation" -> "Process"
+"Stakeholder" -> "Role"
+"SystemsEngineer" -> "Role"
+"RequirementOwner" -> "Role"
+"VerificationEngineer" -> "Role"
+"ConfigurationManager" -> "Role"
+"LifecycleStage" -> "Process"
+"ConceptStage" -> "LifecycleStage"
+"DevelopmentStage" -> "LifecycleStage"
+"ProductionStage" -> "LifecycleStage"
+"DesignReview" -> "Process"
+"TraceabilityLink" -> "InformationContentEntity"
+"Requirement"."req_id": String
+"Requirement"."req_priority": Integer
+"Requirement"."is_approved": Boolean
+"Requirement"."is_verified": Boolean
+"Requirement"."is_allocated": Boolean
+"Requirement"."is_testable": Boolean
+"SafetyRequirement"."safety_integrity_level": Integer
+"SafetyRequirement"."hazard_analysis_done": Boolean
+"SystemElement"."mass_kg": Integer
+"SystemElement"."mass_budget_kg": Integer
+"SystemElement"."power_draw_w": Integer
+"Component"."tech_readiness_level": Integer
+"DesignArtifact"."is_baselined": Boolean
+"DataInterface"."interface_bandwidth_mbps": Integer
+"VerificationActivity"."verification_passed": Boolean
+"ChangeRequest"."change_status": String
+"ChangeRequest"."change_approved": Boolean
+"ChangeRequest"."impact_assessed": Boolean
+"Nonconformance"."nonconformance_open": Boolean
+"Requirement" -> "Requirement": derives_from
+"SystemElement" -> "Requirement": satisfies
+"Requirement" -> "SystemElement": allocated_to
+"Requirement" -> "VerificationActivity": verified_by
+"VerificationActivity" -> "VerificationEvidence": produces_evidence
+"VerificationActivity" -> "TestProcedure": uses_procedure
+"SystemElement" -> "SystemElement": part_of
+"Interface" -> "Port": connects
+"SystemElement" -> "Port": exposes
+"Interface" -> "InterfaceControlDocument": defined_in
+"InterfaceRequirement" -> "Interface": specifies_interface
+"Requirement" -> "RequirementOwner": owned_by
+"ChangeRequest" -> "Requirement": modifies
+"ChangeRequest" -> "DesignArtifact": modifies_design
+"ChangeRequest" -> "ChangeImpactAssessment": assessed_by
+"ChangeRequest" -> "ChangeBoard": decided_by
+"TraceabilityLink" -> "Requirement": traces_from
+"TraceabilityLink" -> "SystemElement": traces_to
+"Requirement" -> "DesignReview": reviewed_in
+"Nonconformance" -> "VerificationActivity": raised_by
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall r (Requirement(r) and is_approved = True implies is_allocated = True)
+#   forall r (Requirement(r) and is_approved = True implies is_testable = True)
+#   forall r (Requirement(r) and is_verified = True implies exists v (verified_by(r, v)))
+#   forall r (SafetyRequirement(r) and is_approved = True implies hazard_analysis_done = True)
+#   forall c (forall d (ChangeRequest(c) and modifies_design(c, d) implies change_approved = True))
+#   forall c (ChangeRequest(c) and change_approved = True implies impact_assessed = True)
+#   forall i (Interface(i) implies exists p (connects(i, p)))
+#   forall x (not Requirement(x) and SystemElement(x))
+#   forall x (not VerificationActivity(x) and ChangeImplementation(x))

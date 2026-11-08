@@ -1,0 +1,195 @@
+; Domain: Systems engineering (requirements to verification).
+; Models requirements, system elements, interfaces, verification activities,
+; change requests and traceability, with a condensed BFO upper level.
+; Axioms enforce: every approved requirement is verified and allocated, safety
+; requirements need analysis, baselined items change only via approved change
+; requests, interfaces have two ends, and requirement/design artifacts stay disjoint.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Requirements ---
+(def-concept Requirement InformationContentEntity)
+(def-concept StakeholderNeed Requirement)
+(def-concept SystemRequirement Requirement)
+(def-concept FunctionalRequirement SystemRequirement)
+(def-concept PerformanceRequirement SystemRequirement)
+(def-concept InterfaceRequirement SystemRequirement)
+(def-concept SafetyRequirement SystemRequirement)
+(def-concept SecurityRequirement SystemRequirement)
+(def-concept ReliabilityRequirement SystemRequirement)
+(def-concept ConstraintRequirement SystemRequirement)
+(def-concept DerivedRequirement SystemRequirement)
+(def-concept ComponentRequirement Requirement)
+(def-concept AcceptanceCriterion InformationContentEntity)
+
+; --- Design / system elements ---
+(def-concept SystemElement Object)
+(def-concept System SystemElement)
+(def-concept Subsystem SystemElement)
+(def-concept Assembly SystemElement)
+(def-concept Component SystemElement)
+(def-concept HardwareComponent Component)
+(def-concept SoftwareComponent Component)
+(def-concept COTSComponent Component)
+(def-concept Interface Object)
+(def-concept ElectricalInterface Interface)
+(def-concept MechanicalInterface Interface)
+(def-concept DataInterface Interface)
+(def-concept Port Object)
+(def-concept DesignArtifact InformationContentEntity)
+(def-concept ArchitectureModel DesignArtifact)
+(def-concept InterfaceControlDocument DesignArtifact)
+(def-concept Specification DesignArtifact)
+(def-concept Baseline InformationContentEntity)
+(def-concept FunctionalBaseline Baseline)
+(def-concept AllocatedBaseline Baseline)
+(def-concept ProductBaseline Baseline)
+
+; --- Verification ---
+(def-concept VerificationActivity Process)
+(def-concept Inspection VerificationActivity)
+(def-concept Analysis VerificationActivity)
+(def-concept Demonstration VerificationActivity)
+(def-concept Test VerificationActivity)
+(def-concept UnitTest Test)
+(def-concept IntegrationTest Test)
+(def-concept SystemQualificationTest Test)
+(def-concept ValidationActivity Process)
+(def-concept VerificationEvidence InformationContentEntity)
+(def-concept TestProcedure InformationContentEntity)
+(def-concept TestResult VerificationEvidence)
+(def-concept Nonconformance InformationContentEntity)
+
+; --- Change management ---
+(def-concept ChangeRequest InformationContentEntity)
+(def-concept EngineeringChangeProposal ChangeRequest)
+(def-concept WaiverRequest ChangeRequest)
+(def-concept ChangeBoard Object)
+(def-concept ChangeImpactAssessment InformationContentEntity)
+(def-concept ChangeImplementation Process)
+
+; --- Roles and lifecycle ---
+(def-concept Stakeholder Role)
+(def-concept SystemsEngineer Role)
+(def-concept RequirementOwner Role)
+(def-concept VerificationEngineer Role)
+(def-concept ConfigurationManager Role)
+(def-concept LifecycleStage Process)
+(def-concept ConceptStage LifecycleStage)
+(def-concept DevelopmentStage LifecycleStage)
+(def-concept ProductionStage LifecycleStage)
+(def-concept DesignReview Process)
+(def-concept TraceabilityLink InformationContentEntity)
+
+; --- Properties ---
+(def-property req_id Requirement String :cardinality 1..1)
+(def-property req_priority Requirement Integer)
+(def-property is_approved Requirement Boolean)
+(def-property is_verified Requirement Boolean)
+(def-property is_allocated Requirement Boolean)
+(def-property is_testable Requirement Boolean)
+(def-property safety_integrity_level SafetyRequirement Integer)
+(def-property hazard_analysis_done SafetyRequirement Boolean)
+(def-property mass_kg SystemElement Integer)
+(def-property mass_budget_kg SystemElement Integer)
+(def-property power_draw_w SystemElement Integer)
+(def-property tech_readiness_level Component Integer)
+(def-property is_baselined DesignArtifact Boolean)
+(def-property interface_bandwidth_mbps DataInterface Integer)
+(def-property verification_passed VerificationActivity Boolean)
+(def-property change_status ChangeRequest String)
+(def-property change_approved ChangeRequest Boolean)
+(def-property impact_assessed ChangeRequest Boolean)
+(def-property nonconformance_open Nonconformance Boolean)
+
+; --- Relations ---
+(def-relation derives_from Requirement Requirement :cardinality 0..*)
+(def-relation satisfies SystemElement Requirement :cardinality 0..*)
+(def-relation allocated_to Requirement SystemElement)
+(def-relation verified_by Requirement VerificationActivity :cardinality 0..*)
+(def-relation produces_evidence VerificationActivity VerificationEvidence)
+(def-relation uses_procedure VerificationActivity TestProcedure)
+(def-relation part_of SystemElement SystemElement)
+(def-relation connects Interface Port :cardinality 1..*)
+(def-relation exposes SystemElement Port)
+(def-relation defined_in Interface InterfaceControlDocument)
+(def-relation specifies_interface InterfaceRequirement Interface)
+(def-relation owned_by Requirement RequirementOwner)
+(def-relation modifies ChangeRequest Requirement)
+(def-relation modifies_design ChangeRequest DesignArtifact)
+(def-relation assessed_by ChangeRequest ChangeImpactAssessment)
+(def-relation decided_by ChangeRequest ChangeBoard)
+(def-relation traces_from TraceabilityLink Requirement)
+(def-relation traces_to TraceabilityLink SystemElement)
+(def-relation reviewed_in Requirement DesignReview)
+(def-relation raised_by Nonconformance VerificationActivity)
+
+; --- Axioms ---
+; 1. Completeness: an approved requirement must be allocated to a system element.
+(forall (r)
+    (implies (and (Requirement r) (eq is_approved True))
+             (eq is_allocated True)))
+
+; 2. Verifiability: an approved requirement must be testable.
+(forall (r)
+    (implies (and (Requirement r) (eq is_approved True))
+             (eq is_testable True)))
+
+; 3. Verification: a verified requirement is backed by a verification activity.
+(forall (r)
+    (implies (and (Requirement r) (eq is_verified True))
+             (exists (v) (verified_by r v))))
+
+; 4. Safety: a safety requirement needs a completed hazard analysis.
+(forall (r)
+    (implies (and (SafetyRequirement r) (eq is_approved True))
+             (eq hazard_analysis_done True)))
+
+; 5. Integrity level: safety integrity level lies between 1 and 4.
+(forall (r)
+    (implies (SafetyRequirement r)
+             (and (gte safety_integrity_level 1) (lte safety_integrity_level 4))))
+
+; 6. Baseline control: baselined artifacts can only be modified by approved changes.
+(forall (c d)
+    (implies (and (ChangeRequest c) (modifies_design c d))
+             (eq change_approved True)))
+
+; 7. Impact: an approved change must have its impact assessed.
+(forall (c)
+    (implies (and (ChangeRequest c) (eq change_approved True))
+             (eq impact_assessed True)))
+
+; 8. Interfaces: every interface connects at least one port (exact arity 2 is not expressible).
+(forall (i)
+    (implies (Interface i)
+             (exists (p) (connects i p))))
+
+; 9. Budgets: system element mass stays within its budget bounds.
+(forall (e)
+    (implies (SystemElement e)
+             (and (gte mass_kg 0) (lte mass_kg 1000000))))
+
+; 10. Maturity: technology readiness level is within the standard 1 to 9 scale.
+(forall (c)
+    (implies (Component c)
+             (and (gte tech_readiness_level 1) (lte tech_readiness_level 9))))
+
+; 11. Priority range for requirements.
+(forall (r)
+    (implies (Requirement r)
+             (and (gte req_priority 1) (lte req_priority 5))))
+
+; 12. Disjointness: requirements (information) are never design elements (objects).
+(forall (x) (not (and (Requirement x) (SystemElement x))))
+(forall (x) (not (and (VerificationActivity x) (ChangeImplementation x))))

@@ -1,0 +1,13 @@
+# key names
+concept Ticket
+concept SupportAgent
+concept Escalation
+concept ServiceLevelAgreement
+concept PremiumSLA
+concept KnowledgeArticle
+concept Queue
+relation raised_by
+relation escalates
+relation governed_by
+property csat_score
+property reopen_count

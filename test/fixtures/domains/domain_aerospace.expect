@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Aircraft
+concept LifeLimitedPart
+concept AirworthinessCertificate
+concept MaintenanceCheck
+concept CommercialFlight
+relation has_certificate
+relation installed_on
+relation commands
+property is_airworthy
+property hours_since_check
+property flight_cycles

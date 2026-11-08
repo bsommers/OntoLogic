@@ -1,0 +1,159 @@
+; =====================================================================
+; Domain: Customer Service
+; Models support tickets, contact channels, agents, queues, SLAs,
+; escalations and knowledge articles on a condensed BFO upper level.
+; Axioms enforce: SLA integrity (response before resolution targets,
+; priority-driven targets), escalation rules (breached or critical tickets
+; escalate), disjointness of customers and agents, and business rules
+; (closed tickets need a resolution, satisfaction scores are 1-5).
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- People and Organisations ---
+(def-concept Person Agent)
+(def-concept Customer Person)
+(def-concept EnterpriseCustomer Customer)
+(def-concept ConsumerCustomer Customer)
+(def-concept SupportStaff Person)
+(def-concept SupportAgent SupportStaff)
+(def-concept SeniorAgent SupportAgent)
+(def-concept TeamLead SupportStaff)
+(def-concept KnowledgeAuthor SupportStaff)
+(def-concept Bot Agent)
+(def-concept SupportTeam Object)
+(def-concept TierOneTeam SupportTeam)
+(def-concept TierTwoTeam SupportTeam)
+(def-concept EngineeringTeam SupportTeam)
+
+; --- Tickets ---
+(def-concept Ticket InformationContentEntity)
+(def-concept Incident Ticket)
+(def-concept ServiceRequest Ticket)
+(def-concept Question Ticket)
+(def-concept Complaint Ticket)
+(def-concept Problem Ticket)
+(def-concept TicketComment InformationContentEntity)
+(def-concept InternalNote TicketComment)
+(def-concept PublicReply TicketComment)
+(def-concept Resolution InformationContentEntity)
+(def-concept Attachment InformationContentEntity)
+(def-concept SatisfactionSurvey InformationContentEntity)
+
+; --- Priority and Status ---
+(def-concept Priority Quality)
+(def-concept CriticalPriority Priority)
+(def-concept HighPriority Priority)
+(def-concept NormalPriority Priority)
+(def-concept LowPriority Priority)
+(def-concept TicketStatus Quality)
+(def-concept OpenStatus TicketStatus)
+(def-concept PendingStatus TicketStatus)
+(def-concept SolvedStatus TicketStatus)
+(def-concept ClosedStatus TicketStatus)
+
+; --- Channels ---
+(def-concept Channel Object)
+(def-concept EmailChannel Channel)
+(def-concept PhoneChannel Channel)
+(def-concept ChatChannel Channel)
+(def-concept SocialChannel Channel)
+(def-concept PortalChannel Channel)
+
+; --- Queues, SLAs, Escalations ---
+(def-concept Queue Object)
+(def-concept GeneralQueue Queue)
+(def-concept BillingQueue Queue)
+(def-concept TechnicalQueue Queue)
+(def-concept PriorityQueue Queue)
+(def-concept ServiceLevelAgreement InformationContentEntity)
+(def-concept PremiumSLA ServiceLevelAgreement)
+(def-concept StandardSLA ServiceLevelAgreement)
+(def-concept SLABreach Process)
+(def-concept Escalation Process)
+(def-concept ManagerEscalation Escalation)
+(def-concept EngineeringEscalation Escalation)
+(def-concept Assignment Process)
+(def-concept Handover Process)
+
+; --- Knowledge ---
+(def-concept KnowledgeArticle InformationContentEntity)
+(def-concept FAQArticle KnowledgeArticle)
+(def-concept TroubleshootingGuide KnowledgeArticle)
+(def-concept InternalRunbook KnowledgeArticle)
+(def-concept ArticleVersion InformationContentEntity)
+(def-concept MacroTemplate InformationContentEntity)
+
+; --- Properties ---
+(def-property ticket_id Ticket String :cardinality 1..1)
+(def-property first_response_minutes Ticket Integer)
+(def-property resolution_minutes Ticket Integer)
+(def-property reopen_count Ticket Integer)
+(def-property is_breached Ticket Boolean)
+(def-property is_escalated Ticket Boolean)
+(def-property has_resolution Ticket Boolean)
+(def-property csat_score SatisfactionSurvey Integer)
+(def-property response_target_minutes ServiceLevelAgreement Integer)
+(def-property resolution_target_minutes ServiceLevelAgreement Integer)
+(def-property open_ticket_count SupportAgent Integer)
+(def-property max_concurrent_chats SupportAgent Integer)
+(def-property queue_depth Queue Integer)
+(def-property is_published KnowledgeArticle Boolean)
+(def-property helpful_votes KnowledgeArticle Integer)
+(def-property is_internal_only KnowledgeArticle Boolean)
+
+; --- Relations ---
+(def-relation raised_by Ticket Customer :cardinality 1..1)
+(def-relation received_via Ticket Channel)
+(def-relation assigned_to Ticket SupportAgent :cardinality 0..1)
+(def-relation held_in Ticket Queue)
+(def-relation governed_by Ticket ServiceLevelAgreement)
+(def-relation has_priority Ticket Priority :cardinality 1..1)
+(def-relation has_status Ticket TicketStatus :cardinality 1..1)
+(def-relation escalates Escalation Ticket)
+(def-relation escalated_to Escalation SupportTeam)
+(def-relation resolved_with Ticket Resolution)
+(def-relation cites Resolution KnowledgeArticle :cardinality 0..*)
+(def-relation commented_on TicketComment Ticket)
+(def-relation member_of SupportAgent SupportTeam)
+(def-relation staffs SupportTeam Queue)
+(def-relation covers_customer ServiceLevelAgreement Customer)
+(def-relation rates SatisfactionSurvey Ticket)
+(def-relation authored_by KnowledgeArticle KnowledgeAuthor)
+
+; --- Axioms ---
+; 1. Integrity: customers are never support staff
+(forall (x) (not (and (Customer x) (SupportStaff x))))
+; 2. Integrity: bots are not human support staff
+(forall (x) (not (and (Bot x) (SupportStaff x))))
+; 3. Integrity: a ticket is not a knowledge article
+(forall (x) (not (and (Ticket x) (KnowledgeArticle x))))
+; 4. Integrity: the four priority levels are mutually exclusive
+(forall (x) (not (and (CriticalPriority x) (LowPriority x))))
+; 5. Integrity: a ticket cannot be open and closed at once
+(forall (x) (not (and (OpenStatus x) (ClosedStatus x))))
+; 6. SLA: customer satisfaction scores run from 1 to 5
+(forall (s) (implies (SatisfactionSurvey s) (and (gte csat_score 1) (lte csat_score 5))))
+; 7. SLA: premium plans must respond within 60 minutes
+(forall (s) (implies (PremiumSLA s) (lte response_target_minutes 60)))
+; 8. SLA: standard plans respond within a business day (1440 minutes)
+(forall (s) (implies (StandardSLA s) (lte response_target_minutes 1440)))
+; 9. Escalation: a breached ticket must be flagged as escalated
+(forall (t) (implies (and (Ticket t) (eq is_breached True)) (eq is_escalated True)))
+; 10. Escalation: more than 3 reopenings force escalation
+(forall (t) (implies (and (Ticket t) (gt reopen_count 3)) (eq is_escalated True)))
+; 11. Business: an agent never carries more than 5 concurrent chats
+(forall (a) (implies (SupportAgent a) (lte max_concurrent_chats 5)))
+; 12. Business: internal runbooks are never published to customers
+(forall (k) (implies (InternalRunbook k) (eq is_internal_only True)))

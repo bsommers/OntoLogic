@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Incident
+concept Alert
+concept Playbook
+concept PrivilegedAccount
+concept Tier1Analyst
+relation escalates_to
+relation approved_by
+relation handled_by_playbook
+property cvss_score
+property incident_severity
+property is_escalated

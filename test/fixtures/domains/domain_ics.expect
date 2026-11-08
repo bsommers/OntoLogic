@@ -1,0 +1,11 @@
+# Key names asserted to exist in the parsed registry
+concept Plc
+concept SafetyController
+concept Interlock
+concept CriticalAlarm
+concept Level35Dmz
+relation resides_at_level
+relation bypasses
+relation authorised_by
+property sil_level
+property scan_time_ms

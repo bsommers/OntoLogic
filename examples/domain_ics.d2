@@ -1,0 +1,193 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"PurdueLevel": { shape: class }
+"Level0Process": { shape: class }
+"Level1BasicControl": { shape: class }
+"Level2Supervisory": { shape: class }
+"Level3SiteOperations": { shape: class }
+"Level35Dmz": { shape: class }
+"Level4Enterprise": { shape: class }
+"PlantArea": { shape: class }
+"ProcessUnit": { shape: class }
+"ControlZone": { shape: class }
+"SafetyZone": { shape: class }
+"FieldDevice": { shape: class }
+"Sensor": { shape: class }
+"PressureTransmitter": { shape: class }
+"TemperatureTransmitter": { shape: class }
+"LevelTransmitter": { shape: class }
+"FlowTransmitter": { shape: class }
+"GasDetector": { shape: class }
+"Actuator": { shape: class }
+"ControlValve": { shape: class }
+"ShutdownValve": { shape: class }
+"MotorStarter": { shape: class }
+"VariableFrequencyDrive": { shape: class }
+"EmergencyStopButton": { shape: class }
+"Controller": { shape: class }
+"Plc": { shape: class }
+"Rtu": { shape: class }
+"Dcs": { shape: class }
+"SafetyController": { shape: class }
+"IoModule": { shape: class }
+"IndustrialNetwork": { shape: class }
+"FieldbusSegment": { shape: class }
+"ControlNetwork": { shape: class }
+"FirewallConduit": { shape: class }
+"Workstation": { shape: class }
+"ScadaServer": { shape: class }
+"HmiStation": { shape: class }
+"EngineeringWorkstation": { shape: class }
+"Historian": { shape: class }
+"ControlProgram": { shape: class }
+"LadderLogicProgram": { shape: class }
+"SafetyProgram": { shape: class }
+"ControlLoop": { shape: class }
+"PidLoop": { shape: class }
+"SafetyInstrumentedFunction": { shape: class }
+"Interlock": { shape: class }
+"PermissiveInterlock": { shape: class }
+"ProtectiveInterlock": { shape: class }
+"EmergencyShutdown": { shape: class }
+"SafetyInstrumentedSystem": { shape: class }
+"Setpoint": { shape: class }
+"ProcessVariable": { shape: class }
+"AlarmLimit": { shape: class }
+"Alarm": { shape: class }
+"AdvisoryAlarm": { shape: class }
+"StandardAlarm": { shape: class }
+"CriticalAlarm": { shape: class }
+"Bypass": { shape: class }
+"ScanCycle": { shape: class }
+"ProcessTrip": { shape: class }
+"ProofTest": { shape: class }
+"FirmwareChange": { shape: class }
+"OperatorRole": { shape: class }
+"ShiftSupervisorRole": { shape: class }
+"ControlsEngineerRole": { shape: class }
+"SafetyAuthorityRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"PurdueLevel" -> "InformationContentEntity"
+"Level0Process" -> "PurdueLevel"
+"Level1BasicControl" -> "PurdueLevel"
+"Level2Supervisory" -> "PurdueLevel"
+"Level3SiteOperations" -> "PurdueLevel"
+"Level35Dmz" -> "PurdueLevel"
+"Level4Enterprise" -> "PurdueLevel"
+"PlantArea" -> "Site"
+"ProcessUnit" -> "Site"
+"ControlZone" -> "Site"
+"SafetyZone" -> "ControlZone"
+"FieldDevice" -> "Object"
+"Sensor" -> "FieldDevice"
+"PressureTransmitter" -> "Sensor"
+"TemperatureTransmitter" -> "Sensor"
+"LevelTransmitter" -> "Sensor"
+"FlowTransmitter" -> "Sensor"
+"GasDetector" -> "Sensor"
+"Actuator" -> "FieldDevice"
+"ControlValve" -> "Actuator"
+"ShutdownValve" -> "Actuator"
+"MotorStarter" -> "Actuator"
+"VariableFrequencyDrive" -> "Actuator"
+"EmergencyStopButton" -> "FieldDevice"
+"Controller" -> "Object"
+"Plc" -> "Controller"
+"Rtu" -> "Controller"
+"Dcs" -> "Controller"
+"SafetyController" -> "Controller"
+"IoModule" -> "Object"
+"IndustrialNetwork" -> "Object"
+"FieldbusSegment" -> "IndustrialNetwork"
+"ControlNetwork" -> "IndustrialNetwork"
+"FirewallConduit" -> "IndustrialNetwork"
+"Workstation" -> "Object"
+"ScadaServer" -> "Workstation"
+"HmiStation" -> "Workstation"
+"EngineeringWorkstation" -> "Workstation"
+"Historian" -> "Workstation"
+"ControlProgram" -> "InformationContentEntity"
+"LadderLogicProgram" -> "ControlProgram"
+"SafetyProgram" -> "ControlProgram"
+"ControlLoop" -> "Function"
+"PidLoop" -> "ControlLoop"
+"SafetyInstrumentedFunction" -> "Function"
+"Interlock" -> "SafetyInstrumentedFunction"
+"PermissiveInterlock" -> "Interlock"
+"ProtectiveInterlock" -> "Interlock"
+"EmergencyShutdown" -> "SafetyInstrumentedFunction"
+"SafetyInstrumentedSystem" -> "InformationContentEntity"
+"Setpoint" -> "Quality"
+"ProcessVariable" -> "Quality"
+"AlarmLimit" -> "Quality"
+"Alarm" -> "InformationContentEntity"
+"AdvisoryAlarm" -> "Alarm"
+"StandardAlarm" -> "Alarm"
+"CriticalAlarm" -> "Alarm"
+"Bypass" -> "InformationContentEntity"
+"ScanCycle" -> "Process"
+"ProcessTrip" -> "Process"
+"ProofTest" -> "Process"
+"FirmwareChange" -> "Process"
+"OperatorRole" -> "Role"
+"ShiftSupervisorRole" -> "Role"
+"ControlsEngineerRole" -> "Role"
+"SafetyAuthorityRole" -> "Role"
+"FieldDevice"."tag_name": String
+"Plc"."scan_time_ms": Integer
+"Setpoint"."setpoint_value": Integer
+"Setpoint"."setpoint_low_limit": Integer
+"Setpoint"."setpoint_high_limit": Integer
+"ProcessVariable"."process_value": Integer
+"AlarmLimit"."high_high_limit": Integer
+"Alarm"."alarm_priority": Integer
+"Alarm"."requires_acknowledgement": Boolean
+"SafetyInstrumentedFunction"."sil_level": Integer
+"SafetyInstrumentedFunction"."proof_test_interval_months": Integer
+"ProcessTrip"."is_tripped": Boolean
+"Interlock"."is_bypassed": Boolean
+"Bypass"."bypass_duration_hours": Integer
+"Controller"."is_remote_access_enabled": Boolean
+"Controller"."is_internet_facing": Boolean
+"Plc"."key_switch_in_run": Boolean
+"FirmwareChange"."firmware_signed": Boolean
+"Controller" -> "FieldDevice": controls
+"Controller" -> "Sensor": reads_from
+"ScadaServer" -> "Controller": supervises
+"HmiStation" -> "ScadaServer": displays_on
+"Controller" -> "PurdueLevel": resides_at_level
+"Controller" -> "IndustrialNetwork": connected_to
+"ShutdownValve" -> "ProcessUnit": protects
+"Interlock" -> "ProcessTrip": initiates
+"Sensor" -> "Alarm": raises
+"Alarm" -> "OperatorRole": acknowledged_by
+"Bypass" -> "Interlock": bypasses
+"Bypass" -> "SafetyAuthorityRole": authorised_by
+"Plc" -> "ControlProgram": executes
+"FieldDevice" -> "ProcessUnit": located_in
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall c (SafetyController(c) implies not Plc(c))
+#   forall b (Bypass(b) implies exists r (SafetyAuthorityRole(r) and authorised_by(b, r)))
+#   forall t (ProcessTrip(t) and is_tripped = True implies exists i (Interlock(i) and initiates(i, t)))
+#   forall x (Alarm(x) implies not Interlock(x))

@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OntoLogic | Logic-as-Code ontology compiler</title>
+<meta name="description" content="OntoLogic is a first-order logic ontology language and toolchain in Haskell: a .logic DSL, linter, SMT/ATP solver bridge, and emitters for OWL, SHACL, code, APIs and diagrams."><meta name="theme-color" content="#03060f">
+<meta property="og:type" content="website"><meta property="og:title" content="OntoLogic | Logic-as-Code ontology compiler"><meta property="og:description" content="OntoLogic is a first-order logic ontology language and toolchain in Haskell: a .logic DSL, linter, SMT/ATP solver bridge, and emitters for OWL, SHACL, code, APIs and diagrams."><meta property="og:url" content="https://bsommers.github.io/OntoLogic/index.html"><meta property="og:site_name" content="OntoLogic">
+<meta name="twitter:card" content="summary"><meta name="twitter:title" content="OntoLogic | Logic-as-Code ontology compiler"><meta name="twitter:description" content="OntoLogic is a first-order logic ontology language and toolchain in Haskell: a .logic DSL, linter, SMT/ATP solver bridge, and emitters for OWL, SHACL, code, APIs and diagrams.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%276%27 fill=%27%2303060f%27/%3E%3Cpath d=%27M16 5l9 5v12l-9 5-9-5V10z%27 fill=%27none%27 stroke=%27%2300e5ff%27 stroke-width=%272.5%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%273%27 fill=%27%2318a0ff%27/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&amp;family=JetBrains+Mono&amp;family=Orbitron:wght@500;700;800&amp;display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css"></head><body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav"><div class="wrap"><a class="brand" href="index.html"><svg width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><path d="M16 5l9 5v12l-9 5-9-5V10z" fill="none" stroke="#00e5ff" stroke-width="2.5"/><circle cx="16" cy="16" r="3" fill="#18a0ff"/></svg>OntoLogic</a><nav aria-label="Main"><ul><li><a href="index.html" aria-current="page">Home</a></li><li><a href="domains.html">Domains</a></li><li><a href="docs.html">Docs</a></li><li><a href="https://github.com/bsommers/OntoLogic">GitHub</a></li></ul></nav></div></header>
+<main id="main">
+<div class="hero"><div class="wrap"><h1>OntoLogic</h1>
+<p class="lead">Write your domain once as first-order logic. Lint it, prove it consistent, and compile it into OWL, SHACL, typed code, API contracts, graph schemas and diagrams.</p>
+<div class="btns"><a class="btn primary" href="https://github.com/bsommers/OntoLogic/blob/main/docs/user-guide/README.md">Get started</a><a class="btn" href="https://github.com/bsommers/OntoLogic">View on GitHub</a></div></div>
+<div class="horizon"></div><div class="floor"></div></div>
+
+<section><div class="wrap"><h2>What it does</h2>
+<div class="pipeline">
+<div class="card"><h3>Write .logic</h3><p>A concise Lisp-style DSL for concepts, relations, typed properties and quantified axioms, with modular imports and namespaces.</p></div>
+<div class="card"><h3>Lint</h3><p>Symbol resolution, circular inheritance, duplicate definitions and contradiction detection before anything runs.</p></div>
+<div class="card"><h3>Solve</h3><p>Consistency checks, subsumption proofs, empty-concept detection and counterexamples via real solvers.</p></div>
+<div class="card"><h3>Emit and visualize</h3><p>One model, many targets: schemas, code, API contracts, graph databases and architecture diagrams.</p></div>
+</div></div></section>
+
+<section><div class="wrap"><h2>The language</h2>
+<p class="lede">A trimmed excerpt from <a href="https://github.com/bsommers/OntoLogic/blob/main/examples/domain_mining.logic">examples/domain_mining.logic</a>.</p>
+<pre><code>(def-concept HeavyMachinery MiningEquipment)
+(def-concept GasSensor Sensor)
+(def-concept SafetyAlert InformationContentEntity)
+
+(def-property methane_level GasSensor Integer)
+
+; High methane implies an evacuation alert exists
+(forall (s)
+    (implies (and (GasSensor s) (gt methane_level 5))
+             (exists (a) (SafetyAlert a))))</code></pre></div></section>
+
+<section><div class="wrap"><h2>Emit targets</h2><p class="lede">One model compiles to all of these. Pick any with <code>-t</code>.</p><div><span class="tag">OWL/RDF</span><span class="tag">SHACL</span><span class="tag">Java</span><span class="tag">Python (Pydantic)</span><span class="tag">Rust</span><span class="tag">Go</span><span class="tag">TypeScript/Zod</span><span class="tag">OpenAPI 3.1</span><span class="tag">GraphQL</span><span class="tag">JSON Schema</span><span class="tag">Protobuf</span><span class="tag">C++</span><span class="tag">SQL DDL</span><span class="tag">Neo4j Cypher</span><span class="tag">TPTP</span><span class="tag">SMT-LIB2</span><span class="tag">Mermaid</span><span class="tag">D2</span></div></div></section>
+
+<section><div class="wrap"><h2>Solver backends</h2>
+<div class="grid">
+<div class="card"><h3>Z3</h3><p>SMT-LIB2 consistency and satisfiability checking.</p></div>
+<div class="card"><h3>CVC5</h3><p>Alternative SMT backend, same model, same flags.</p></div>
+<div class="card"><h3>Vampire</h3><p>First-order ATP over TPTP FOF problems.</p></div>
+<div class="card"><h3>Native</h3><p>Built-in solver with no external dependency. Auto-discovery picks what is installed.</p></div>
+</div></div></section>
+
+<section><div class="wrap"><h2>Tooling</h2>
+<div class="grid">
+<div class="card"><h3>REPL</h3><p>Incremental evaluation with <code>:load</code>, <code>:solve</code>, <code>:prove</code>, <code>:emit</code>.</p></div>
+<div class="card"><h3>LSP</h3><p>Diagnostics, completion, hover, go-to-definition and rename.</p></div>
+<div class="card"><h3>VS Code</h3><p>Syntax highlighting, snippets and solver commands.</p></div>
+<div class="card"><h3><a href="domains.html">Domain gallery</a></h3><p>Dozens of worked ontologies across industry sectors.</p></div>
+</div></div></section>
+
+<section><div class="wrap"><h2>Quickstart</h2><pre><code># Interactive REPL
+stack exec ontologic-exe -- --repl
+
+# Lint a model
+stack exec ontologic-exe -- -i examples/smart_factory.logic -t lint
+
+# Check consistency with an SMT solver (z3, cvc5, vampire, native)
+stack exec ontologic-exe -- -i examples/smart_factory.logic -t solve --prover z3
+
+# Emit artifacts
+stack exec ontologic-exe -- -i examples/smart_factory.logic -t ts -o ./generated/ts
+stack exec ontologic-exe -- -i examples/smart_factory.logic -t openapi -o ./generated/openapi
+stack exec ontologic-exe -- -i examples/smart_grid_relational.logic -t d2 -o ./generated/diagrams --render
+
+# Language server for editors
+stack exec ontologic-lsp</code></pre></div></section>
+</main>
+<footer><div class="wrap"><span>OntoLogic &mdash; Logic-as-Code. Licensed under <a href="https://github.com/bsommers/OntoLogic/blob/main/LICENSE">Apache-2.0</a>.</span><span><a href="https://github.com/bsommers/OntoLogic">Source on GitHub</a> &middot; <a href="https://github.com/bsommers/OntoLogic/blob/main/CHANGELOG.md">Changelog</a></span></div></footer></body></html>

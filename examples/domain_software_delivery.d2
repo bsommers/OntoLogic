@@ -1,0 +1,188 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Team": { shape: class }
+"Developer": { shape: class }
+"Reviewer": { shape: class }
+"CodeOwner": { shape: class }
+"ReleaseManager": { shape: class }
+"OnCallEngineer": { shape: class }
+"IncidentCommander": { shape: class }
+"SourceArtifact": { shape: class }
+"Repository": { shape: class }
+"MonorepoRepository": { shape: class }
+"Branch": { shape: class }
+"ProtectedBranch": { shape: class }
+"FeatureBranch": { shape: class }
+"Commit": { shape: class }
+"SignedCommit": { shape: class }
+"MergeCommit": { shape: class }
+"Tag": { shape: class }
+"CodeChange": { shape: class }
+"PullRequest": { shape: class }
+"DraftPullRequest": { shape: class }
+"MergedPullRequest": { shape: class }
+"ReviewComment": { shape: class }
+"BuildArtifact": { shape: class }
+"ContainerImage": { shape: class }
+"Package": { shape: class }
+"SoftwareBillOfMaterials": { shape: class }
+"Release": { shape: class }
+"CandidateRelease": { shape: class }
+"StableRelease": { shape: class }
+"HotfixRelease": { shape: class }
+"Changelog": { shape: class }
+"TestReport": { shape: class }
+"CoverageReport": { shape: class }
+"PostmortemReport": { shape: class }
+"Environment": { shape: class }
+"DevelopmentEnvironment": { shape: class }
+"StagingEnvironment": { shape: class }
+"ProductionEnvironment": { shape: class }
+"BuildAgent": { shape: class }
+"Service": { shape: class }
+"FeatureFlag": { shape: class }
+"DeliveryProcess": { shape: class }
+"CodeReview": { shape: class }
+"Build": { shape: class }
+"FailedBuild": { shape: class }
+"TestRun": { shape: class }
+"UnitTestRun": { shape: class }
+"IntegrationTestRun": { shape: class }
+"SecurityScan": { shape: class }
+"Deployment": { shape: class }
+"ProductionDeployment": { shape: class }
+"CanaryDeployment": { shape: class }
+"Rollback": { shape: class }
+"IncidentResponse": { shape: class }
+"Incident": { shape: class }
+"ProductionIncident": { shape: class }
+"SecurityIncident": { shape: class }
+"Alert": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Object"
+"Team" -> "Object"
+"Developer" -> "Role"
+"Reviewer" -> "Role"
+"CodeOwner" -> "Reviewer"
+"ReleaseManager" -> "Role"
+"OnCallEngineer" -> "Role"
+"IncidentCommander" -> "Role"
+"SourceArtifact" -> "InformationContentEntity"
+"Repository" -> "SourceArtifact"
+"MonorepoRepository" -> "Repository"
+"Branch" -> "SourceArtifact"
+"ProtectedBranch" -> "Branch"
+"FeatureBranch" -> "Branch"
+"Commit" -> "SourceArtifact"
+"SignedCommit" -> "Commit"
+"MergeCommit" -> "Commit"
+"Tag" -> "SourceArtifact"
+"CodeChange" -> "SourceArtifact"
+"PullRequest" -> "CodeChange"
+"DraftPullRequest" -> "PullRequest"
+"MergedPullRequest" -> "PullRequest"
+"ReviewComment" -> "SourceArtifact"
+"BuildArtifact" -> "InformationContentEntity"
+"ContainerImage" -> "BuildArtifact"
+"Package" -> "BuildArtifact"
+"SoftwareBillOfMaterials" -> "InformationContentEntity"
+"Release" -> "InformationContentEntity"
+"CandidateRelease" -> "Release"
+"StableRelease" -> "Release"
+"HotfixRelease" -> "Release"
+"Changelog" -> "InformationContentEntity"
+"TestReport" -> "InformationContentEntity"
+"CoverageReport" -> "TestReport"
+"PostmortemReport" -> "InformationContentEntity"
+"Environment" -> "Object"
+"DevelopmentEnvironment" -> "Environment"
+"StagingEnvironment" -> "Environment"
+"ProductionEnvironment" -> "Environment"
+"BuildAgent" -> "Object"
+"Service" -> "Object"
+"FeatureFlag" -> "InformationContentEntity"
+"DeliveryProcess" -> "Process"
+"CodeReview" -> "DeliveryProcess"
+"Build" -> "DeliveryProcess"
+"FailedBuild" -> "Build"
+"TestRun" -> "DeliveryProcess"
+"UnitTestRun" -> "TestRun"
+"IntegrationTestRun" -> "TestRun"
+"SecurityScan" -> "DeliveryProcess"
+"Deployment" -> "DeliveryProcess"
+"ProductionDeployment" -> "Deployment"
+"CanaryDeployment" -> "ProductionDeployment"
+"Rollback" -> "DeliveryProcess"
+"IncidentResponse" -> "DeliveryProcess"
+"Incident" -> "Occurrent"
+"ProductionIncident" -> "Incident"
+"SecurityIncident" -> "Incident"
+"Alert" -> "InformationContentEntity"
+"Commit"."commit_hash": String
+"PullRequest"."approval_count": Integer
+"PullRequest"."lines_changed": Integer
+"PullRequest"."is_merged": Boolean
+"PullRequest"."ci_passed": Boolean
+"Branch"."is_protected": Boolean
+"Build"."build_duration_s": Integer
+"Build"."build_succeeded": Boolean
+"TestRun"."tests_total": Integer
+"TestRun"."tests_failed": Integer
+"CoverageReport"."coverage_percent": Integer
+"Release"."semver": String
+"Release"."is_signed_off": Boolean
+"Release"."is_published": Boolean
+"Deployment"."deploy_succeeded": Boolean
+"Incident"."incident_severity": Integer
+"Incident"."time_to_resolve_min": Integer
+"Incident"."is_resolved": Boolean
+"Incident"."has_postmortem": Boolean
+"Repository" -> "Commit": contains_commit
+"Commit" -> "Person": authored_by
+"PullRequest" -> "Commit": proposes
+"PullRequest" -> "Branch": targets_branch
+"PullRequest" -> "Reviewer": reviewed_by
+"CodeReview" -> "PullRequest": reviews
+"Build" -> "Commit": builds_from
+"Build" -> "BuildArtifact": produces
+"TestRun" -> "Build": validates
+"SecurityScan" -> "BuildArtifact": scans
+"Release" -> "BuildArtifact": packages_artifact
+"Release" -> "SoftwareBillOfMaterials": has_sbom
+"Deployment" -> "Release": deploys
+"Deployment" -> "Environment": deploys_to
+"Rollback" -> "Deployment": rolls_back
+"Incident" -> "Deployment": caused_by
+"Incident" -> "IncidentCommander": owned_by
+"IncidentResponse" -> "Incident": responds_to
+"Incident" -> "PostmortemReport": documented_in
+"Service" -> "Environment": runs_on
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall p (PullRequest(p) and is_merged = True implies ci_passed = True)
+#   forall p (PullRequest(p) and is_merged = True implies gte(approval_count, 2))
+#   forall b (Build(b) and build_succeeded = True implies exists t (TestRun(t)))
+#   forall r (Release(r) and is_published = True implies is_signed_off = True)
+#   forall d (forall r (Deployment(d) and deploys(d, r) implies Release(r)))
+#   forall r (Release(r) and is_signed_off = True implies exists s (has_sbom(r, s)))
+#   forall i (Incident(i) and is_resolved = False implies exists c (owned_by(i, c)))
+#   forall i (Incident(i) and incident_severity = 1 and is_resolved = True implies has_postmortem = True)
+#   forall x (not Commit(x) and Build(x))
+#   forall x (not Release(x) and Deployment(x))

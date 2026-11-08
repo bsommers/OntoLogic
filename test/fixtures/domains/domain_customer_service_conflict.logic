@@ -1,0 +1,6 @@
+; Conflict fixture: violates the integrity axiom that customers are never support staff.
+(import "../../../examples/domain_customer_service.logic")
+
+; Assert an individual that is both Customer and SupportStaff,
+; contradicting the disjointness axiom in the base ontology.
+(exists (x) (and (Customer x) (SupportStaff x)))

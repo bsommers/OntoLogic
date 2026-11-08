@@ -3,10 +3,12 @@ set -euo pipefail
 
 # setup.sh - Install dependencies for OntoLogic
 
-# Display the sick logo from logo.txt with Cyan/Green gradient style colors
-if [ -f "logo.txt" ]; then
+LOGO_FILE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/scripts/assets/logo.txt"
+
+# Display the logo from scripts/assets/logo.txt with Cyan/Green gradient style colors
+if [ -f "$LOGO_FILE" ]; then
     echo -e "\033[1;36m"
-    cat logo.txt
+    cat "$LOGO_FILE"
     echo -e "\033[0m\033[1;32m"
     echo "       OntoLogic: Logic as Code for the IoT Edge      "
     echo -e "\033[0m"

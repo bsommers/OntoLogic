@@ -1,0 +1,224 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Organization["Organization"]
+    class Shipper["Shipper"]
+    class Consignee["Consignee"]
+    class Carrier["Carrier"]
+    class RoadCarrier["RoadCarrier"]
+    class AirCarrier["AirCarrier"]
+    class OceanCarrier["OceanCarrier"]
+    class RailCarrier["RailCarrier"]
+    class Supplier["Supplier"]
+    class CustomsBroker["CustomsBroker"]
+    class ThirdPartyLogisticsProvider["ThirdPartyLogisticsProvider"]
+    class Facility["Facility"]
+    class Warehouse["Warehouse"]
+    class DistributionCenter["DistributionCenter"]
+    class CrossDock["CrossDock"]
+    class ColdStore["ColdStore"]
+    class HazmatStore["HazmatStore"]
+    class Port["Port"]
+    class Airport["Airport"]
+    class RailTerminal["RailTerminal"]
+    class StorageZone["StorageZone"]
+    class DockDoor["DockDoor"]
+    class StorageLocation["StorageLocation"]
+    class TransportAsset["TransportAsset"]
+    class Vehicle["Vehicle"]
+    class Truck["Truck"]
+    class ReeferTruck["ReeferTruck"]
+    class Van["Van"]
+    class Aircraft["Aircraft"]
+    class Vessel["Vessel"]
+    class Container["Container"]
+    class ReeferContainer["ReeferContainer"]
+    class Pallet["Pallet"]
+    class Person["Person"]
+    class Driver["Driver"]
+    class Goods["Goods"]
+    class GeneralCargo["GeneralCargo"]
+    class PerishableGoods["PerishableGoods"]
+    class FrozenGoods["FrozenGoods"]
+    class ChilledGoods["ChilledGoods"]
+    class Pharmaceuticals["Pharmaceuticals"]
+    class DangerousGoods["DangerousGoods"]
+    class FlammableGoods["FlammableGoods"]
+    class CorrosiveGoods["CorrosiveGoods"]
+    class OversizedGoods["OversizedGoods"]
+    class StockKeepingUnit["StockKeepingUnit"]
+    class InventoryRecord["InventoryRecord"]
+    class Lot["Lot"]
+    class Order["Order"]
+    class PurchaseOrder["PurchaseOrder"]
+    class SalesOrder["SalesOrder"]
+    class TransferOrder["TransferOrder"]
+    class Shipment["Shipment"]
+    class InboundShipment["InboundShipment"]
+    class OutboundShipment["OutboundShipment"]
+    class ColdChainShipment["ColdChainShipment"]
+    class InternationalShipment["InternationalShipment"]
+    class Leg["Leg"]
+    class Pickup["Pickup"]
+    class Delivery["Delivery"]
+    class Receiving["Receiving"]
+    class PutAway["PutAway"]
+    class Picking["Picking"]
+    class Packing["Packing"]
+    class CustomsClearance["CustomsClearance"]
+    class Exception["Exception"]
+    class DelayException["DelayException"]
+    class TemperatureExcursion["TemperatureExcursion"]
+    class ShippingDocument["ShippingDocument"]
+    class BillOfLading["BillOfLading"]
+    class CommercialInvoice["CommercialInvoice"]
+    class PackingList["PackingList"]
+    class CustomsDeclaration["CustomsDeclaration"]
+    class ProofOfDelivery["ProofOfDelivery"]
+    class TemperatureLog["TemperatureLog"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Organization
+    Organization <|-- Shipper
+    Organization <|-- Consignee
+    Organization <|-- Carrier
+    Carrier <|-- RoadCarrier
+    Carrier <|-- AirCarrier
+    Carrier <|-- OceanCarrier
+    Carrier <|-- RailCarrier
+    Organization <|-- Supplier
+    Organization <|-- CustomsBroker
+    Organization <|-- ThirdPartyLogisticsProvider
+    Site <|-- Facility
+    Facility <|-- Warehouse
+    Warehouse <|-- DistributionCenter
+    Warehouse <|-- CrossDock
+    Warehouse <|-- ColdStore
+    Warehouse <|-- HazmatStore
+    Facility <|-- Port
+    Facility <|-- Airport
+    Facility <|-- RailTerminal
+    Site <|-- StorageZone
+    Site <|-- DockDoor
+    Site <|-- StorageLocation
+    Object <|-- TransportAsset
+    TransportAsset <|-- Vehicle
+    Vehicle <|-- Truck
+    Truck <|-- ReeferTruck
+    Vehicle <|-- Van
+    TransportAsset <|-- Aircraft
+    TransportAsset <|-- Vessel
+    TransportAsset <|-- Container
+    Container <|-- ReeferContainer
+    TransportAsset <|-- Pallet
+    Agent <|-- Person
+    Person <|-- Driver
+    MaterialEntity <|-- Goods
+    Goods <|-- GeneralCargo
+    Goods <|-- PerishableGoods
+    PerishableGoods <|-- FrozenGoods
+    PerishableGoods <|-- ChilledGoods
+    Goods <|-- Pharmaceuticals
+    Goods <|-- DangerousGoods
+    DangerousGoods <|-- FlammableGoods
+    DangerousGoods <|-- CorrosiveGoods
+    Goods <|-- OversizedGoods
+    InformationContentEntity <|-- StockKeepingUnit
+    InformationContentEntity <|-- InventoryRecord
+    InformationContentEntity <|-- Lot
+    InformationContentEntity <|-- Order
+    Order <|-- PurchaseOrder
+    Order <|-- SalesOrder
+    Order <|-- TransferOrder
+    Process <|-- Shipment
+    Shipment <|-- InboundShipment
+    Shipment <|-- OutboundShipment
+    Shipment <|-- ColdChainShipment
+    Shipment <|-- InternationalShipment
+    Process <|-- Leg
+    Process <|-- Pickup
+    Process <|-- Delivery
+    Process <|-- Receiving
+    Process <|-- PutAway
+    Process <|-- Picking
+    Process <|-- Packing
+    Process <|-- CustomsClearance
+    Process <|-- Exception
+    Exception <|-- DelayException
+    Exception <|-- TemperatureExcursion
+    InformationContentEntity <|-- ShippingDocument
+    ShippingDocument <|-- BillOfLading
+    ShippingDocument <|-- CommercialInvoice
+    ShippingDocument <|-- PackingList
+    ShippingDocument <|-- CustomsDeclaration
+    ShippingDocument <|-- ProofOfDelivery
+    InformationContentEntity <|-- TemperatureLog
+    Shipment : +String tracking_number
+    Shipment : +Integer gross_weight_kg
+    Shipment : +Integer transit_hours
+    Shipment : +Boolean is_delivered
+    Shipment : +Boolean has_proof_of_delivery
+    Shipment : +Boolean has_customs_declaration
+    Vehicle : +Integer payload_capacity_kg
+    Vehicle : +Integer loaded_weight_kg
+    ReeferContainer : +Integer reefer_set_point_c
+    ColdStore : +Integer cold_store_temp_c
+    FrozenGoods : +Integer frozen_goods_temp_c
+    ChilledGoods : +Integer chilled_goods_temp_c
+    Pharmaceuticals : +Integer pharma_temp_c
+    InventoryRecord : +Integer on_hand_quantity
+    InventoryRecord : +Integer reserved_quantity
+    InventoryRecord : +Integer reorder_point
+    Lot : +Integer shelf_life_days
+    Warehouse : +Integer storage_capacity_pallets
+    Driver : +Integer driving_hours_today
+    DangerousGoods : +String un_number
+    Shipment --> Shipper : shipped_by
+    Shipment --> Consignee : consigned_to
+    Shipment --> Carrier : carried_by
+    Shipment --> Goods : transports
+    Shipment --> Leg : has_leg
+    Leg --> TransportAsset : leg_uses
+    Shipment --> Facility : originates_at
+    Shipment --> Facility : destined_for
+    InventoryRecord --> StorageLocation : stored_in
+    InventoryRecord --> StockKeepingUnit : tracks
+    StorageLocation --> Warehouse : located_in
+    StorageZone --> Warehouse : zone_of
+    Shipment --> Order : fulfils
+    Shipment --> ShippingDocument : documented_by
+    ColdChainShipment --> TemperatureLog : monitored_by
+    Vehicle --> Carrier : operated_by
+    Truck --> Driver : driven_by
+    CustomsClearance --> CustomsBroker : cleared_by
+    Goods --> Warehouse : stored_with
+    DangerousGoods --> Goods : segregated_from
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not Shipper(x) and Carrier(x))
+%%   forall x (not DangerousGoods(x) and GeneralCargo(x))
+%%   forall x (not InboundShipment(x) and OutboundShipment(x))
+%%   forall x (not FrozenGoods(x) and ChilledGoods(x))
+%%   forall x (not HazmatStore(x) and ColdStore(x))
+%%   forall s (Shipment(s) and is_delivered = True implies has_proof_of_delivery = True)

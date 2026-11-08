@@ -1,0 +1,13 @@
+# key names
+concept Account
+concept EnterpriseAccount
+concept CustomerSuccessManager
+concept HealthScore
+concept Renewal
+concept ChurnRisk
+concept ExecutiveBusinessReview
+relation managed_by
+relation renews
+relation derived_from
+property health_score
+property has_success_plan

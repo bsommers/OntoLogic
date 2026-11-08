@@ -1,0 +1,195 @@
+; --- Industrial Control Systems (ICS / OT) ---
+; Models PLCs, SCADA/HMI, Purdue-model network levels, safety instrumented
+; systems, setpoints, alarms and interlocks.
+; Axioms enforce: a safe operating envelope for setpoints, SIS independence
+; from the basic process control system, Purdue-level segmentation, alarm
+; handling duties, and interlock/bypass authorisation rules.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Purdue Reference Model Levels ---
+(def-concept PurdueLevel InformationContentEntity)
+(def-concept Level0Process PurdueLevel)
+(def-concept Level1BasicControl PurdueLevel)
+(def-concept Level2Supervisory PurdueLevel)
+(def-concept Level3SiteOperations PurdueLevel)
+(def-concept Level35Dmz PurdueLevel)
+(def-concept Level4Enterprise PurdueLevel)
+
+; --- Plant Structure ---
+(def-concept PlantArea Site)
+(def-concept ProcessUnit Site)
+(def-concept ControlZone Site)
+(def-concept SafetyZone ControlZone)
+
+; --- Field Devices ---
+(def-concept FieldDevice Object)
+(def-concept Sensor FieldDevice)
+(def-concept PressureTransmitter Sensor)
+(def-concept TemperatureTransmitter Sensor)
+(def-concept LevelTransmitter Sensor)
+(def-concept FlowTransmitter Sensor)
+(def-concept GasDetector Sensor)
+(def-concept Actuator FieldDevice)
+(def-concept ControlValve Actuator)
+(def-concept ShutdownValve Actuator)
+(def-concept MotorStarter Actuator)
+(def-concept VariableFrequencyDrive Actuator)
+(def-concept EmergencyStopButton FieldDevice)
+
+; --- Controllers and Networks ---
+(def-concept Controller Object)
+(def-concept Plc Controller)
+(def-concept Rtu Controller)
+(def-concept Dcs Controller)
+(def-concept SafetyController Controller)
+(def-concept IoModule Object)
+(def-concept IndustrialNetwork Object)
+(def-concept FieldbusSegment IndustrialNetwork)
+(def-concept ControlNetwork IndustrialNetwork)
+(def-concept FirewallConduit IndustrialNetwork)
+
+; --- Supervisory Software and Workstations ---
+(def-concept Workstation Object)
+(def-concept ScadaServer Workstation)
+(def-concept HmiStation Workstation)
+(def-concept EngineeringWorkstation Workstation)
+(def-concept Historian Workstation)
+(def-concept ControlProgram InformationContentEntity)
+(def-concept LadderLogicProgram ControlProgram)
+(def-concept SafetyProgram ControlProgram)
+
+; --- Control and Safety Functions ---
+(def-concept ControlLoop Function)
+(def-concept PidLoop ControlLoop)
+(def-concept SafetyInstrumentedFunction Function)
+(def-concept Interlock SafetyInstrumentedFunction)
+(def-concept PermissiveInterlock Interlock)
+(def-concept ProtectiveInterlock Interlock)
+(def-concept EmergencyShutdown SafetyInstrumentedFunction)
+(def-concept SafetyInstrumentedSystem InformationContentEntity)
+
+; --- Setpoints, Limits and Alarms ---
+(def-concept Setpoint Quality)
+(def-concept ProcessVariable Quality)
+(def-concept AlarmLimit Quality)
+(def-concept Alarm InformationContentEntity)
+(def-concept AdvisoryAlarm Alarm)
+(def-concept StandardAlarm Alarm)
+(def-concept CriticalAlarm Alarm)
+(def-concept Bypass InformationContentEntity)
+
+; --- Processes and Roles ---
+(def-concept ScanCycle Process)
+(def-concept ProcessTrip Process)
+(def-concept ProofTest Process)
+(def-concept FirmwareChange Process)
+(def-concept OperatorRole Role)
+(def-concept ShiftSupervisorRole Role)
+(def-concept ControlsEngineerRole Role)
+(def-concept SafetyAuthorityRole Role)
+
+; --- Relations ---
+(def-relation controls Controller FieldDevice :cardinality 0..*)
+(def-relation reads_from Controller Sensor :cardinality 0..*)
+(def-relation supervises ScadaServer Controller :cardinality 0..*)
+(def-relation displays_on HmiStation ScadaServer)
+(def-relation resides_at_level Controller PurdueLevel :cardinality 1..1)
+(def-relation connected_to Controller IndustrialNetwork :cardinality 1..*)
+(def-relation protects ShutdownValve ProcessUnit)
+(def-relation initiates Interlock ProcessTrip)
+(def-relation raises Sensor Alarm :cardinality 0..*)
+(def-relation acknowledged_by Alarm OperatorRole)
+(def-relation bypasses Bypass Interlock)
+(def-relation authorised_by Bypass SafetyAuthorityRole :cardinality 1..1)
+(def-relation executes Plc ControlProgram :cardinality 1..*)
+(def-relation located_in FieldDevice ProcessUnit)
+
+; --- Properties ---
+(def-property tag_name FieldDevice String :cardinality 1..1)
+(def-property scan_time_ms Plc Integer)
+(def-property setpoint_value Setpoint Integer)
+(def-property setpoint_low_limit Setpoint Integer)
+(def-property setpoint_high_limit Setpoint Integer)
+(def-property process_value ProcessVariable Integer)
+(def-property high_high_limit AlarmLimit Integer)
+(def-property alarm_priority Alarm Integer)
+(def-property requires_acknowledgement Alarm Boolean)
+(def-property sil_level SafetyInstrumentedFunction Integer)
+(def-property proof_test_interval_months SafetyInstrumentedFunction Integer)
+(def-property is_tripped ProcessTrip Boolean)
+(def-property is_bypassed Interlock Boolean)
+(def-property bypass_duration_hours Bypass Integer)
+(def-property is_remote_access_enabled Controller Boolean)
+(def-property is_internet_facing Controller Boolean)
+(def-property key_switch_in_run Plc Boolean)
+(def-property firmware_signed FirmwareChange Boolean)
+
+; --- Axioms ---
+
+; 1. Safety integrity levels range from SIL 1 to SIL 4
+(forall (f)
+    (implies (SafetyInstrumentedFunction f)
+             (and (gte sil_level 1) (lte sil_level 4))))
+
+; 2. Operating envelope: setpoint is within the scaled engineering range 0..10000
+(forall (s)
+    (implies (Setpoint s)
+             (and (gte setpoint_value 0) (lte setpoint_value 10000))))
+
+; 3. Scan cycle bound: PLC scan time must be positive and under 500 ms
+(forall (p)
+    (implies (Plc p)
+             (and (gt scan_time_ms 0) (lt scan_time_ms 500))))
+
+; 4. SIS independence: a safety controller is never a basic-process PLC
+(forall (c)
+    (implies (SafetyController c) (not (Plc c))))
+
+; 5. A critical alarm always demands operator acknowledgement
+(forall (a)
+    (implies (CriticalAlarm a) (eq requires_acknowledgement True)))
+
+; 6. Alarm priority is ranked 1 (most urgent) to 3
+(forall (a)
+    (implies (Alarm a)
+             (and (gte alarm_priority 1) (lte alarm_priority 3))))
+
+; 7. Segmentation: no controller is ever directly internet facing
+(forall (c)
+    (implies (Controller c) (eq is_internet_facing False)))
+
+; 8. Every bypass of an interlock needs an authorising safety authority
+(forall (b)
+    (implies (Bypass b)
+             (exists (r) (and (SafetyAuthorityRole r) (authorised_by b r)))))
+
+; 9. A bypass is time boxed to at most 8 hours
+(forall (b)
+    (implies (Bypass b)
+             (and (gt bypass_duration_hours 0) (lte bypass_duration_hours 8))))
+
+; 10. A tripped process must have an interlock that initiated the trip
+(forall (t)
+    (implies (and (ProcessTrip t) (eq is_tripped True))
+             (exists (i) (and (Interlock i) (initiates i t)))))
+
+; 11. Firmware changes on controllers must be signed
+(forall (f)
+    (implies (FirmwareChange f) (eq firmware_signed True)))
+
+; 12. Alarms, interlocks and trips are distinct kinds of thing
+(forall (x)
+    (implies (Alarm x) (not (Interlock x))))

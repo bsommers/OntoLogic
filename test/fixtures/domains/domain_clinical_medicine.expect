@@ -1,0 +1,14 @@
+# key names
+concept Patient
+concept Clinician
+concept MedicationOrder
+concept ControlledSubstanceOrder
+concept DrugAllergy
+concept Contraindication
+concept Diagnosis
+concept EmergencyVisit
+relation prescribes
+relation has_allergy
+relation triggers_allergy
+property oxygen_saturation
+property triage_level

@@ -1,0 +1,203 @@
+; Domain: Research projects (grants, investigators, studies, data, publications).
+; Models funding, investigators, institutions, studies, datasets, publications
+; and ethics approval, with a condensed BFO upper level.
+; Axioms enforce: human-subject studies need ethics approval before enrolment,
+; funded grants have a principal investigator, budgets stay within award limits,
+; published data is documented, conflicts of interest are declared, and disjoint kinds.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- People and organisations ---
+(def-concept Person Object)
+(def-concept Organization Object)
+(def-concept University Organization)
+(def-concept ResearchInstitute Organization)
+(def-concept FundingAgency Organization)
+(def-concept PublicFunder FundingAgency)
+(def-concept PrivateFoundation FundingAgency)
+(def-concept Publisher Organization)
+(def-concept EthicsCommittee Organization)
+(def-concept Department Organization)
+(def-concept ResearchGroup Organization)
+(def-concept Investigator Role)
+(def-concept PrincipalInvestigator Investigator)
+(def-concept CoInvestigator Investigator)
+(def-concept PostdoctoralResearcher Role)
+(def-concept DoctoralStudent Role)
+(def-concept ResearchParticipant Role)
+(def-concept Reviewer Role)
+(def-concept Author Role)
+
+; --- Funding ---
+(def-concept FundingInstrument InformationContentEntity)
+(def-concept Grant FundingInstrument)
+(def-concept ProjectGrant Grant)
+(def-concept FellowshipGrant Grant)
+(def-concept ProposalDocument InformationContentEntity)
+(def-concept Budget InformationContentEntity)
+(def-concept BudgetLine Budget)
+(def-concept DataManagementPlan InformationContentEntity)
+(def-concept ProgressReport InformationContentEntity)
+(def-concept FinalReport InformationContentEntity)
+(def-concept ConflictOfInterestDeclaration InformationContentEntity)
+
+; --- Studies and ethics ---
+(def-concept ResearchProject Process)
+(def-concept Study Process)
+(def-concept ObservationalStudy Study)
+(def-concept ClinicalTrial Study)
+(def-concept SurveyStudy Study)
+(def-concept ComputationalStudy Study)
+(def-concept HumanSubjectsStudy Study)
+(def-concept Experiment Process)
+(def-concept Enrolment Process)
+(def-concept PeerReview Process)
+(def-concept EthicsReview Process)
+(def-concept EthicsApproval InformationContentEntity)
+(def-concept InformedConsent InformationContentEntity)
+(def-concept StudyProtocol InformationContentEntity)
+(def-concept PreRegistration InformationContentEntity)
+(def-concept AdverseEventReport InformationContentEntity)
+
+; --- Data and outputs ---
+(def-concept Dataset InformationContentEntity)
+(def-concept RawDataset Dataset)
+(def-concept ProcessedDataset Dataset)
+(def-concept SensitiveDataset Dataset)
+(def-concept OpenDataset Dataset)
+(def-concept Metadata InformationContentEntity)
+(def-concept Codebook Metadata)
+(def-concept Software InformationContentEntity)
+(def-concept Publication InformationContentEntity)
+(def-concept JournalArticle Publication)
+(def-concept ConferencePaper Publication)
+(def-concept Preprint Publication)
+(def-concept Thesis Publication)
+(def-concept Citation InformationContentEntity)
+(def-concept Journal Object)
+(def-concept Repository Object)
+
+; --- Properties ---
+(def-property grant_number Grant String :cardinality 1..1)
+(def-property award_amount Grant Integer)
+(def-property budget_total Budget Integer)
+(def-property grant_active Grant Boolean)
+(def-property duration_months ResearchProject Integer)
+(def-property sample_size Study Integer)
+(def-property enrolled_count Study Integer)
+(def-property study_started Study Boolean)
+(def-property is_preregistered Study Boolean)
+(def-property approval_valid EthicsApproval Boolean)
+(def-property consent_obtained Enrolment Boolean)
+(def-property data_is_personal Dataset Boolean)
+(def-property data_is_anonymised Dataset Boolean)
+(def-property data_is_public Dataset Boolean)
+(def-property has_metadata Dataset Boolean)
+(def-property doi Publication String)
+(def-property is_peer_reviewed Publication Boolean)
+(def-property author_count Publication Integer)
+(def-property has_coi_declared Publication Boolean)
+(def-property h_index Person Integer)
+
+; --- Relations ---
+(def-relation awarded_by Grant FundingAgency)
+(def-relation held_by Grant Organization)
+(def-relation led_by Grant PrincipalInvestigator :cardinality 1..1)
+(def-relation funds ResearchProject Grant :cardinality 0..*)
+(def-relation has_budget Grant Budget)
+(def-relation includes_line Budget BudgetLine :cardinality 0..*)
+(def-relation proposes ProposalDocument ResearchProject)
+(def-relation employed_by Person Organization)
+(def-relation member_of Person ResearchGroup)
+(def-relation conducts Investigator Study)
+(def-relation part_of_project Study ResearchProject)
+(def-relation governed_by Study StudyProtocol)
+(def-relation approved_by_ethics Study EthicsApproval)
+(def-relation issued_by EthicsApproval EthicsCommittee)
+(def-relation enrols Enrolment ResearchParticipant)
+(def-relation enrolment_in Enrolment Study)
+(def-relation has_consent Enrolment InformedConsent)
+(def-relation generates Study Dataset :cardinality 0..*)
+(def-relation derived_from_dataset ProcessedDataset RawDataset)
+(def-relation described_by Dataset Metadata)
+(def-relation deposited_in Dataset Repository)
+(def-relation governed_by_plan ResearchProject DataManagementPlan)
+(def-relation reports_on Publication Study)
+(def-relation uses_dataset Publication Dataset :cardinality 0..*)
+(def-relation authored_by Publication Author :cardinality 1..*)
+(def-relation published_in Publication Journal)
+(def-relation cites Publication Publication :cardinality 0..*)
+(def-relation acknowledges Publication Grant)
+(def-relation reviewed_by Publication Reviewer)
+(def-relation declares ConflictOfInterestDeclaration Author)
+
+; --- Axioms ---
+; 1. Ethics: a human-subjects study that has started needs an ethics approval.
+(forall (s)
+    (implies (and (HumanSubjectsStudy s) (eq study_started True))
+             (exists (a) (approved_by_ethics s a))))
+
+; 2. Consent: every enrolment must hold an informed consent record.
+(forall (e)
+    (implies (Enrolment e)
+             (exists (c) (has_consent e c))))
+
+; 3. Consent flag: enrolment requires consent to have been obtained.
+(forall (e)
+    (implies (Enrolment e)
+             (eq consent_obtained True)))
+
+; 4. Governance: an active grant must have a budget (the PI link is 1..1 on led_by).
+(forall (g)
+    (implies (and (Grant g) (eq grant_active True))
+             (exists (b) (has_budget g b))))
+
+; 5. Budget limit: a budget never exceeds a positive bound of 10 million.
+(forall (b)
+    (implies (Budget b)
+             (and (gte budget_total 0) (lte budget_total 10000000))))
+
+; 6. Study design: sample size is positive and enrolment never starts negative.
+(forall (s)
+    (implies (Study s)
+             (and (gt sample_size 0) (gte enrolled_count 0))))
+
+; 7. Privacy: personal data is public only after anonymisation.
+(forall (d)
+    (implies (and (Dataset d) (eq data_is_personal True) (eq data_is_public True))
+             (eq data_is_anonymised True)))
+
+; 8. FAIR data: a public dataset must have metadata.
+(forall (d)
+    (implies (and (Dataset d) (eq data_is_public True))
+             (eq has_metadata True)))
+
+; 9. Integrity: a peer-reviewed publication has at least one reviewer.
+(forall (p)
+    (implies (and (Publication p) (eq is_peer_reviewed True))
+             (exists (r) (reviewed_by p r))))
+
+; 10. Transparency: a publication must declare conflicts of interest.
+(forall (p)
+    (implies (and (Publication p) (eq is_peer_reviewed True))
+             (eq has_coi_declared True)))
+
+; 11. Clinical trials must be pre-registered.
+(forall (t)
+    (implies (ClinicalTrial t)
+             (eq is_preregistered True)))
+
+; 12. Disjointness: a study is not a publication; organisations are not people.
+(forall (x) (not (and (Study x) (Publication x))))
+(forall (x) (not (and (Organization x) (Person x))))
+(forall (x) (not (and (RawDataset x) (ProcessedDataset x))))

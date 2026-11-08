@@ -1,0 +1,157 @@
+; =====================================================================
+; Domain: Clinical Medicine
+; Models patients, encounters, clinicians, diagnoses, orders, medications,
+; allergies and contraindications on a condensed BFO upper level.
+; Axioms enforce: patient safety (allergy/contraindication, dose limits,
+; vital-sign escalation), integrity (patients and clinicians are disjoint,
+; orders and results are distinct kinds of record) and business rules
+; (controlled-substance orders need a prescriber licence, discharge needs a
+; summary).
+; =====================================================================
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Agent Object)
+(def-concept Site IndependentContinuant)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept Quality Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- People and Roles ---
+(def-concept Person Agent)
+(def-concept Patient Person)
+(def-concept PediatricPatient Patient)
+(def-concept GeriatricPatient Patient)
+(def-concept PregnantPatient Patient)
+(def-concept Clinician Person)
+(def-concept Physician Clinician)
+(def-concept Surgeon Physician)
+(def-concept Nurse Clinician)
+(def-concept Pharmacist Clinician)
+(def-concept Therapist Clinician)
+(def-concept PrescriberRole Role)
+(def-concept AttendingRole Role)
+(def-concept CareTeam Object)
+
+; --- Facilities ---
+(def-concept Facility Site)
+(def-concept Hospital Facility)
+(def-concept Clinic Facility)
+(def-concept Ward Facility)
+(def-concept IntensiveCareUnit Ward)
+(def-concept OperatingTheatre Facility)
+(def-concept Pharmacy Facility)
+
+; --- Encounters ---
+(def-concept Encounter Process)
+(def-concept InpatientAdmission Encounter)
+(def-concept OutpatientVisit Encounter)
+(def-concept EmergencyVisit Encounter)
+(def-concept TelehealthVisit Encounter)
+(def-concept Procedure Process)
+(def-concept SurgicalProcedure Procedure)
+(def-concept Administration Process)
+(def-concept Discharge Process)
+
+; --- Clinical Findings ---
+(def-concept Condition Quality)
+(def-concept Diagnosis Condition)
+(def-concept ChronicCondition Diagnosis)
+(def-concept AcuteCondition Diagnosis)
+(def-concept Allergy Condition)
+(def-concept DrugAllergy Allergy)
+(def-concept FoodAllergy Allergy)
+(def-concept Contraindication Condition)
+(def-concept VitalSign Quality)
+(def-concept Observation InformationContentEntity)
+(def-concept LabResult Observation)
+(def-concept ImagingResult Observation)
+(def-concept DischargeSummary InformationContentEntity)
+(def-concept ClinicalNote InformationContentEntity)
+
+; --- Orders ---
+(def-concept ClinicalOrder InformationContentEntity)
+(def-concept MedicationOrder ClinicalOrder)
+(def-concept ControlledSubstanceOrder MedicationOrder)
+(def-concept LabOrder ClinicalOrder)
+(def-concept ImagingOrder ClinicalOrder)
+(def-concept ReferralOrder ClinicalOrder)
+
+; --- Medications ---
+(def-concept Medication MaterialEntity)
+(def-concept Antibiotic Medication)
+(def-concept PenicillinAntibiotic Antibiotic)
+(def-concept Anticoagulant Medication)
+(def-concept Analgesic Medication)
+(def-concept Opioid Analgesic)
+(def-concept NSAID Analgesic)
+(def-concept ACEInhibitor Medication)
+(def-concept ActiveIngredient MaterialEntity)
+
+; --- Properties ---
+(def-property patient_age Patient Integer :cardinality 1..1)
+(def-property weight_kg Patient Float)
+(def-property heart_rate Patient Integer)
+(def-property systolic_bp Patient Integer)
+(def-property oxygen_saturation Patient Integer)
+(def-property body_temperature Patient Float)
+(def-property medical_record_number Patient String :cardinality 1..1)
+(def-property license_number Clinician String)
+(def-property is_licensed_prescriber Clinician Boolean)
+(def-property dose_mg MedicationOrder Integer)
+(def-property max_daily_dose_mg Medication Integer)
+(def-property is_signed ClinicalOrder Boolean)
+(def-property length_of_stay_days InpatientAdmission Integer)
+(def-property bed_count Ward Integer)
+(def-property triage_level EmergencyVisit Integer)
+(def-property is_critical LabResult Boolean)
+(def-property has_summary Discharge Boolean)
+
+; --- Relations ---
+(def-relation treated_by Patient Clinician :cardinality 1..*)
+(def-relation attends Clinician Encounter)
+(def-relation subject_of Patient Encounter :cardinality 0..*)
+(def-relation diagnosed_with Patient Diagnosis :cardinality 0..*)
+(def-relation has_allergy Patient Allergy :cardinality 0..*)
+(def-relation prescribes Clinician MedicationOrder)
+(def-relation orders_medication MedicationOrder Medication)
+(def-relation received_by MedicationOrder Patient)
+(def-relation contraindicates Contraindication Medication)
+(def-relation triggers_allergy Allergy Medication)
+(def-relation has_ingredient Medication ActiveIngredient :cardinality 1..*)
+(def-relation member_of Clinician CareTeam)
+(def-relation located_in Encounter Facility)
+(def-relation results_from LabResult LabOrder)
+
+; --- Axioms ---
+; 1. Integrity: a patient is never a clinician record (roles are modelled separately)
+(forall (x) (not (and (Patient x) (Clinician x))))
+; 2. Integrity: orders and observations are distinct kinds of record
+(forall (x) (not (and (ClinicalOrder x) (Observation x))))
+; 3. Integrity: medications and active ingredients are distinct materials
+(forall (x) (not (and (Medication x) (ActiveIngredient x))))
+; 4. Safety: oxygen saturation is a percentage
+(forall (p) (implies (Patient p) (and (gte oxygen_saturation 0) (lte oxygen_saturation 100))))
+; 5. Safety: recorded heart rate must be physiologically possible
+(forall (p) (implies (Patient p) (and (gte heart_rate 0) (lte heart_rate 300))))
+; 6. Safety: a single opioid order may not exceed 200 mg
+(forall (o) (implies (ControlledSubstanceOrder o) (and (gt dose_mg 0) (lte dose_mg 200))))
+; 7. Safety: an allergy to a drug means that drug must never be ordered for the patient
+(forall (p a m) (implies (and (has_allergy p a) (triggers_allergy a m)) (not (exists (o) (and (MedicationOrder o) (orders_medication o m) (received_by o p))))))
+; 8. Safety: severe hypoxia requires an escalation record
+(forall (p) (implies (and (Patient p) (lt oxygen_saturation 90)) (exists (n) (ClinicalNote n))))
+; 9. Business: orders must be signed to be actioned
+(forall (o) (implies (MedicationOrder o) (eq is_signed True)))
+; 10. Business: only licensed clinicians prescribe
+(forall (c o) (implies (prescribes c o) (eq is_licensed_prescriber True)))
+; 11. Business: discharge requires a discharge summary
+(forall (d) (implies (Discharge d) (eq has_summary True)))
+; 12. Business: triage level runs from 1 (resuscitation) to 5 (non-urgent)
+(forall (e) (implies (EmergencyVisit e) (and (gte triage_level 1) (lte triage_level 5))))

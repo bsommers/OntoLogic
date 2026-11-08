@@ -1,0 +1,6 @@
+; Conflict fixture: violates the integrity axiom that crops are never livestock.
+(import "../../../examples/domain_agriculture.logic")
+
+; Assert an individual that is both Crop and Livestock,
+; contradicting the disjointness axiom in the base ontology.
+(exists (x) (and (Crop x) (Livestock x)))

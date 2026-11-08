@@ -1,0 +1,199 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"InformationContentEntity": { shape: class }
+"Sample": { shape: class }
+"BiologicalSample": { shape: class }
+"BloodSample": { shape: class }
+"TissueSample": { shape: class }
+"CellCulture": { shape: class }
+"EnvironmentalSample": { shape: class }
+"WaterSample": { shape: class }
+"SoilSample": { shape: class }
+"ChemicalSample": { shape: class }
+"Aliquot": { shape: class }
+"ReferenceMaterial": { shape: class }
+"CertifiedReferenceMaterial": { shape: class }
+"Reagent": { shape: class }
+"Solvent": { shape: class }
+"Buffer": { shape: class }
+"Container": { shape: class }
+"SampleVial": { shape: class }
+"StorageUnit": { shape: class }
+"Freezer": { shape: class }
+"ColdRoom": { shape: class }
+"Incubator": { shape: class }
+"Instrument": { shape: class }
+"Spectrometer": { shape: class }
+"MassSpectrometer": { shape: class }
+"Chromatograph": { shape: class }
+"Microscope": { shape: class }
+"Centrifuge": { shape: class }
+"AnalyticalBalance": { shape: class }
+"PCRThermocycler": { shape: class }
+"Sensor": { shape: class }
+"TemperatureProbe": { shape: class }
+"Laboratory": { shape: class }
+"CleanRoom": { shape: class }
+"BiosafetyLab": { shape: class }
+"Person": { shape: class }
+"LabTechnician": { shape: class }
+"PrincipalScientist": { shape: class }
+"QualityManager": { shape: class }
+"CustodyHolder": { shape: class }
+"Analyst": { shape: class }
+"Protocol": { shape: class }
+"StandardOperatingProcedure": { shape: class }
+"AnalyticalMethod": { shape: class }
+"CalibrationCertificate": { shape: class }
+"Measurement": { shape: class }
+"RawMeasurement": { shape: class }
+"DerivedMeasurement": { shape: class }
+"DatasetRecord": { shape: class }
+"LabNotebookEntry": { shape: class }
+"CustodyRecord": { shape: class }
+"SafetyDataSheet": { shape: class }
+"Deviation": { shape: class }
+"LabProcess": { shape: class }
+"Experiment": { shape: class }
+"ControlExperiment": { shape: class }
+"Replicate": { shape: class }
+"SamplePreparation": { shape: class }
+"Extraction": { shape: class }
+"Dilution": { shape: class }
+"Calibration": { shape: class }
+"MeasurementProcess": { shape: class }
+"CustodyTransfer": { shape: class }
+"Disposal": { shape: class }
+"QualityAudit": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Sample" -> "MaterialEntity"
+"BiologicalSample" -> "Sample"
+"BloodSample" -> "BiologicalSample"
+"TissueSample" -> "BiologicalSample"
+"CellCulture" -> "BiologicalSample"
+"EnvironmentalSample" -> "Sample"
+"WaterSample" -> "EnvironmentalSample"
+"SoilSample" -> "EnvironmentalSample"
+"ChemicalSample" -> "Sample"
+"Aliquot" -> "Sample"
+"ReferenceMaterial" -> "MaterialEntity"
+"CertifiedReferenceMaterial" -> "ReferenceMaterial"
+"Reagent" -> "MaterialEntity"
+"Solvent" -> "Reagent"
+"Buffer" -> "Reagent"
+"Container" -> "Object"
+"SampleVial" -> "Container"
+"StorageUnit" -> "Object"
+"Freezer" -> "StorageUnit"
+"ColdRoom" -> "StorageUnit"
+"Incubator" -> "StorageUnit"
+"Instrument" -> "Object"
+"Spectrometer" -> "Instrument"
+"MassSpectrometer" -> "Spectrometer"
+"Chromatograph" -> "Instrument"
+"Microscope" -> "Instrument"
+"Centrifuge" -> "Instrument"
+"AnalyticalBalance" -> "Instrument"
+"PCRThermocycler" -> "Instrument"
+"Sensor" -> "Instrument"
+"TemperatureProbe" -> "Sensor"
+"Laboratory" -> "Object"
+"CleanRoom" -> "Laboratory"
+"BiosafetyLab" -> "Laboratory"
+"Person" -> "Object"
+"LabTechnician" -> "Role"
+"PrincipalScientist" -> "Role"
+"QualityManager" -> "Role"
+"CustodyHolder" -> "Role"
+"Analyst" -> "Role"
+"Protocol" -> "InformationContentEntity"
+"StandardOperatingProcedure" -> "Protocol"
+"AnalyticalMethod" -> "Protocol"
+"CalibrationCertificate" -> "InformationContentEntity"
+"Measurement" -> "InformationContentEntity"
+"RawMeasurement" -> "Measurement"
+"DerivedMeasurement" -> "Measurement"
+"DatasetRecord" -> "InformationContentEntity"
+"LabNotebookEntry" -> "InformationContentEntity"
+"CustodyRecord" -> "InformationContentEntity"
+"SafetyDataSheet" -> "InformationContentEntity"
+"Deviation" -> "InformationContentEntity"
+"LabProcess" -> "Process"
+"Experiment" -> "LabProcess"
+"ControlExperiment" -> "Experiment"
+"Replicate" -> "Experiment"
+"SamplePreparation" -> "LabProcess"
+"Extraction" -> "SamplePreparation"
+"Dilution" -> "SamplePreparation"
+"Calibration" -> "LabProcess"
+"MeasurementProcess" -> "LabProcess"
+"CustodyTransfer" -> "LabProcess"
+"Disposal" -> "LabProcess"
+"QualityAudit" -> "LabProcess"
+"Sample"."sample_id": String
+"Sample"."volume_ml": Integer
+"Sample"."is_biohazard": Boolean
+"Sample"."storage_temp_c": Integer
+"Sample"."is_expired": Boolean
+"Sample"."collection_date": String
+"Instrument"."instrument_serial": String
+"Instrument"."calibration_valid": Boolean
+"Instrument"."days_since_calibration": Integer
+"Measurement"."measured_value": Integer
+"Measurement"."uncertainty_percent": Integer
+"Protocol"."protocol_approved": Boolean
+"Protocol"."protocol_version": Integer
+"Experiment"."replicate_count": Integer
+"Experiment"."experiment_complete": Boolean
+"CustodyRecord"."custody_gap": Boolean
+"BiosafetyLab"."containment_level": Integer
+"Sample"."is_disposed": Boolean
+"Aliquot" -> "Sample": derived_from
+"Sample" -> "StorageUnit": stored_in
+"Sample" -> "Container": held_in
+"Measurement" -> "Instrument": measured_by
+"Measurement" -> "Sample": measures
+"MeasurementProcess" -> "Laboratory": performed_in
+"Experiment" -> "Protocol": follows_protocol
+"Experiment" -> "Sample": uses_sample
+"Experiment" -> "Instrument": uses_instrument
+"Experiment" -> "Measurement": produces_measurement
+"Instrument" -> "CalibrationCertificate": calibrated_by
+"Calibration" -> "Instrument": calibration_of
+"Calibration" -> "ReferenceMaterial": uses_reference
+"CustodyRecord" -> "Sample": custody_of
+"CustodyTransfer" -> "Person": released_by
+"CustodyTransfer" -> "Person": received_by
+"CustodyTransfer" -> "Sample": transfers
+"CustodyTransfer" -> "CustodyRecord": recorded_in
+"LabProcess" -> "Person": performed_by
+"Experiment" -> "LabNotebookEntry": documented_in
+"Deviation" -> "Protocol": deviates_from
+"Sample" -> "SafetyDataSheet": handled_under
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall m (forall i (Measurement(m) and measured_by(m, i) implies calibration_valid = True))
+#   forall i (Instrument(i) and gt(days_since_calibration, 365) implies calibration_valid = False)
+#   forall e (forall p (Experiment(e) and follows_protocol(e, p) implies protocol_approved = True))
+#   forall t (CustodyTransfer(t) implies exists r (recorded_in(t, r)))
+#   forall s (Sample(s) and is_biohazard = True implies exists d (handled_under(s, d)))
+#   forall e (Experiment(e) and experiment_complete = True implies gte(replicate_count, 3))
+#   forall e (forall s (Experiment(e) and uses_sample(e, s) implies is_expired = False))
+#   forall s (Sample(s) and is_disposed = True implies volume_ml = 0)
+#   forall x (not Sample(x) and Instrument(x))
+#   forall x (not Measurement(x) and Protocol(x))

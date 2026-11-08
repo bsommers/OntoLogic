@@ -1,0 +1,195 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Organization": { shape: class }
+"Account": { shape: class }
+"EnterpriseAccount": { shape: class }
+"MidMarketAccount": { shape: class }
+"SmallBusinessAccount": { shape: class }
+"Person": { shape: class }
+"CustomerContact": { shape: class }
+"ExecutiveSponsor": { shape: class }
+"Champion": { shape: class }
+"Administrator": { shape: class }
+"EndUser": { shape: class }
+"Detractor": { shape: class }
+"VendorStaff": { shape: class }
+"CustomerSuccessManager": { shape: class }
+"SolutionsEngineer": { shape: class }
+"AccountExecutive": { shape: class }
+"SupportLiaison": { shape: class }
+"SuccessTeam": { shape: class }
+"LifecycleStage": { shape: class }
+"ProspectStage": { shape: class }
+"OnboardingStage": { shape: class }
+"AdoptionStage": { shape: class }
+"ExpansionStage": { shape: class }
+"RenewalStage": { shape: class }
+"ChurnedStage": { shape: class }
+"OnboardingProcess": { shape: class }
+"Kickoff": { shape: class }
+"DataMigration": { shape: class }
+"IntegrationSetup": { shape: class }
+"UserTraining": { shape: class }
+"GoLive": { shape: class }
+"OnboardingPlan": { shape: class }
+"Milestone": { shape: class }
+"SuccessPlan": { shape: class }
+"SuccessGoal": { shape: class }
+"HealthScore": { shape: class }
+"HealthyScore": { shape: class }
+"NeutralScore": { shape: class }
+"AtRiskScore": { shape: class }
+"HealthSignal": { shape: class }
+"UsageSignal": { shape: class }
+"SupportSignal": { shape: class }
+"SentimentSignal": { shape: class }
+"FinancialSignal": { shape: class }
+"ChurnRisk": { shape: class }
+"HighChurnRisk": { shape: class }
+"LowChurnRisk": { shape: class }
+"RiskAlert": { shape: class }
+"SaveCampaign": { shape: class }
+"Contract": { shape: class }
+"Subscription": { shape: class }
+"Renewal": { shape: class }
+"AutoRenewal": { shape: class }
+"NegotiatedRenewal": { shape: class }
+"Expansion": { shape: class }
+"Upsell": { shape: class }
+"CrossSell": { shape: class }
+"Churn": { shape: class }
+"VoluntaryChurn": { shape: class }
+"InvoluntaryChurn": { shape: class }
+"Invoice": { shape: class }
+"BusinessReview": { shape: class }
+"ExecutiveBusinessReview": { shape: class }
+"QuarterlyBusinessReview": { shape: class }
+"ReviewDeck": { shape: class }
+"ActionItem": { shape: class }
+"NPSSurvey": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Organization" -> "Agent"
+"Account" -> "Organization"
+"EnterpriseAccount" -> "Account"
+"MidMarketAccount" -> "Account"
+"SmallBusinessAccount" -> "Account"
+"Person" -> "Agent"
+"CustomerContact" -> "Person"
+"ExecutiveSponsor" -> "CustomerContact"
+"Champion" -> "CustomerContact"
+"Administrator" -> "CustomerContact"
+"EndUser" -> "CustomerContact"
+"Detractor" -> "CustomerContact"
+"VendorStaff" -> "Person"
+"CustomerSuccessManager" -> "VendorStaff"
+"SolutionsEngineer" -> "VendorStaff"
+"AccountExecutive" -> "VendorStaff"
+"SupportLiaison" -> "VendorStaff"
+"SuccessTeam" -> "Object"
+"LifecycleStage" -> "Quality"
+"ProspectStage" -> "LifecycleStage"
+"OnboardingStage" -> "LifecycleStage"
+"AdoptionStage" -> "LifecycleStage"
+"ExpansionStage" -> "LifecycleStage"
+"RenewalStage" -> "LifecycleStage"
+"ChurnedStage" -> "LifecycleStage"
+"OnboardingProcess" -> "Process"
+"Kickoff" -> "OnboardingProcess"
+"DataMigration" -> "OnboardingProcess"
+"IntegrationSetup" -> "OnboardingProcess"
+"UserTraining" -> "OnboardingProcess"
+"GoLive" -> "OnboardingProcess"
+"OnboardingPlan" -> "InformationContentEntity"
+"Milestone" -> "InformationContentEntity"
+"SuccessPlan" -> "InformationContentEntity"
+"SuccessGoal" -> "InformationContentEntity"
+"HealthScore" -> "Quality"
+"HealthyScore" -> "HealthScore"
+"NeutralScore" -> "HealthScore"
+"AtRiskScore" -> "HealthScore"
+"HealthSignal" -> "InformationContentEntity"
+"UsageSignal" -> "HealthSignal"
+"SupportSignal" -> "HealthSignal"
+"SentimentSignal" -> "HealthSignal"
+"FinancialSignal" -> "HealthSignal"
+"ChurnRisk" -> "Quality"
+"HighChurnRisk" -> "ChurnRisk"
+"LowChurnRisk" -> "ChurnRisk"
+"RiskAlert" -> "InformationContentEntity"
+"SaveCampaign" -> "Process"
+"Contract" -> "InformationContentEntity"
+"Subscription" -> "Contract"
+"Renewal" -> "Process"
+"AutoRenewal" -> "Renewal"
+"NegotiatedRenewal" -> "Renewal"
+"Expansion" -> "Process"
+"Upsell" -> "Expansion"
+"CrossSell" -> "Expansion"
+"Churn" -> "Process"
+"VoluntaryChurn" -> "Churn"
+"InvoluntaryChurn" -> "Churn"
+"Invoice" -> "InformationContentEntity"
+"BusinessReview" -> "Process"
+"ExecutiveBusinessReview" -> "BusinessReview"
+"QuarterlyBusinessReview" -> "BusinessReview"
+"ReviewDeck" -> "InformationContentEntity"
+"ActionItem" -> "InformationContentEntity"
+"NPSSurvey" -> "InformationContentEntity"
+"Account"."account_name": String
+"Account"."annual_recurring_revenue": Integer
+"Account"."seat_count": Integer
+"Account"."active_seat_count": Integer
+"Account"."health_score": Integer
+"Account"."days_to_renewal": Integer
+"Account"."onboarding_days": Integer
+"Account"."is_at_risk": Boolean
+"Account"."has_success_plan": Boolean
+"Account"."has_executive_sponsor": Boolean
+"Account"."login_count_30d": Integer
+"NPSSurvey"."nps_score": Integer
+"Renewal"."discount_percent": Integer
+"Milestone"."is_completed": Boolean
+"CustomerSuccessManager"."portfolio_size": Integer
+"Account" -> "CustomerSuccessManager": managed_by
+"Account" -> "CustomerContact": has_contact
+"Account" -> "ExecutiveSponsor": sponsored_by
+"Account" -> "LifecycleStage": in_stage
+"Account" -> "Contract": holds_contract
+"Renewal" -> "Contract": renews
+"Account" -> "OnboardingPlan": onboarded_via
+"OnboardingPlan" -> "Milestone": contains_milestone
+"Account" -> "HealthScore": scored_as
+"HealthScore" -> "HealthSignal": derived_from
+"RiskAlert" -> "Account": raises
+"Account" -> "BusinessReview": reviewed_in
+"BusinessReview" -> "ActionItem": produces
+"SaveCampaign" -> "Account": targets
+"CustomerSuccessManager" -> "SuccessTeam": member_of
+"Expansion" -> "Account": expands
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not CustomerContact(x) and VendorStaff(x))
+#   forall x (not EnterpriseAccount(x) and SmallBusinessAccount(x))
+#   forall x (not HealthyScore(x) and AtRiskScore(x))
+#   forall x (not ChurnedStage(x) and RenewalStage(x))
+#   forall x (not VoluntaryChurn(x) and InvoluntaryChurn(x))
+#   forall a (Account(a) and lt(health_score, 40) implies is_at_risk = True)
+#   forall a (Account(a) and is_at_risk = True implies has_success_plan = True)

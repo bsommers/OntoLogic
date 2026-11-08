@@ -1,0 +1,200 @@
+; Domain: Aerospace (airworthiness, maintenance and flight operations).
+; Models aircraft, components, certification, maintenance checks, flight
+; operations and crews, with a condensed BFO upper level.
+; Axioms enforce: flight only with a valid airworthiness certificate, life-limited
+; parts within limits, maintenance release before flight, crew licensing,
+; mass and fuel limits, and component/aircraft disjointness.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Aircraft ---
+(def-concept Aircraft Object)
+(def-concept FixedWingAircraft Aircraft)
+(def-concept Airliner FixedWingAircraft)
+(def-concept CargoAircraft FixedWingAircraft)
+(def-concept BusinessJet FixedWingAircraft)
+(def-concept Rotorcraft Aircraft)
+(def-concept Helicopter Rotorcraft)
+(def-concept UnmannedAircraft Aircraft)
+
+; --- Components ---
+(def-concept AircraftComponent Object)
+(def-concept Airframe AircraftComponent)
+(def-concept Wing Airframe)
+(def-concept Fuselage Airframe)
+(def-concept Empennage Airframe)
+(def-concept Powerplant AircraftComponent)
+(def-concept TurbofanEngine Powerplant)
+(def-concept Propeller Powerplant)
+(def-concept LandingGear AircraftComponent)
+(def-concept FlightControlSurface AircraftComponent)
+(def-concept Avionics AircraftComponent)
+(def-concept FlightManagementComputer Avionics)
+(def-concept Transponder Avionics)
+(def-concept FuelSystem AircraftComponent)
+(def-concept HydraulicSystem AircraftComponent)
+(def-concept LifeLimitedPart AircraftComponent)
+(def-concept SparePart Object)
+
+; --- Roles and people ---
+(def-concept Person Object)
+(def-concept Organization Object)
+(def-concept PilotInCommand Role)
+(def-concept FirstOfficer Role)
+(def-concept CertifyingEngineer Role)
+(def-concept AirworthinessInspector Role)
+(def-concept Operator Role)
+(def-concept MaintenanceOrganization Organization)
+(def-concept Regulator Organization)
+(def-concept Airport Object)
+(def-concept Runway Object)
+
+; --- Certification and documents ---
+(def-concept CertificationDocument InformationContentEntity)
+(def-concept TypeCertificate CertificationDocument)
+(def-concept AirworthinessCertificate CertificationDocument)
+(def-concept AirworthinessDirective CertificationDocument)
+(def-concept PilotLicense CertificationDocument)
+(def-concept MedicalCertificate CertificationDocument)
+(def-concept MaintenanceRelease CertificationDocument)
+(def-concept MinimumEquipmentList CertificationDocument)
+(def-concept FlightPlan InformationContentEntity)
+(def-concept TechnicalLogEntry InformationContentEntity)
+(def-concept Defect InformationContentEntity)
+(def-concept DeferredDefect Defect)
+
+; --- Maintenance processes ---
+(def-concept MaintenanceProcess Process)
+(def-concept MaintenanceCheck MaintenanceProcess)
+(def-concept LineCheck MaintenanceCheck)
+(def-concept ACheck MaintenanceCheck)
+(def-concept CCheck MaintenanceCheck)
+(def-concept HeavyCheck MaintenanceCheck)
+(def-concept ComponentOverhaul MaintenanceProcess)
+(def-concept NonDestructiveInspection MaintenanceProcess)
+(def-concept DefectRectification MaintenanceProcess)
+(def-concept ComplianceAction MaintenanceProcess)
+
+; --- Flight operations ---
+(def-concept FlightOperation Process)
+(def-concept Flight FlightOperation)
+(def-concept CommercialFlight Flight)
+(def-concept FerryFlight Flight)
+(def-concept TestFlight Flight)
+(def-concept Takeoff FlightOperation)
+(def-concept Landing FlightOperation)
+(def-concept Cruise FlightOperation)
+(def-concept PreflightInspection FlightOperation)
+(def-concept Incident Occurrent)
+(def-concept RunwayExcursion Incident)
+
+; --- Properties ---
+(def-property registration Aircraft String :cardinality 1..1)
+(def-property max_takeoff_mass_kg Aircraft Integer)
+(def-property takeoff_mass_kg Flight Integer)
+(def-property fuel_load_kg Flight Integer)
+(def-property fuel_reserve_kg Flight Integer)
+(def-property total_flight_hours Aircraft Integer)
+(def-property flight_cycles LifeLimitedPart Integer)
+(def-property cycle_limit LifeLimitedPart Integer)
+(def-property hours_since_check Aircraft Integer)
+(def-property check_interval_hours Aircraft Integer)
+(def-property certificate_valid AirworthinessCertificate Boolean)
+(def-property is_airworthy Aircraft Boolean)
+(def-property is_released_to_service Aircraft Boolean)
+(def-property license_current PilotLicense Boolean)
+(def-property crew_size Flight Integer)
+(def-property cruise_altitude_ft Flight Integer)
+(def-property directive_complied AirworthinessDirective Boolean)
+(def-property open_defect_count Aircraft Integer)
+
+; --- Relations ---
+(def-relation installed_on AircraftComponent Aircraft)
+(def-relation has_certificate Aircraft AirworthinessCertificate)
+(def-relation type_certified_by Aircraft TypeCertificate)
+(def-relation operated_by Aircraft Operator)
+(def-relation performs_flight Aircraft Flight)
+(def-relation commands Person Flight)
+(def-relation holds_license Person PilotLicense)
+(def-relation departs_from Flight Airport)
+(def-relation arrives_at Flight Airport)
+(def-relation follows_plan Flight FlightPlan)
+(def-relation inspects MaintenanceCheck Aircraft)
+(def-relation performed_by MaintenanceProcess MaintenanceOrganization)
+(def-relation certified_by MaintenanceRelease CertifyingEngineer)
+(def-relation releases MaintenanceRelease Aircraft)
+(def-relation applies_to AirworthinessDirective Aircraft)
+(def-relation raised_against Defect AircraftComponent)
+(def-relation rectifies DefectRectification Defect)
+(def-relation issued_by CertificationDocument Regulator)
+(def-relation involves Incident Aircraft)
+
+; --- Axioms ---
+; 1. Safety: an aircraft flagged airworthy must hold an airworthiness certificate.
+(forall (a)
+    (implies (and (Aircraft a) (eq is_airworthy True))
+             (exists (c) (has_certificate a c))))
+
+; 2. Safety: a released-to-service aircraft must be airworthy.
+(forall (a)
+    (implies (and (Aircraft a) (eq is_released_to_service True))
+             (eq is_airworthy True)))
+
+; 3. Life limits: life-limited parts never exceed their cycle limit.
+(forall (p)
+    (implies (LifeLimitedPart p)
+             (and (gte flight_cycles 0) (lte flight_cycles 50000))))
+
+; 4. Maintenance: an aircraft whose check interval is exceeded is not airworthy.
+(forall (a)
+    (implies (and (Aircraft a) (gt hours_since_check 600))
+             (eq is_airworthy False)))
+
+; 5. Mass limit: takeoff mass stays within a physical bound for the fleet.
+(forall (f)
+    (implies (Flight f)
+             (and (gt takeoff_mass_kg 0) (lte takeoff_mass_kg 600000))))
+
+; 6. Fuel: every flight carries a positive fuel reserve.
+(forall (f)
+    (implies (Flight f)
+             (gt fuel_reserve_kg 0)))
+
+; 7. Crew: commercial flights require at least two crew.
+(forall (f)
+    (implies (CommercialFlight f)
+             (gte crew_size 2)))
+
+; 8. Licensing: the commander of a flight must hold a pilot license.
+(forall (p f)
+    (implies (commands p f)
+             (exists (l) (holds_license p l))))
+
+; 9. Airworthiness directives: no open defects on an airworthy aircraft.
+(forall (a)
+    (implies (and (Aircraft a) (eq is_airworthy True))
+             (eq open_defect_count 0)))
+
+; 10. Release: a maintenance release must be certified by a certifying engineer.
+(forall (m)
+    (implies (MaintenanceRelease m)
+             (exists (e) (certified_by m e))))
+
+; 11. Altitude: cruise altitude stays within the certified ceiling.
+(forall (f)
+    (implies (Flight f)
+             (and (gte cruise_altitude_ft 0) (lte cruise_altitude_ft 51000))))
+
+; 12. Disjointness: aircraft and their components are different kinds of object.
+(forall (x) (not (and (Aircraft x) (AircraftComponent x))))
+(forall (x) (not (and (Flight x) (MaintenanceProcess x))))

@@ -1,0 +1,8 @@
+; Conflict fixture: violates the consent grant / withdrawal exclusivity of
+; domain_iot_smart_home. One consent record is declared as both.
+(import "../../../examples/domain_iot_smart_home.logic")
+
+(def-concept AmbiguousConsent ConsentGrant)
+(forall (x)
+    (implies (AmbiguousConsent x) (ConsentWithdrawal x)))
+(exists (u) (AmbiguousConsent u))

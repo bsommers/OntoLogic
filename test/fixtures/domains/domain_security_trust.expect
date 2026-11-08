@@ -1,0 +1,6 @@
+concept CISORole
+concept AttackerRole
+concept TrustedRole
+property is_valid
+property key_length
+property risk_score

@@ -1,0 +1,204 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Asset": { shape: class }
+"RotatingAsset": { shape: class }
+"Motor": { shape: class }
+"Pump": { shape: class }
+"Compressor": { shape: class }
+"Fan": { shape: class }
+"Gearbox": { shape: class }
+"StaticAsset": { shape: class }
+"HeatExchanger": { shape: class }
+"Tank": { shape: class }
+"Pipeline": { shape: class }
+"Component": { shape: class }
+"Bearing": { shape: class }
+"Seal": { shape: class }
+"Impeller": { shape: class }
+"Sensor": { shape: class }
+"VibrationSensor": { shape: class }
+"TemperatureSensor": { shape: class }
+"PressureSensor": { shape: class }
+"CurrentSensor": { shape: class }
+"AcousticSensor": { shape: class }
+"OilQualitySensor": { shape: class }
+"EdgeGateway": { shape: class }
+"ProtocolBridge": { shape: class }
+"EdgeAnalyticsNode": { shape: class }
+"PlcController": { shape: class }
+"MessageBroker": { shape: class }
+"MqttBroker": { shape: class }
+"OpcUaServer": { shape: class }
+"CloudPlatform": { shape: class }
+"TimeSeriesStore": { shape: class }
+"NetworkLink": { shape: class }
+"CellularLink": { shape: class }
+"EthernetLink": { shape: class }
+"WirelessMeshLink": { shape: class }
+"TelemetryMessage": { shape: class }
+"MqttMessage": { shape: class }
+"OpcUaDataChange": { shape: class }
+"Topic": { shape: class }
+"NodeId": { shape: class }
+"PayloadSchema": { shape: class }
+"Measurement": { shape: class }
+"Waveform": { shape: class }
+"ScalarReading": { shape: class }
+"HealthIndicator": { shape: class }
+"FeatureVector": { shape: class }
+"AnomalyModel": { shape: class }
+"RemainingUsefulLifeEstimate": { shape: class }
+"Alert": { shape: class }
+"ConditionAlert": { shape: class }
+"ConnectivityAlert": { shape: class }
+"WorkOrder": { shape: class }
+"PredictiveWorkOrder": { shape: class }
+"CorrectiveWorkOrder": { shape: class }
+"Certificate": { shape: class }
+"Telemetry": { shape: class }
+"Sampling": { shape: class }
+"Publication": { shape: class }
+"StoreAndForward": { shape: class }
+"InferenceRun": { shape: class }
+"Degradation": { shape: class }
+"MaintenanceActivity": { shape: class }
+"InspectionActivity": { shape: class }
+"RepairActivity": { shape: class }
+"ReliabilityEngineerRole": { shape: class }
+"MaintenanceTechnicianRole": { shape: class }
+"DataEngineerRole": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Asset" -> "Object"
+"RotatingAsset" -> "Asset"
+"Motor" -> "RotatingAsset"
+"Pump" -> "RotatingAsset"
+"Compressor" -> "RotatingAsset"
+"Fan" -> "RotatingAsset"
+"Gearbox" -> "RotatingAsset"
+"StaticAsset" -> "Asset"
+"HeatExchanger" -> "StaticAsset"
+"Tank" -> "StaticAsset"
+"Pipeline" -> "StaticAsset"
+"Component" -> "Object"
+"Bearing" -> "Component"
+"Seal" -> "Component"
+"Impeller" -> "Component"
+"Sensor" -> "Object"
+"VibrationSensor" -> "Sensor"
+"TemperatureSensor" -> "Sensor"
+"PressureSensor" -> "Sensor"
+"CurrentSensor" -> "Sensor"
+"AcousticSensor" -> "Sensor"
+"OilQualitySensor" -> "Sensor"
+"EdgeGateway" -> "Object"
+"ProtocolBridge" -> "EdgeGateway"
+"EdgeAnalyticsNode" -> "EdgeGateway"
+"PlcController" -> "Object"
+"MessageBroker" -> "Object"
+"MqttBroker" -> "MessageBroker"
+"OpcUaServer" -> "Object"
+"CloudPlatform" -> "Object"
+"TimeSeriesStore" -> "Object"
+"NetworkLink" -> "Object"
+"CellularLink" -> "NetworkLink"
+"EthernetLink" -> "NetworkLink"
+"WirelessMeshLink" -> "NetworkLink"
+"TelemetryMessage" -> "InformationContentEntity"
+"MqttMessage" -> "TelemetryMessage"
+"OpcUaDataChange" -> "TelemetryMessage"
+"Topic" -> "InformationContentEntity"
+"NodeId" -> "InformationContentEntity"
+"PayloadSchema" -> "InformationContentEntity"
+"Measurement" -> "InformationContentEntity"
+"Waveform" -> "Measurement"
+"ScalarReading" -> "Measurement"
+"HealthIndicator" -> "InformationContentEntity"
+"FeatureVector" -> "InformationContentEntity"
+"AnomalyModel" -> "InformationContentEntity"
+"RemainingUsefulLifeEstimate" -> "InformationContentEntity"
+"Alert" -> "InformationContentEntity"
+"ConditionAlert" -> "Alert"
+"ConnectivityAlert" -> "Alert"
+"WorkOrder" -> "InformationContentEntity"
+"PredictiveWorkOrder" -> "WorkOrder"
+"CorrectiveWorkOrder" -> "WorkOrder"
+"Certificate" -> "InformationContentEntity"
+"Telemetry" -> "Process"
+"Sampling" -> "Telemetry"
+"Publication" -> "Telemetry"
+"StoreAndForward" -> "Process"
+"InferenceRun" -> "Process"
+"Degradation" -> "Process"
+"MaintenanceActivity" -> "Process"
+"InspectionActivity" -> "MaintenanceActivity"
+"RepairActivity" -> "MaintenanceActivity"
+"ReliabilityEngineerRole" -> "Role"
+"MaintenanceTechnicianRole" -> "Role"
+"DataEngineerRole" -> "Role"
+"Asset"."asset_tag": String
+"Asset"."criticality_rank": Integer
+"Sensor"."sampling_rate_hz": Integer
+"ScalarReading"."reading_value": Integer
+"Measurement"."quality_code": Integer
+"MqttMessage"."qos_level": Integer
+"MqttMessage"."is_retained": Boolean
+"TelemetryMessage"."is_encrypted_in_transit": Boolean
+"Topic"."topic_depth": Integer
+"EdgeGateway"."buffer_capacity_msgs": Integer
+"EdgeGateway"."buffered_msgs": Integer
+"EdgeGateway"."is_online": Boolean
+"EdgeGateway"."firmware_version": String
+"VibrationSensor"."vibration_rms_mm_s": Integer
+"Bearing"."bearing_temp_c": Integer
+"HealthIndicator"."health_score": Integer
+"RemainingUsefulLifeEstimate"."rul_hours": Integer
+"RemainingUsefulLifeEstimate"."confidence_pct": Integer
+"Alert"."alert_severity": Integer
+"Alert"."is_acknowledged": Boolean
+"Alert"."is_false_positive": Boolean
+"Certificate"."is_expired": Boolean
+"TelemetryMessage"."clock_skew_ms": Integer
+"Sensor" -> "Asset": monitors
+"Sensor" -> "Component": attached_to
+"Component" -> "Asset": part_of
+"EdgeGateway" -> "Sensor": collects_from
+"EdgeGateway" -> "MessageBroker": publishes_to
+"OpcUaServer" -> "Asset": exposes
+"MessageBroker" -> "CloudPlatform": reports_to
+"TelemetryMessage" -> "Sensor": emitted_by
+"TelemetryMessage" -> "Topic": published_on
+"TelemetryMessage" -> "PayloadSchema": conforms_to
+"FeatureVector" -> "Measurement": derived_from
+"HealthIndicator" -> "Asset": scores
+"RemainingUsefulLifeEstimate" -> "Asset": predicts
+"Alert" -> "WorkOrder": triggers
+"Alert" -> "Asset": raised_for
+"WorkOrder" -> "MaintenanceTechnicianRole": assigned_to
+"EdgeGateway" -> "Certificate": authenticated_with
+"EdgeGateway" -> "NetworkLink": uplink
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall a (ConditionAlert(a) implies exists x (Asset(x) and raised_for(a, x)))
+#   forall w (PredictiveWorkOrder(w) implies exists a (Alert(a) and triggers(a, w)))
+#   forall g (EdgeGateway(g) implies exists c (Certificate(c) and authenticated_with(g, c)))
+#   forall g (EdgeGateway(g) implies not Sensor(g))

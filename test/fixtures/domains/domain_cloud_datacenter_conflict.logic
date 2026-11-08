@@ -1,0 +1,4 @@
+(import "../../../examples/domain_cloud_datacenter.logic")
+(forall (n)
+    (implies (ComputeNode n)
+             (and (gt cpu_usage 90) (lt cpu_usage 10))))

@@ -1,0 +1,255 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Facility["Facility"]
+    class Cleanroom["Cleanroom"]
+    class Bay["Bay"]
+    class LithographyBay["LithographyBay"]
+    class EtchBay["EtchBay"]
+    class DiffusionBay["DiffusionBay"]
+    class ThinFilmBay["ThinFilmBay"]
+    class MetrologyBay["MetrologyBay"]
+    class ChemicalMechanicalPolishBay["ChemicalMechanicalPolishBay"]
+    class ISOClass["ISOClass"]
+    class ISOClass3["ISOClass3"]
+    class ISOClass5["ISOClass5"]
+    class ISOClass7["ISOClass7"]
+    class Wafer["Wafer"]
+    class ProductWafer["ProductWafer"]
+    class MonitorWafer["MonitorWafer"]
+    class DummyWafer["DummyWafer"]
+    class Lot["Lot"]
+    class ProductionLot["ProductionLot"]
+    class EngineeringLot["EngineeringLot"]
+    class HotLot["HotLot"]
+    class Foup["Foup"]
+    class Reticle["Reticle"]
+    class Die["Die"]
+    class GoodDie["GoodDie"]
+    class ScrapDie["ScrapDie"]
+    class ProcessChemical["ProcessChemical"]
+    class Photoresist["Photoresist"]
+    class ProcessGas["ProcessGas"]
+    class Slurry["Slurry"]
+    class Tool["Tool"]
+    class ProcessTool["ProcessTool"]
+    class Stepper["Stepper"]
+    class Scanner["Scanner"]
+    class CoaterDeveloper["CoaterDeveloper"]
+    class PlasmaEtcher["PlasmaEtcher"]
+    class DiffusionFurnace["DiffusionFurnace"]
+    class CvdChamber["CvdChamber"]
+    class PvdChamber["PvdChamber"]
+    class IonImplanter["IonImplanter"]
+    class CmpPolisher["CmpPolisher"]
+    class WetBench["WetBench"]
+    class MetrologyTool["MetrologyTool"]
+    class CriticalDimensionSem["CriticalDimensionSem"]
+    class OpticalOverlayTool["OpticalOverlayTool"]
+    class FilmThicknessGauge["FilmThicknessGauge"]
+    class InspectionTool["InspectionTool"]
+    class BrightFieldInspector["BrightFieldInspector"]
+    class DarkFieldInspector["DarkFieldInspector"]
+    class DefectReviewSem["DefectReviewSem"]
+    class WaferProber["WaferProber"]
+    class AutomatedMaterialHandling["AutomatedMaterialHandling"]
+    class ProcessStep["ProcessStep"]
+    class Photolithography["Photolithography"]
+    class Etch["Etch"]
+    class Deposition["Deposition"]
+    class Implantation["Implantation"]
+    class Diffusion["Diffusion"]
+    class Planarization["Planarization"]
+    class WetClean["WetClean"]
+    class MetrologyStep["MetrologyStep"]
+    class InspectionStep["InspectionStep"]
+    class ElectricalTest["ElectricalTest"]
+    class Rework["Rework"]
+    class ProcessFlow["ProcessFlow"]
+    class Layer["Layer"]
+    class Recipe["Recipe"]
+    class QualifiedRecipe["QualifiedRecipe"]
+    class RecipeParameter["RecipeParameter"]
+    class ControlPlan["ControlPlan"]
+    class Measurement["Measurement"]
+    class CriticalDimensionMeasurement["CriticalDimensionMeasurement"]
+    class OverlayMeasurement["OverlayMeasurement"]
+    class ThicknessMeasurement["ThicknessMeasurement"]
+    class Defect["Defect"]
+    class ParticleDefect["ParticleDefect"]
+    class ScratchDefect["ScratchDefect"]
+    class PatternDefect["PatternDefect"]
+    class KillerDefect["KillerDefect"]
+    class WaferMap["WaferMap"]
+    class YieldReport["YieldReport"]
+    class SpcChart["SpcChart"]
+    class OutOfControlEvent["OutOfControlEvent"]
+    class HoldOrder["HoldOrder"]
+    class ProcessEngineerRole["ProcessEngineerRole"]
+    class EquipmentTechnicianRole["EquipmentTechnicianRole"]
+    class YieldEngineerRole["YieldEngineerRole"]
+    class OperatorRole["OperatorRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Site <|-- Facility
+    Site <|-- Cleanroom
+    Cleanroom <|-- Bay
+    Bay <|-- LithographyBay
+    Bay <|-- EtchBay
+    Bay <|-- DiffusionBay
+    Bay <|-- ThinFilmBay
+    Bay <|-- MetrologyBay
+    Bay <|-- ChemicalMechanicalPolishBay
+    Quality <|-- ISOClass
+    ISOClass <|-- ISOClass3
+    ISOClass <|-- ISOClass5
+    ISOClass <|-- ISOClass7
+    Object <|-- Wafer
+    Wafer <|-- ProductWafer
+    Wafer <|-- MonitorWafer
+    Wafer <|-- DummyWafer
+    Object <|-- Lot
+    Lot <|-- ProductionLot
+    Lot <|-- EngineeringLot
+    ProductionLot <|-- HotLot
+    Object <|-- Foup
+    Object <|-- Reticle
+    Object <|-- Die
+    Die <|-- GoodDie
+    Die <|-- ScrapDie
+    Object <|-- ProcessChemical
+    ProcessChemical <|-- Photoresist
+    ProcessChemical <|-- ProcessGas
+    ProcessChemical <|-- Slurry
+    Object <|-- Tool
+    Tool <|-- ProcessTool
+    ProcessTool <|-- Stepper
+    ProcessTool <|-- Scanner
+    ProcessTool <|-- CoaterDeveloper
+    ProcessTool <|-- PlasmaEtcher
+    ProcessTool <|-- DiffusionFurnace
+    ProcessTool <|-- CvdChamber
+    ProcessTool <|-- PvdChamber
+    ProcessTool <|-- IonImplanter
+    ProcessTool <|-- CmpPolisher
+    ProcessTool <|-- WetBench
+    Tool <|-- MetrologyTool
+    MetrologyTool <|-- CriticalDimensionSem
+    MetrologyTool <|-- OpticalOverlayTool
+    MetrologyTool <|-- FilmThicknessGauge
+    Tool <|-- InspectionTool
+    InspectionTool <|-- BrightFieldInspector
+    InspectionTool <|-- DarkFieldInspector
+    InspectionTool <|-- DefectReviewSem
+    Tool <|-- WaferProber
+    Tool <|-- AutomatedMaterialHandling
+    Process <|-- ProcessStep
+    ProcessStep <|-- Photolithography
+    ProcessStep <|-- Etch
+    ProcessStep <|-- Deposition
+    ProcessStep <|-- Implantation
+    ProcessStep <|-- Diffusion
+    ProcessStep <|-- Planarization
+    ProcessStep <|-- WetClean
+    Process <|-- MetrologyStep
+    Process <|-- InspectionStep
+    Process <|-- ElectricalTest
+    Process <|-- Rework
+    InformationContentEntity <|-- ProcessFlow
+    InformationContentEntity <|-- Layer
+    InformationContentEntity <|-- Recipe
+    Recipe <|-- QualifiedRecipe
+    InformationContentEntity <|-- RecipeParameter
+    InformationContentEntity <|-- ControlPlan
+    InformationContentEntity <|-- Measurement
+    Measurement <|-- CriticalDimensionMeasurement
+    Measurement <|-- OverlayMeasurement
+    Measurement <|-- ThicknessMeasurement
+    InformationContentEntity <|-- Defect
+    Defect <|-- ParticleDefect
+    Defect <|-- ScratchDefect
+    Defect <|-- PatternDefect
+    Defect <|-- KillerDefect
+    InformationContentEntity <|-- WaferMap
+    InformationContentEntity <|-- YieldReport
+    InformationContentEntity <|-- SpcChart
+    InformationContentEntity <|-- OutOfControlEvent
+    InformationContentEntity <|-- HoldOrder
+    Role <|-- ProcessEngineerRole
+    Role <|-- EquipmentTechnicianRole
+    Role <|-- YieldEngineerRole
+    Role <|-- OperatorRole
+    Lot : +String lot_id
+    Lot : +Integer wafer_count
+    Wafer : +Integer wafer_diameter_mm
+    Wafer : +Integer wafer_thickness_um
+    Lot : +Integer lot_priority
+    Lot : +Boolean is_on_hold
+    Tool : +String tool_state
+    Tool : +Boolean is_qualified
+    Tool : +Boolean is_in_maintenance
+    ProcessTool : +Integer chamber_pressure_mtorr
+    ProcessTool : +Integer process_temp_c
+    Cleanroom : +Integer iso_class_number
+    Cleanroom : +Integer particle_count_per_m3
+    Recipe : +Boolean is_released
+    Recipe : +Boolean is_golden
+    CriticalDimensionMeasurement : +Integer cd_nm
+    CriticalDimensionMeasurement : +Integer cd_target_nm
+    OverlayMeasurement : +Integer overlay_nm
+    ThicknessMeasurement : +Integer film_thickness_nm
+    Wafer : +Integer defect_density_per_cm2
+    Defect : +Integer defect_size_nm
+    Defect : +Boolean is_killer
+    Wafer : +Integer die_yield_pct
+    YieldReport : +Integer line_yield_pct
+    Lot : +Integer rework_count
+    Wafer : +Boolean is_cross_contaminated
+    Lot --> Wafer : contains_wafer
+    Lot --> Foup : carried_in
+    Tool --> Bay : located_in
+    ProcessStep --> Lot : processes_lot
+    ProcessStep --> Tool : performed_on
+    ProcessStep --> Recipe : uses_recipe
+    Recipe --> RecipeParameter : has_parameter
+    Photolithography --> Reticle : uses_reticle
+    ProcessStep --> Layer : forms_layer
+    ProcessStep --> ProcessStep : follows
+    ProcessStep --> ProcessFlow : part_of_flow
+    MetrologyStep --> Lot : measures
+    MetrologyStep --> MetrologyTool : measured_on
+    MetrologyStep --> Measurement : produces
+    InspectionStep --> Wafer : inspects
+    InspectionStep --> Defect : detects
+    Defect --> Wafer : found_on
+    HoldOrder --> Lot : hold_for
+    HoldOrder --> OutOfControlEvent : triggered_by
+    YieldReport --> Lot : summarises
+    WaferMap --> Wafer : maps
+    ProcessStep --> ControlPlan : governed_by
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall s (ProcessStep(s) implies exists r (Recipe(r) and uses_recipe(s, r)))
+%%   forall p (Photolithography(p) implies exists r (Reticle(r) and uses_reticle(p, r)))
+%%   forall h (HoldOrder(h) implies exists l (Lot(l) and hold_for(h, l)))
+%%   forall w (ProductWafer(w) implies not DummyWafer(w))
+%%   forall t (ProcessTool(t) implies not MetrologyTool(t))

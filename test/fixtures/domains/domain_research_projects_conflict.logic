@@ -1,0 +1,6 @@
+; Conflict fixture: asserts a started clinical trial that is not pre-registered,
+; violating the pre-registration axiom for clinical trials.
+(import "../../../examples/domain_research_projects.logic")
+
+(exists (t)
+    (and (ClinicalTrial t) (eq study_started True) (eq is_preregistered False)))

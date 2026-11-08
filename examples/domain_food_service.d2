@@ -1,0 +1,215 @@
+"Entity": { shape: class }
+"Continuant": { shape: class }
+"IndependentContinuant": { shape: class }
+"MaterialEntity": { shape: class }
+"Object": { shape: class }
+"Agent": { shape: class }
+"Site": { shape: class }
+"Occurrent": { shape: class }
+"Process": { shape: class }
+"Role": { shape: class }
+"Function": { shape: class }
+"Quality": { shape: class }
+"InformationContentEntity": { shape: class }
+"Person": { shape: class }
+"Guest": { shape: class }
+"KitchenStaff": { shape: class }
+"Chef": { shape: class }
+"SousChef": { shape: class }
+"LineCook": { shape: class }
+"Dishwasher": { shape: class }
+"FrontOfHouseStaff": { shape: class }
+"Server": { shape: class }
+"Host": { shape: class }
+"Manager": { shape: class }
+"FoodSafetyOfficer": { shape: class }
+"Restaurant": { shape: class }
+"DiningRoom": { shape: class }
+"Kitchen": { shape: class }
+"Station": { shape: class }
+"GrillStation": { shape: class }
+"FryStation": { shape: class }
+"SaladStation": { shape: class }
+"PastryStation": { shape: class }
+"AllergenFreeStation": { shape: class }
+"ColdStorage": { shape: class }
+"WalkInFridge": { shape: class }
+"Freezer": { shape: class }
+"DryStorage": { shape: class }
+"HotHoldingUnit": { shape: class }
+"Ingredient": { shape: class }
+"Meat": { shape: class }
+"Poultry": { shape: class }
+"Seafood": { shape: class }
+"Produce": { shape: class }
+"Dairy": { shape: class }
+"Grain": { shape: class }
+"Egg": { shape: class }
+"Nut": { shape: class }
+"Spice": { shape: class }
+"Allergen": { shape: class }
+"PeanutAllergen": { shape: class }
+"GlutenAllergen": { shape: class }
+"MilkAllergen": { shape: class }
+"ShellfishAllergen": { shape: class }
+"EggAllergen": { shape: class }
+"SesameAllergen": { shape: class }
+"MenuItem": { shape: class }
+"Appetizer": { shape: class }
+"MainCourse": { shape: class }
+"Dessert": { shape: class }
+"Beverage": { shape: class }
+"VegetarianItem": { shape: class }
+"VeganItem": { shape: class }
+"Menu": { shape: class }
+"Recipe": { shape: class }
+"AllergenLabel": { shape: class }
+"Order": { shape: class }
+"DineInOrder": { shape: class }
+"TakeawayOrder": { shape: class }
+"DeliveryOrder": { shape: class }
+"OrderLine": { shape: class }
+"AllergyNote": { shape: class }
+"KitchenTicket": { shape: class }
+"Payment": { shape: class }
+"PreparationProcess": { shape: class }
+"Cooking": { shape: class }
+"Chilling": { shape: class }
+"HotHolding": { shape: class }
+"Reheating": { shape: class }
+"Thawing": { shape: class }
+"Plating": { shape: class }
+"FoodBatch": { shape: class }
+"TemperatureLog": { shape: class }
+"CriticalControlPoint": { shape: class }
+"CorrectiveAction": { shape: class }
+"HealthInspection": { shape: class }
+
+"Continuant" -> "Entity"
+"IndependentContinuant" -> "Continuant"
+"MaterialEntity" -> "IndependentContinuant"
+"Object" -> "MaterialEntity"
+"Agent" -> "Object"
+"Site" -> "IndependentContinuant"
+"Occurrent" -> "Entity"
+"Process" -> "Occurrent"
+"Role" -> "Continuant"
+"Function" -> "Continuant"
+"Quality" -> "Continuant"
+"InformationContentEntity" -> "Continuant"
+"Person" -> "Agent"
+"Guest" -> "Person"
+"KitchenStaff" -> "Person"
+"Chef" -> "KitchenStaff"
+"SousChef" -> "Chef"
+"LineCook" -> "KitchenStaff"
+"Dishwasher" -> "KitchenStaff"
+"FrontOfHouseStaff" -> "Person"
+"Server" -> "FrontOfHouseStaff"
+"Host" -> "FrontOfHouseStaff"
+"Manager" -> "FrontOfHouseStaff"
+"FoodSafetyOfficer" -> "Role"
+"Restaurant" -> "Site"
+"DiningRoom" -> "Site"
+"Kitchen" -> "Site"
+"Station" -> "Site"
+"GrillStation" -> "Station"
+"FryStation" -> "Station"
+"SaladStation" -> "Station"
+"PastryStation" -> "Station"
+"AllergenFreeStation" -> "Station"
+"ColdStorage" -> "Site"
+"WalkInFridge" -> "ColdStorage"
+"Freezer" -> "ColdStorage"
+"DryStorage" -> "Site"
+"HotHoldingUnit" -> "Object"
+"Ingredient" -> "MaterialEntity"
+"Meat" -> "Ingredient"
+"Poultry" -> "Meat"
+"Seafood" -> "Ingredient"
+"Produce" -> "Ingredient"
+"Dairy" -> "Ingredient"
+"Grain" -> "Ingredient"
+"Egg" -> "Ingredient"
+"Nut" -> "Ingredient"
+"Spice" -> "Ingredient"
+"Allergen" -> "Quality"
+"PeanutAllergen" -> "Allergen"
+"GlutenAllergen" -> "Allergen"
+"MilkAllergen" -> "Allergen"
+"ShellfishAllergen" -> "Allergen"
+"EggAllergen" -> "Allergen"
+"SesameAllergen" -> "Allergen"
+"MenuItem" -> "InformationContentEntity"
+"Appetizer" -> "MenuItem"
+"MainCourse" -> "MenuItem"
+"Dessert" -> "MenuItem"
+"Beverage" -> "MenuItem"
+"VegetarianItem" -> "MenuItem"
+"VeganItem" -> "VegetarianItem"
+"Menu" -> "InformationContentEntity"
+"Recipe" -> "InformationContentEntity"
+"AllergenLabel" -> "InformationContentEntity"
+"Order" -> "InformationContentEntity"
+"DineInOrder" -> "Order"
+"TakeawayOrder" -> "Order"
+"DeliveryOrder" -> "Order"
+"OrderLine" -> "InformationContentEntity"
+"AllergyNote" -> "InformationContentEntity"
+"KitchenTicket" -> "InformationContentEntity"
+"Payment" -> "Process"
+"PreparationProcess" -> "Process"
+"Cooking" -> "PreparationProcess"
+"Chilling" -> "PreparationProcess"
+"HotHolding" -> "PreparationProcess"
+"Reheating" -> "PreparationProcess"
+"Thawing" -> "PreparationProcess"
+"Plating" -> "PreparationProcess"
+"FoodBatch" -> "MaterialEntity"
+"TemperatureLog" -> "InformationContentEntity"
+"CriticalControlPoint" -> "InformationContentEntity"
+"CorrectiveAction" -> "Process"
+"HealthInspection" -> "Process"
+"MenuItem"."price_cents": Integer
+"MenuItem"."calories": Integer
+"MenuItem"."is_available": Boolean
+"MenuItem"."contains_allergen_declared": Boolean
+"ColdStorage"."cold_holding_temp_c": Integer
+"Freezer"."freezer_temp_c": Integer
+"HotHoldingUnit"."hot_holding_temp_c": Integer
+"Cooking"."core_cook_temp_c": Integer
+"Reheating"."reheat_temp_c": Integer
+"Poultry"."poultry_core_temp_c": Integer
+"FoodBatch"."hours_in_danger_zone": Integer
+"FoodBatch"."is_discarded": Boolean
+"Ingredient"."shelf_life_days": Integer
+"DineInOrder"."table_number": Integer
+"DineInOrder"."party_size": Integer
+"Order"."has_allergy_flag": Boolean
+"Order"."is_allergen_free_prepared": Boolean
+"Station"."station_capacity": Integer
+"KitchenStaff"."food_handler_certified": Boolean
+"MenuItem" -> "Ingredient": contains
+"Ingredient" -> "Allergen": has_allergen
+"AllergenLabel" -> "Allergen": lists_allergen
+"AllergenLabel" -> "MenuItem": labels
+"MenuItem" -> "Menu": appears_on
+"MenuItem" -> "Station": prepared_by
+"Order" -> "OrderLine": has_line
+"OrderLine" -> "MenuItem": orders
+"Order" -> "Guest": placed_by
+"Order" -> "Server": served_by
+"KitchenStaff" -> "Station": works_at
+"FoodBatch" -> "ColdStorage": stored_in
+"FoodBatch" -> "Ingredient": batch_of
+"TemperatureLog" -> "FoodBatch": records
+"CriticalControlPoint" -> "Station": monitors
+"CriticalControlPoint" -> "CorrectiveAction": triggers
+"MenuItem" -> "Recipe": follows
+# WARNING: The following axioms could not be mapped to field constraints:
+#   forall x (not Guest(x) and KitchenStaff(x))
+#   forall x (not Ingredient(x) and Allergen(x))
+#   forall x (not Dessert(x) and MainCourse(x))
+#   forall b (FoodBatch(b) and gt(hours_in_danger_zone, 4) implies is_discarded = True)
+#   forall o (Order(o) and has_allergy_flag = True implies is_allergen_free_prepared = True)
+#   forall m (MenuItem(m) and is_available = True implies contains_allergen_declared = True)

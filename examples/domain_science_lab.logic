@@ -1,0 +1,196 @@
+; Domain: Laboratory science (samples, instruments, experiments, custody).
+; Models samples, specimens, instruments, calibration, protocols, experiments,
+; measurements and chain of custody, with a condensed BFO upper level.
+; Axioms enforce: measurements use calibrated instruments, samples have an
+; unbroken custody chain, protocols are approved before use, biohazard samples
+; need containment, storage temperatures stay in range, and disjoint kinds.
+
+; --- BFO Upper Level (Condensed) ---
+(def-concept Entity)
+(def-concept Continuant Entity)
+(def-concept IndependentContinuant Continuant)
+(def-concept MaterialEntity IndependentContinuant)
+(def-concept Object MaterialEntity)
+(def-concept Occurrent Entity)
+(def-concept Process Occurrent)
+(def-concept Role Continuant)
+(def-concept Function Continuant)
+(def-concept InformationContentEntity Continuant)
+
+; --- Samples and materials ---
+(def-concept Sample MaterialEntity)
+(def-concept BiologicalSample Sample)
+(def-concept BloodSample BiologicalSample)
+(def-concept TissueSample BiologicalSample)
+(def-concept CellCulture BiologicalSample)
+(def-concept EnvironmentalSample Sample)
+(def-concept WaterSample EnvironmentalSample)
+(def-concept SoilSample EnvironmentalSample)
+(def-concept ChemicalSample Sample)
+(def-concept Aliquot Sample)
+(def-concept ReferenceMaterial MaterialEntity)
+(def-concept CertifiedReferenceMaterial ReferenceMaterial)
+(def-concept Reagent MaterialEntity)
+(def-concept Solvent Reagent)
+(def-concept Buffer Reagent)
+(def-concept Container Object)
+(def-concept SampleVial Container)
+(def-concept StorageUnit Object)
+(def-concept Freezer StorageUnit)
+(def-concept ColdRoom StorageUnit)
+(def-concept Incubator StorageUnit)
+
+; --- Instruments ---
+(def-concept Instrument Object)
+(def-concept Spectrometer Instrument)
+(def-concept MassSpectrometer Spectrometer)
+(def-concept Chromatograph Instrument)
+(def-concept Microscope Instrument)
+(def-concept Centrifuge Instrument)
+(def-concept AnalyticalBalance Instrument)
+(def-concept PCRThermocycler Instrument)
+(def-concept Sensor Instrument)
+(def-concept TemperatureProbe Sensor)
+(def-concept Laboratory Object)
+(def-concept CleanRoom Laboratory)
+(def-concept BiosafetyLab Laboratory)
+
+; --- People and roles ---
+(def-concept Person Object)
+(def-concept LabTechnician Role)
+(def-concept PrincipalScientist Role)
+(def-concept QualityManager Role)
+(def-concept CustodyHolder Role)
+(def-concept Analyst Role)
+
+; --- Information ---
+(def-concept Protocol InformationContentEntity)
+(def-concept StandardOperatingProcedure Protocol)
+(def-concept AnalyticalMethod Protocol)
+(def-concept CalibrationCertificate InformationContentEntity)
+(def-concept Measurement InformationContentEntity)
+(def-concept RawMeasurement Measurement)
+(def-concept DerivedMeasurement Measurement)
+(def-concept DatasetRecord InformationContentEntity)
+(def-concept LabNotebookEntry InformationContentEntity)
+(def-concept CustodyRecord InformationContentEntity)
+(def-concept SafetyDataSheet InformationContentEntity)
+(def-concept Deviation InformationContentEntity)
+
+; --- Processes ---
+(def-concept LabProcess Process)
+(def-concept Experiment LabProcess)
+(def-concept ControlExperiment Experiment)
+(def-concept Replicate Experiment)
+(def-concept SamplePreparation LabProcess)
+(def-concept Extraction SamplePreparation)
+(def-concept Dilution SamplePreparation)
+(def-concept Calibration LabProcess)
+(def-concept MeasurementProcess LabProcess)
+(def-concept CustodyTransfer LabProcess)
+(def-concept Disposal LabProcess)
+(def-concept QualityAudit LabProcess)
+
+; --- Properties ---
+(def-property sample_id Sample String :cardinality 1..1)
+(def-property volume_ml Sample Integer)
+(def-property is_biohazard Sample Boolean)
+(def-property storage_temp_c Sample Integer)
+(def-property is_expired Sample Boolean)
+(def-property collection_date Sample String)
+(def-property instrument_serial Instrument String :cardinality 1..1)
+(def-property calibration_valid Instrument Boolean)
+(def-property days_since_calibration Instrument Integer)
+(def-property measured_value Measurement Integer)
+(def-property uncertainty_percent Measurement Integer)
+(def-property protocol_approved Protocol Boolean)
+(def-property protocol_version Protocol Integer)
+(def-property replicate_count Experiment Integer)
+(def-property experiment_complete Experiment Boolean)
+(def-property custody_gap CustodyRecord Boolean)
+(def-property containment_level BiosafetyLab Integer)
+(def-property is_disposed Sample Boolean)
+
+; --- Relations ---
+(def-relation derived_from Aliquot Sample)
+(def-relation stored_in Sample StorageUnit)
+(def-relation held_in Sample Container)
+(def-relation measured_by Measurement Instrument)
+(def-relation measures Measurement Sample)
+(def-relation performed_in MeasurementProcess Laboratory)
+(def-relation follows_protocol Experiment Protocol)
+(def-relation uses_sample Experiment Sample :cardinality 1..*)
+(def-relation uses_instrument Experiment Instrument :cardinality 0..*)
+(def-relation produces_measurement Experiment Measurement :cardinality 0..*)
+(def-relation calibrated_by Instrument CalibrationCertificate)
+(def-relation calibration_of Calibration Instrument)
+(def-relation uses_reference Calibration ReferenceMaterial)
+(def-relation custody_of CustodyRecord Sample)
+(def-relation released_by CustodyTransfer Person)
+(def-relation received_by CustodyTransfer Person)
+(def-relation transfers CustodyTransfer Sample)
+(def-relation recorded_in CustodyTransfer CustodyRecord)
+(def-relation performed_by LabProcess Person)
+(def-relation documented_in Experiment LabNotebookEntry)
+(def-relation deviates_from Deviation Protocol)
+(def-relation handled_under Sample SafetyDataSheet)
+
+; --- Axioms ---
+; 1. Metrology: a sample may only be measured by an instrument with valid calibration.
+(forall (m i)
+    (implies (and (Measurement m) (measured_by m i))
+             (eq calibration_valid True)))
+
+; 2. Calibration interval: an instrument beyond 365 days is not validly calibrated.
+(forall (i)
+    (implies (and (Instrument i) (gt days_since_calibration 365))
+             (eq calibration_valid False)))
+
+; 3. Protocol control: an experiment may only follow an approved protocol.
+(forall (e p)
+    (implies (and (Experiment e) (follows_protocol e p))
+             (eq protocol_approved True)))
+
+; 4. Chain of custody: every transfer is recorded in a custody record.
+(forall (t)
+    (implies (CustodyTransfer t)
+             (exists (r) (recorded_in t r))))
+
+; 5. Custody integrity: a custody record never has a gap.
+(forall (r)
+    (implies (CustodyRecord r)
+             (eq custody_gap False)))
+
+; 6. Biosafety: biohazard samples are only handled with a safety data sheet.
+(forall (s)
+    (implies (and (Sample s) (eq is_biohazard True))
+             (exists (d) (handled_under s d))))
+
+; 7. Cold storage: stored biological samples stay between minus 196 and 40 Celsius.
+(forall (s)
+    (implies (BiologicalSample s)
+             (and (gte storage_temp_c -196) (lte storage_temp_c 40))))
+
+; 8. Reproducibility: a completed experiment has at least three replicates.
+(forall (e)
+    (implies (and (Experiment e) (eq experiment_complete True))
+             (gte replicate_count 3)))
+
+; 9. Data quality: measurement uncertainty is a percentage from 0 to 100.
+(forall (m)
+    (implies (Measurement m)
+             (and (gte uncertainty_percent 0) (lte uncertainty_percent 100))))
+
+; 10. Expiry: an expired sample must not be used in an experiment.
+(forall (e s)
+    (implies (and (Experiment e) (uses_sample e s))
+             (eq is_expired False)))
+
+; 11. Disposal: a disposed sample has zero remaining volume.
+(forall (s)
+    (implies (and (Sample s) (eq is_disposed True))
+             (eq volume_ml 0)))
+
+; 12. Disjointness: samples and instruments, measurements and protocols differ.
+(forall (x) (not (and (Sample x) (Instrument x))))
+(forall (x) (not (and (Measurement x) (Protocol x))))

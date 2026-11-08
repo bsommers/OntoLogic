@@ -1,0 +1,205 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Asset["Asset"]
+    class RotatingAsset["RotatingAsset"]
+    class Motor["Motor"]
+    class Pump["Pump"]
+    class Compressor["Compressor"]
+    class Fan["Fan"]
+    class Gearbox["Gearbox"]
+    class StaticAsset["StaticAsset"]
+    class HeatExchanger["HeatExchanger"]
+    class Tank["Tank"]
+    class Pipeline["Pipeline"]
+    class Component["Component"]
+    class Bearing["Bearing"]
+    class Seal["Seal"]
+    class Impeller["Impeller"]
+    class Sensor["Sensor"]
+    class VibrationSensor["VibrationSensor"]
+    class TemperatureSensor["TemperatureSensor"]
+    class PressureSensor["PressureSensor"]
+    class CurrentSensor["CurrentSensor"]
+    class AcousticSensor["AcousticSensor"]
+    class OilQualitySensor["OilQualitySensor"]
+    class EdgeGateway["EdgeGateway"]
+    class ProtocolBridge["ProtocolBridge"]
+    class EdgeAnalyticsNode["EdgeAnalyticsNode"]
+    class PlcController["PlcController"]
+    class MessageBroker["MessageBroker"]
+    class MqttBroker["MqttBroker"]
+    class OpcUaServer["OpcUaServer"]
+    class CloudPlatform["CloudPlatform"]
+    class TimeSeriesStore["TimeSeriesStore"]
+    class NetworkLink["NetworkLink"]
+    class CellularLink["CellularLink"]
+    class EthernetLink["EthernetLink"]
+    class WirelessMeshLink["WirelessMeshLink"]
+    class TelemetryMessage["TelemetryMessage"]
+    class MqttMessage["MqttMessage"]
+    class OpcUaDataChange["OpcUaDataChange"]
+    class Topic["Topic"]
+    class NodeId["NodeId"]
+    class PayloadSchema["PayloadSchema"]
+    class Measurement["Measurement"]
+    class Waveform["Waveform"]
+    class ScalarReading["ScalarReading"]
+    class HealthIndicator["HealthIndicator"]
+    class FeatureVector["FeatureVector"]
+    class AnomalyModel["AnomalyModel"]
+    class RemainingUsefulLifeEstimate["RemainingUsefulLifeEstimate"]
+    class Alert["Alert"]
+    class ConditionAlert["ConditionAlert"]
+    class ConnectivityAlert["ConnectivityAlert"]
+    class WorkOrder["WorkOrder"]
+    class PredictiveWorkOrder["PredictiveWorkOrder"]
+    class CorrectiveWorkOrder["CorrectiveWorkOrder"]
+    class Certificate["Certificate"]
+    class Telemetry["Telemetry"]
+    class Sampling["Sampling"]
+    class Publication["Publication"]
+    class StoreAndForward["StoreAndForward"]
+    class InferenceRun["InferenceRun"]
+    class Degradation["Degradation"]
+    class MaintenanceActivity["MaintenanceActivity"]
+    class InspectionActivity["InspectionActivity"]
+    class RepairActivity["RepairActivity"]
+    class ReliabilityEngineerRole["ReliabilityEngineerRole"]
+    class MaintenanceTechnicianRole["MaintenanceTechnicianRole"]
+    class DataEngineerRole["DataEngineerRole"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Object <|-- Asset
+    Asset <|-- RotatingAsset
+    RotatingAsset <|-- Motor
+    RotatingAsset <|-- Pump
+    RotatingAsset <|-- Compressor
+    RotatingAsset <|-- Fan
+    RotatingAsset <|-- Gearbox
+    Asset <|-- StaticAsset
+    StaticAsset <|-- HeatExchanger
+    StaticAsset <|-- Tank
+    StaticAsset <|-- Pipeline
+    Object <|-- Component
+    Component <|-- Bearing
+    Component <|-- Seal
+    Component <|-- Impeller
+    Object <|-- Sensor
+    Sensor <|-- VibrationSensor
+    Sensor <|-- TemperatureSensor
+    Sensor <|-- PressureSensor
+    Sensor <|-- CurrentSensor
+    Sensor <|-- AcousticSensor
+    Sensor <|-- OilQualitySensor
+    Object <|-- EdgeGateway
+    EdgeGateway <|-- ProtocolBridge
+    EdgeGateway <|-- EdgeAnalyticsNode
+    Object <|-- PlcController
+    Object <|-- MessageBroker
+    MessageBroker <|-- MqttBroker
+    Object <|-- OpcUaServer
+    Object <|-- CloudPlatform
+    Object <|-- TimeSeriesStore
+    Object <|-- NetworkLink
+    NetworkLink <|-- CellularLink
+    NetworkLink <|-- EthernetLink
+    NetworkLink <|-- WirelessMeshLink
+    InformationContentEntity <|-- TelemetryMessage
+    TelemetryMessage <|-- MqttMessage
+    TelemetryMessage <|-- OpcUaDataChange
+    InformationContentEntity <|-- Topic
+    InformationContentEntity <|-- NodeId
+    InformationContentEntity <|-- PayloadSchema
+    InformationContentEntity <|-- Measurement
+    Measurement <|-- Waveform
+    Measurement <|-- ScalarReading
+    InformationContentEntity <|-- HealthIndicator
+    InformationContentEntity <|-- FeatureVector
+    InformationContentEntity <|-- AnomalyModel
+    InformationContentEntity <|-- RemainingUsefulLifeEstimate
+    InformationContentEntity <|-- Alert
+    Alert <|-- ConditionAlert
+    Alert <|-- ConnectivityAlert
+    InformationContentEntity <|-- WorkOrder
+    WorkOrder <|-- PredictiveWorkOrder
+    WorkOrder <|-- CorrectiveWorkOrder
+    InformationContentEntity <|-- Certificate
+    Process <|-- Telemetry
+    Telemetry <|-- Sampling
+    Telemetry <|-- Publication
+    Process <|-- StoreAndForward
+    Process <|-- InferenceRun
+    Process <|-- Degradation
+    Process <|-- MaintenanceActivity
+    MaintenanceActivity <|-- InspectionActivity
+    MaintenanceActivity <|-- RepairActivity
+    Role <|-- ReliabilityEngineerRole
+    Role <|-- MaintenanceTechnicianRole
+    Role <|-- DataEngineerRole
+    Asset : +String asset_tag
+    Asset : +Integer criticality_rank
+    Sensor : +Integer sampling_rate_hz
+    ScalarReading : +Integer reading_value
+    Measurement : +Integer quality_code
+    MqttMessage : +Integer qos_level
+    MqttMessage : +Boolean is_retained
+    TelemetryMessage : +Boolean is_encrypted_in_transit
+    Topic : +Integer topic_depth
+    EdgeGateway : +Integer buffer_capacity_msgs
+    EdgeGateway : +Integer buffered_msgs
+    EdgeGateway : +Boolean is_online
+    EdgeGateway : +String firmware_version
+    VibrationSensor : +Integer vibration_rms_mm_s
+    Bearing : +Integer bearing_temp_c
+    HealthIndicator : +Integer health_score
+    RemainingUsefulLifeEstimate : +Integer rul_hours
+    RemainingUsefulLifeEstimate : +Integer confidence_pct
+    Alert : +Integer alert_severity
+    Alert : +Boolean is_acknowledged
+    Alert : +Boolean is_false_positive
+    Certificate : +Boolean is_expired
+    TelemetryMessage : +Integer clock_skew_ms
+    Sensor --> Asset : monitors
+    Sensor --> Component : attached_to
+    Component --> Asset : part_of
+    EdgeGateway --> Sensor : collects_from
+    EdgeGateway --> MessageBroker : publishes_to
+    OpcUaServer --> Asset : exposes
+    MessageBroker --> CloudPlatform : reports_to
+    TelemetryMessage --> Sensor : emitted_by
+    TelemetryMessage --> Topic : published_on
+    TelemetryMessage --> PayloadSchema : conforms_to
+    FeatureVector --> Measurement : derived_from
+    HealthIndicator --> Asset : scores
+    RemainingUsefulLifeEstimate --> Asset : predicts
+    Alert --> WorkOrder : triggers
+    Alert --> Asset : raised_for
+    WorkOrder --> MaintenanceTechnicianRole : assigned_to
+    EdgeGateway --> Certificate : authenticated_with
+    EdgeGateway --> NetworkLink : uplink
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall a (ConditionAlert(a) implies exists x (Asset(x) and raised_for(a, x)))
+%%   forall w (PredictiveWorkOrder(w) implies exists a (Alert(a) and triggers(a, w)))
+%%   forall g (EdgeGateway(g) implies exists c (Certificate(c) and authenticated_with(g, c)))
+%%   forall g (EdgeGateway(g) implies not Sensor(g))

@@ -1,0 +1,13 @@
+# key names
+concept Farm
+concept Field
+concept Crop
+concept Livestock
+concept IrrigationSystem
+concept MoistureSensor
+concept Harvest
+relation planted_with
+relation irrigates
+relation harvested_from
+property soil_ph
+property withdrawal_days

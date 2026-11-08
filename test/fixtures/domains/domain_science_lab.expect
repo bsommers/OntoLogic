@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept Sample
+concept Instrument
+concept CustodyRecord
+concept Calibration
+concept Experiment
+relation measured_by
+relation follows_protocol
+relation recorded_in
+property calibration_valid
+property days_since_calibration
+property protocol_approved

@@ -1,0 +1,12 @@
+# Key names asserted to exist in the parsed registry
+concept EdgeGateway
+concept MqttBroker
+concept OpcUaServer
+concept PredictiveWorkOrder
+concept RemainingUsefulLifeEstimate
+relation publishes_to
+relation monitors
+relation triggers
+property qos_level
+property health_score
+property rul_hours

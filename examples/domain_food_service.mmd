@@ -1,0 +1,216 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Site["Site"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Function["Function"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Guest["Guest"]
+    class KitchenStaff["KitchenStaff"]
+    class Chef["Chef"]
+    class SousChef["SousChef"]
+    class LineCook["LineCook"]
+    class Dishwasher["Dishwasher"]
+    class FrontOfHouseStaff["FrontOfHouseStaff"]
+    class Server["Server"]
+    class Host["Host"]
+    class Manager["Manager"]
+    class FoodSafetyOfficer["FoodSafetyOfficer"]
+    class Restaurant["Restaurant"]
+    class DiningRoom["DiningRoom"]
+    class Kitchen["Kitchen"]
+    class Station["Station"]
+    class GrillStation["GrillStation"]
+    class FryStation["FryStation"]
+    class SaladStation["SaladStation"]
+    class PastryStation["PastryStation"]
+    class AllergenFreeStation["AllergenFreeStation"]
+    class ColdStorage["ColdStorage"]
+    class WalkInFridge["WalkInFridge"]
+    class Freezer["Freezer"]
+    class DryStorage["DryStorage"]
+    class HotHoldingUnit["HotHoldingUnit"]
+    class Ingredient["Ingredient"]
+    class Meat["Meat"]
+    class Poultry["Poultry"]
+    class Seafood["Seafood"]
+    class Produce["Produce"]
+    class Dairy["Dairy"]
+    class Grain["Grain"]
+    class Egg["Egg"]
+    class Nut["Nut"]
+    class Spice["Spice"]
+    class Allergen["Allergen"]
+    class PeanutAllergen["PeanutAllergen"]
+    class GlutenAllergen["GlutenAllergen"]
+    class MilkAllergen["MilkAllergen"]
+    class ShellfishAllergen["ShellfishAllergen"]
+    class EggAllergen["EggAllergen"]
+    class SesameAllergen["SesameAllergen"]
+    class MenuItem["MenuItem"]
+    class Appetizer["Appetizer"]
+    class MainCourse["MainCourse"]
+    class Dessert["Dessert"]
+    class Beverage["Beverage"]
+    class VegetarianItem["VegetarianItem"]
+    class VeganItem["VeganItem"]
+    class Menu["Menu"]
+    class Recipe["Recipe"]
+    class AllergenLabel["AllergenLabel"]
+    class Order["Order"]
+    class DineInOrder["DineInOrder"]
+    class TakeawayOrder["TakeawayOrder"]
+    class DeliveryOrder["DeliveryOrder"]
+    class OrderLine["OrderLine"]
+    class AllergyNote["AllergyNote"]
+    class KitchenTicket["KitchenTicket"]
+    class Payment["Payment"]
+    class PreparationProcess["PreparationProcess"]
+    class Cooking["Cooking"]
+    class Chilling["Chilling"]
+    class HotHolding["HotHolding"]
+    class Reheating["Reheating"]
+    class Thawing["Thawing"]
+    class Plating["Plating"]
+    class FoodBatch["FoodBatch"]
+    class TemperatureLog["TemperatureLog"]
+    class CriticalControlPoint["CriticalControlPoint"]
+    class CorrectiveAction["CorrectiveAction"]
+    class HealthInspection["HealthInspection"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    IndependentContinuant <|-- Site
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Function
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Person
+    Person <|-- Guest
+    Person <|-- KitchenStaff
+    KitchenStaff <|-- Chef
+    Chef <|-- SousChef
+    KitchenStaff <|-- LineCook
+    KitchenStaff <|-- Dishwasher
+    Person <|-- FrontOfHouseStaff
+    FrontOfHouseStaff <|-- Server
+    FrontOfHouseStaff <|-- Host
+    FrontOfHouseStaff <|-- Manager
+    Role <|-- FoodSafetyOfficer
+    Site <|-- Restaurant
+    Site <|-- DiningRoom
+    Site <|-- Kitchen
+    Site <|-- Station
+    Station <|-- GrillStation
+    Station <|-- FryStation
+    Station <|-- SaladStation
+    Station <|-- PastryStation
+    Station <|-- AllergenFreeStation
+    Site <|-- ColdStorage
+    ColdStorage <|-- WalkInFridge
+    ColdStorage <|-- Freezer
+    Site <|-- DryStorage
+    Object <|-- HotHoldingUnit
+    MaterialEntity <|-- Ingredient
+    Ingredient <|-- Meat
+    Meat <|-- Poultry
+    Ingredient <|-- Seafood
+    Ingredient <|-- Produce
+    Ingredient <|-- Dairy
+    Ingredient <|-- Grain
+    Ingredient <|-- Egg
+    Ingredient <|-- Nut
+    Ingredient <|-- Spice
+    Quality <|-- Allergen
+    Allergen <|-- PeanutAllergen
+    Allergen <|-- GlutenAllergen
+    Allergen <|-- MilkAllergen
+    Allergen <|-- ShellfishAllergen
+    Allergen <|-- EggAllergen
+    Allergen <|-- SesameAllergen
+    InformationContentEntity <|-- MenuItem
+    MenuItem <|-- Appetizer
+    MenuItem <|-- MainCourse
+    MenuItem <|-- Dessert
+    MenuItem <|-- Beverage
+    MenuItem <|-- VegetarianItem
+    VegetarianItem <|-- VeganItem
+    InformationContentEntity <|-- Menu
+    InformationContentEntity <|-- Recipe
+    InformationContentEntity <|-- AllergenLabel
+    InformationContentEntity <|-- Order
+    Order <|-- DineInOrder
+    Order <|-- TakeawayOrder
+    Order <|-- DeliveryOrder
+    InformationContentEntity <|-- OrderLine
+    InformationContentEntity <|-- AllergyNote
+    InformationContentEntity <|-- KitchenTicket
+    Process <|-- Payment
+    Process <|-- PreparationProcess
+    PreparationProcess <|-- Cooking
+    PreparationProcess <|-- Chilling
+    PreparationProcess <|-- HotHolding
+    PreparationProcess <|-- Reheating
+    PreparationProcess <|-- Thawing
+    PreparationProcess <|-- Plating
+    MaterialEntity <|-- FoodBatch
+    InformationContentEntity <|-- TemperatureLog
+    InformationContentEntity <|-- CriticalControlPoint
+    Process <|-- CorrectiveAction
+    Process <|-- HealthInspection
+    MenuItem : +Integer price_cents
+    MenuItem : +Integer calories
+    MenuItem : +Boolean is_available
+    MenuItem : +Boolean contains_allergen_declared
+    ColdStorage : +Integer cold_holding_temp_c
+    Freezer : +Integer freezer_temp_c
+    HotHoldingUnit : +Integer hot_holding_temp_c
+    Cooking : +Integer core_cook_temp_c
+    Reheating : +Integer reheat_temp_c
+    Poultry : +Integer poultry_core_temp_c
+    FoodBatch : +Integer hours_in_danger_zone
+    FoodBatch : +Boolean is_discarded
+    Ingredient : +Integer shelf_life_days
+    DineInOrder : +Integer table_number
+    DineInOrder : +Integer party_size
+    Order : +Boolean has_allergy_flag
+    Order : +Boolean is_allergen_free_prepared
+    Station : +Integer station_capacity
+    KitchenStaff : +Boolean food_handler_certified
+    MenuItem --> Ingredient : contains
+    Ingredient --> Allergen : has_allergen
+    AllergenLabel --> Allergen : lists_allergen
+    AllergenLabel --> MenuItem : labels
+    MenuItem --> Menu : appears_on
+    MenuItem --> Station : prepared_by
+    Order --> OrderLine : has_line
+    OrderLine --> MenuItem : orders
+    Order --> Guest : placed_by
+    Order --> Server : served_by
+    KitchenStaff --> Station : works_at
+    FoodBatch --> ColdStorage : stored_in
+    FoodBatch --> Ingredient : batch_of
+    TemperatureLog --> FoodBatch : records
+    CriticalControlPoint --> Station : monitors
+    CriticalControlPoint --> CorrectiveAction : triggers
+    MenuItem --> Recipe : follows
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not Guest(x) and KitchenStaff(x))
+%%   forall x (not Ingredient(x) and Allergen(x))
+%%   forall x (not Dessert(x) and MainCourse(x))
+%%   forall b (FoodBatch(b) and gt(hours_in_danger_zone, 4) implies is_discarded = True)
+%%   forall o (Order(o) and has_allergy_flag = True implies is_allergen_free_prepared = True)
+%%   forall m (MenuItem(m) and is_available = True implies contains_allergen_declared = True)

@@ -1,0 +1,188 @@
+classDiagram
+    class Entity["Entity"]
+    class Continuant["Continuant"]
+    class IndependentContinuant["IndependentContinuant"]
+    class MaterialEntity["MaterialEntity"]
+    class Object["Object"]
+    class Agent["Agent"]
+    class Occurrent["Occurrent"]
+    class Process["Process"]
+    class Role["Role"]
+    class Quality["Quality"]
+    class InformationContentEntity["InformationContentEntity"]
+    class Person["Person"]
+    class Customer["Customer"]
+    class EnterpriseCustomer["EnterpriseCustomer"]
+    class ConsumerCustomer["ConsumerCustomer"]
+    class SupportStaff["SupportStaff"]
+    class SupportAgent["SupportAgent"]
+    class SeniorAgent["SeniorAgent"]
+    class TeamLead["TeamLead"]
+    class KnowledgeAuthor["KnowledgeAuthor"]
+    class Bot["Bot"]
+    class SupportTeam["SupportTeam"]
+    class TierOneTeam["TierOneTeam"]
+    class TierTwoTeam["TierTwoTeam"]
+    class EngineeringTeam["EngineeringTeam"]
+    class Ticket["Ticket"]
+    class Incident["Incident"]
+    class ServiceRequest["ServiceRequest"]
+    class Question["Question"]
+    class Complaint["Complaint"]
+    class Problem["Problem"]
+    class TicketComment["TicketComment"]
+    class InternalNote["InternalNote"]
+    class PublicReply["PublicReply"]
+    class Resolution["Resolution"]
+    class Attachment["Attachment"]
+    class SatisfactionSurvey["SatisfactionSurvey"]
+    class Priority["Priority"]
+    class CriticalPriority["CriticalPriority"]
+    class HighPriority["HighPriority"]
+    class NormalPriority["NormalPriority"]
+    class LowPriority["LowPriority"]
+    class TicketStatus["TicketStatus"]
+    class OpenStatus["OpenStatus"]
+    class PendingStatus["PendingStatus"]
+    class SolvedStatus["SolvedStatus"]
+    class ClosedStatus["ClosedStatus"]
+    class Channel["Channel"]
+    class EmailChannel["EmailChannel"]
+    class PhoneChannel["PhoneChannel"]
+    class ChatChannel["ChatChannel"]
+    class SocialChannel["SocialChannel"]
+    class PortalChannel["PortalChannel"]
+    class Queue["Queue"]
+    class GeneralQueue["GeneralQueue"]
+    class BillingQueue["BillingQueue"]
+    class TechnicalQueue["TechnicalQueue"]
+    class PriorityQueue["PriorityQueue"]
+    class ServiceLevelAgreement["ServiceLevelAgreement"]
+    class PremiumSLA["PremiumSLA"]
+    class StandardSLA["StandardSLA"]
+    class SLABreach["SLABreach"]
+    class Escalation["Escalation"]
+    class ManagerEscalation["ManagerEscalation"]
+    class EngineeringEscalation["EngineeringEscalation"]
+    class Assignment["Assignment"]
+    class Handover["Handover"]
+    class KnowledgeArticle["KnowledgeArticle"]
+    class FAQArticle["FAQArticle"]
+    class TroubleshootingGuide["TroubleshootingGuide"]
+    class InternalRunbook["InternalRunbook"]
+    class ArticleVersion["ArticleVersion"]
+    class MacroTemplate["MacroTemplate"]
+    Entity <|-- Continuant
+    Continuant <|-- IndependentContinuant
+    IndependentContinuant <|-- MaterialEntity
+    MaterialEntity <|-- Object
+    Object <|-- Agent
+    Entity <|-- Occurrent
+    Occurrent <|-- Process
+    Continuant <|-- Role
+    Continuant <|-- Quality
+    Continuant <|-- InformationContentEntity
+    Agent <|-- Person
+    Person <|-- Customer
+    Customer <|-- EnterpriseCustomer
+    Customer <|-- ConsumerCustomer
+    Person <|-- SupportStaff
+    SupportStaff <|-- SupportAgent
+    SupportAgent <|-- SeniorAgent
+    SupportStaff <|-- TeamLead
+    SupportStaff <|-- KnowledgeAuthor
+    Agent <|-- Bot
+    Object <|-- SupportTeam
+    SupportTeam <|-- TierOneTeam
+    SupportTeam <|-- TierTwoTeam
+    SupportTeam <|-- EngineeringTeam
+    InformationContentEntity <|-- Ticket
+    Ticket <|-- Incident
+    Ticket <|-- ServiceRequest
+    Ticket <|-- Question
+    Ticket <|-- Complaint
+    Ticket <|-- Problem
+    InformationContentEntity <|-- TicketComment
+    TicketComment <|-- InternalNote
+    TicketComment <|-- PublicReply
+    InformationContentEntity <|-- Resolution
+    InformationContentEntity <|-- Attachment
+    InformationContentEntity <|-- SatisfactionSurvey
+    Quality <|-- Priority
+    Priority <|-- CriticalPriority
+    Priority <|-- HighPriority
+    Priority <|-- NormalPriority
+    Priority <|-- LowPriority
+    Quality <|-- TicketStatus
+    TicketStatus <|-- OpenStatus
+    TicketStatus <|-- PendingStatus
+    TicketStatus <|-- SolvedStatus
+    TicketStatus <|-- ClosedStatus
+    Object <|-- Channel
+    Channel <|-- EmailChannel
+    Channel <|-- PhoneChannel
+    Channel <|-- ChatChannel
+    Channel <|-- SocialChannel
+    Channel <|-- PortalChannel
+    Object <|-- Queue
+    Queue <|-- GeneralQueue
+    Queue <|-- BillingQueue
+    Queue <|-- TechnicalQueue
+    Queue <|-- PriorityQueue
+    InformationContentEntity <|-- ServiceLevelAgreement
+    ServiceLevelAgreement <|-- PremiumSLA
+    ServiceLevelAgreement <|-- StandardSLA
+    Process <|-- SLABreach
+    Process <|-- Escalation
+    Escalation <|-- ManagerEscalation
+    Escalation <|-- EngineeringEscalation
+    Process <|-- Assignment
+    Process <|-- Handover
+    InformationContentEntity <|-- KnowledgeArticle
+    KnowledgeArticle <|-- FAQArticle
+    KnowledgeArticle <|-- TroubleshootingGuide
+    KnowledgeArticle <|-- InternalRunbook
+    InformationContentEntity <|-- ArticleVersion
+    InformationContentEntity <|-- MacroTemplate
+    Ticket : +String ticket_id
+    Ticket : +Integer first_response_minutes
+    Ticket : +Integer resolution_minutes
+    Ticket : +Integer reopen_count
+    Ticket : +Boolean is_breached
+    Ticket : +Boolean is_escalated
+    Ticket : +Boolean has_resolution
+    SatisfactionSurvey : +Integer csat_score
+    ServiceLevelAgreement : +Integer response_target_minutes
+    ServiceLevelAgreement : +Integer resolution_target_minutes
+    SupportAgent : +Integer open_ticket_count
+    SupportAgent : +Integer max_concurrent_chats
+    Queue : +Integer queue_depth
+    KnowledgeArticle : +Boolean is_published
+    KnowledgeArticle : +Integer helpful_votes
+    KnowledgeArticle : +Boolean is_internal_only
+    Ticket --> Customer : raised_by
+    Ticket --> Channel : received_via
+    Ticket --> SupportAgent : assigned_to
+    Ticket --> Queue : held_in
+    Ticket --> ServiceLevelAgreement : governed_by
+    Ticket --> Priority : has_priority
+    Ticket --> TicketStatus : has_status
+    Escalation --> Ticket : escalates
+    Escalation --> SupportTeam : escalated_to
+    Ticket --> Resolution : resolved_with
+    Resolution --> KnowledgeArticle : cites
+    TicketComment --> Ticket : commented_on
+    SupportAgent --> SupportTeam : member_of
+    SupportTeam --> Queue : staffs
+    ServiceLevelAgreement --> Customer : covers_customer
+    SatisfactionSurvey --> Ticket : rates
+    KnowledgeArticle --> KnowledgeAuthor : authored_by
+
+%% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall x (not Customer(x) and SupportStaff(x))
+%%   forall x (not Bot(x) and SupportStaff(x))
+%%   forall x (not Ticket(x) and KnowledgeArticle(x))
+%%   forall x (not CriticalPriority(x) and LowPriority(x))
+%%   forall x (not OpenStatus(x) and ClosedStatus(x))
+%%   forall t (Ticket(t) and is_breached = True implies is_escalated = True)
+%%   forall t (Ticket(t) and gt(reopen_count, 3) implies is_escalated = True)

@@ -1,0 +1,6 @@
+; Conflict fixture: violates the cold-chain axiom that frozen and chilled goods use different temperature regimes.
+(import "../../../examples/domain_logistics.logic")
+
+; Assert an individual that is both FrozenGoods and ChilledGoods,
+; contradicting the disjointness axiom in the base ontology.
+(exists (x) (and (FrozenGoods x) (ChilledGoods x)))
