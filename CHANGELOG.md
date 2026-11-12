@@ -7,9 +7,20 @@ All notable changes to OntoLogic are recorded here. The format follows
 Entries before 1.5.1 were back-filled from git history. v1.4.0 and v1.5.0 were
 tagged after the fact, on their version-bump commits.
 
-## [1.8.2] - Unreleased
+## [1.8.3] - 2026-11-11
 
-Fixes to the v1.8.1 solver resource controls, plus emitter, REPL and prover fixes.
+Emitter, REPL and prover fixes found while writing the user guide, and a warning for answers
+reached without arithmetic.
+
+### Added
+- **Warning when a prover without arithmetic gives an all-clear.** The native prover and
+  Vampire read `gt`, `gte`, `lt` and `lte` without arithmetic, so their SAT can miss a conflict
+  that needs it (an integer gap such as `gt 5` with `lt 6`). When the ontology uses those
+  comparisons and one of them reports SAT or every concept satisfiable, `--solve` prints a
+  warning on stderr. The REPL adds the same line to `:solve`, `:model`, `:explain`, `:unsat`
+  and a refuted `:prove`, and the language server adds it to the `ontologic.solve` result.
+  `auto` warns only when it falls back to the native prover. Z3 and CVC5 answers, and every
+  UNSAT, are unchanged.
 
 ### Fixed
 - **Repeated bounds in generated Python and Java.** A subclass that restated an inherited
@@ -28,6 +39,12 @@ Fixes to the v1.8.1 solver resource controls, plus emitter, REPL and prover fixe
   Z3 or CVC5.
 - **VS Code snippets expanded to obsolete syntax.** They now use the current grammar, and the
   extension README and `build_extension.sh` report the real package version.
+
+## [1.8.2] - 2026-11-08
+
+Fixes to the v1.8.1 solver resource controls.
+
+### Fixed
 - **`--solve-timeout` was ignored by CVC5.** `--tlimit` was passed after the `-` stdin
   marker, where cvc5 ignores options. It now comes before `-`.
 - **Timeouts behave the same on every backend.** External solvers now also run under a

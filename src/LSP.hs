@@ -38,7 +38,7 @@ import OntoLogic
 import Parser (parseRegistry, parseRegistryWithSource)
 import Linter (lintRegistryFindings, lintRegistryFindingsWithSource, LintFinding(..))
 import IR (compileRegistry, irClasses, compClassName, compParentClass, compProperties, compPropName, compPropType, compConstraints, CompiledProperty, compCardinality, compDefaultValue)
-import Solver (checkConsistencyWith, explainUnsatWith, extractModel, Prover(AutoProver), UnsatExplanation(..))
+import Solver (checkConsistencyWith, explainUnsatWith, extractModel, arithmeticCaveat, Prover(AutoProver), UnsatExplanation(..))
 
 data LSPState = LSPState
     { lspDocs :: Map.Map String String            -- URI -> Content
@@ -440,8 +440,9 @@ handleLSPRequestIO state raw
         case cmd of
             "ontologic.solve" -> do
                 res <- checkConsistencyWith AutoProver reg
+                caveat <- arithmeticCaveat AutoProver reg
                 let (status, details) = case res of
-                        Sat _        -> ("sat", "Satisfiable (SAT): Consistent Model Found")
+                        Sat _        -> ("sat", "Satisfiable (SAT): Consistent Model Found" ++ maybe "" (". " ++) caveat)
                         Unsat        -> ("unsat", "Unsatisfiable (UNSAT): Logical Contradiction Detected")
                         Unknown u    -> ("unknown", u)
                         SolverError e-> ("error", e)

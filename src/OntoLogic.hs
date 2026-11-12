@@ -503,3 +503,22 @@ disjointBoundPairs axs =
        | l@(lop, a) <- lowers, u@(uop, b) <- uppers
        , num a > num b || (num a == num b && (lop == "gt" || uop == "lt"))
        ]
+
+-- | Whether any axiom compares values with an ordering operator (gt, gte, lt, lte). A declared
+--   relation that shares one of those names is a relation, not a comparison.
+usesOrderingComparison :: Registry -> Bool
+usesOrderingComparison reg = any go (axioms reg)
+  where
+    ordOps = filter (`notElem` map relName (relations reg)) ["gt", "gte", "lt", "lte"]
+    go f = case f of
+        Predicate op _ -> op `elem` ordOps
+        And a b -> go a || go b
+        Or a b -> go a || go b
+        Implies a b -> go a || go b
+        Iff a b -> go a || go b
+        Not a -> go a
+        ForAll _ b -> go b
+        Exists _ b -> go b
+        TypedForAll _ _ b -> go b
+        TypedExists _ _ b -> go b
+        _ -> False

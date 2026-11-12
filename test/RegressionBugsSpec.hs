@@ -1,17 +1,21 @@
 -- | Regression tests for defects found while writing the 1.8.2 user guide:
 --   emitter output for subclasses, the REPL/CLI unsat-core explanation, and numeric-bound
---   contradictions on provers without arithmetic.
+--   contradictions on provers without arithmetic, including the caveat those provers attach
+--   to an all-clear answer.
 module RegressionBugsSpec (spec) where
 
 import Test.Hspec
+import Control.Monad (forM_)
 import Data.List (isInfixOf, isPrefixOf)
+import Data.Maybe (isJust, isNothing)
 import Data.Text (pack)
 import System.Directory (findExecutable)
 import Text.Megaparsec (parse, errorBundlePretty)
 import OntoLogic
 import Parser (parseRegistry)
 import IR
-import Solver (checkConsistencyWith, explainUnsatWith, Prover(..), UnsatExplanation(..))
+import REPL (evalREPLCommand, REPLState(..), initialREPLState)
+import Solver (checkConsistencyWith, explainUnsatWith, arithmeticCaveat, Prover(..), UnsatExplanation(..))
 import Emitters.Java (emitJavaWithPackage)
 import Emitters.OpenApi (emitOpenApi)
 import Emitters.Python (emitPython)
@@ -61,6 +65,28 @@ sensorReg = load $ unlines
     , "(forall (s) (implies (SmartSensor s) (and (gte batteryLevel 0) (lte batteryLevel 100))))"
     , "(forall (s) (implies (SmartSensor s) (gt batteryLevel 100)))"
     ]
+
+-- | An integer gap: no Integer is above 5 and below 6. Only arithmetic finds the conflict.
+--   Same content as test/fixtures/integer_gap.logic.
+gapReg :: Registry
+gapReg = load $ unlines
+    [ "(def-concept Tank)"
+    , "(def-property level Tank Integer)"
+    , "(forall (t) (implies (Tank t) (gt level 5)))"
+    , "(exists (t) (and (Tank t) (lt level 6)))"
+    ]
+
+-- | A declared relation named like an ordering operator: a relation, not a comparison.
+relationLtReg :: Registry
+relationLtReg = load $ unlines
+    [ "(def-concept Version)"
+    , "(def-relation lt Version Version)"
+    , "(forall (a b) (implies (lt a b) (not (lt b a))))"
+    ]
+
+-- | A REPL session on the native prover, which has no arithmetic.
+nativeSession :: Registry -> REPLState
+nativeSession reg = initialREPLState { replProver = NativeProver, replRegistry = reg }
 
 constraintsOf :: Name -> Name -> Registry -> [BoundConstraint]
 constraintsOf cls prop reg =
@@ -122,6 +148,47 @@ spec = do
         Right e  -> do
           unsatCoreNames e `shouldSatisfy` (not . null)
           unwords (unsatCoreDetails e) `shouldSatisfy` ("SmartSensor.batteryLevel" `isInfixOf`)
+
+  describe "all-clear answers from provers without arithmetic" $ do
+    it "recognises ordering comparisons, but not a relation that shares an operator name" $ do
+      usesOrderingComparison gapReg `shouldBe` True
+      usesOrderingComparison relationLtReg `shouldBe` False
+      usesOrderingComparison (load "(def-concept A)\n(def-concept B A)") `shouldBe` False
+    it "gives a caveat for the native prover and Vampire, not for Z3 or CVC5" $ do
+      arithmeticCaveat NativeProver gapReg >>= (`shouldSatisfy` maybe False ("The native prover" `isPrefixOf`))
+      arithmeticCaveat Vampire gapReg >>= (`shouldSatisfy` maybe False ("Vampire" `isPrefixOf`))
+      arithmeticCaveat Z3 gapReg `shouldReturn` Nothing
+      arithmeticCaveat CVC5 gapReg `shouldReturn` Nothing
+    it "gives no caveat when the theory has no ordering comparison" $
+      arithmeticCaveat NativeProver relationLtReg `shouldReturn` Nothing
+    it "auto gives a caveat only when it falls back to the native prover" $ do
+      external <- mapM findExecutable ["z3", "cvc5", "vampire"]
+      caveat <- arithmeticCaveat AutoProver gapReg
+      isJust caveat `shouldBe` all isNothing external
+    it "the native prover answers SAT on an integer gap (the case the caveat is for)" $
+      checkConsistencyWith NativeProver gapReg >>= (`shouldSatisfy` isSat)
+    it "Z3 answers UNSAT on the same integer gap" $ withProver "z3" $
+      checkConsistencyWith Z3 gapReg >>= (`shouldSatisfy` isUnsat)
+    it "REPL :solve adds the caveat to a native SAT answer" $ do
+      (_, out) <- evalREPLCommand (nativeSession gapReg) ":solve"
+      out `shouldContain` "SMT Satisfiable (SAT)"
+      out `shouldContain` "The native prover checks this theory without arithmetic"
+    it "REPL :model, :unsat and :explain carry the same caveat" $
+      forM_ [":model", ":unsat", ":explain"] $ \cmd -> do
+        (_, out) <- evalREPLCommand (nativeSession gapReg) cmd
+        out `shouldContain` "without arithmetic"
+    it "REPL :prove adds the caveat to a failed subsumption proof" $ do
+      (_, out) <- evalREPLCommand (nativeSession truckReg) ":prove Vehicle Truck"
+      out `shouldContain` "NOT subsumed"
+      out `shouldContain` "without arithmetic"
+    it "REPL adds no caveat to an UNSAT answer" $ do
+      (_, out) <- evalREPLCommand (nativeSession pumpConflictReg) ":solve"
+      out `shouldContain` "UNSAT"
+      out `shouldNotContain` "without arithmetic"
+    it "REPL adds no caveat when Z3 answers" $ withProver "z3" $ do
+      (_, out) <- evalREPLCommand ((nativeSession gapReg) { replProver = Z3 }) ":solve"
+      out `shouldContain` "UNSAT"
+      out `shouldNotContain` "without arithmetic"
 
   describe "numeric-bound contradictions without arithmetic" $ do
     it "native prover finds the forall/exists bound conflict" $

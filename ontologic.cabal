@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           ontologic
-version:        1.8.2
+version:        1.8.3
 homepage:       https://github.com/bsommers/OntoLogic#readme
 bug-reports:    https://github.com/bsommers/OntoLogic/issues
 author:         OntoLogic Team

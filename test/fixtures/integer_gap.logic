@@ -1,0 +1,7 @@
+; An integer gap: no Integer is above 5 and below 6, so this ontology is contradictory.
+; Finding that needs arithmetic. Z3 and CVC5 answer UNSAT; the native prover and Vampire
+; answer SAT and print a warning that they have no arithmetic.
+(def-concept Tank)
+(def-property level Tank Integer)
+(forall (t) (implies (Tank t) (gt level 5)))
+(exists (t) (and (Tank t) (lt level 6)))

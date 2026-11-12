@@ -20,6 +20,7 @@ import Solver
     , findUnsatConceptsWithOptions
     , explainUnsatWithOptions
     , untranslatedAxioms
+    , arithmeticCaveat
     , resolveProver
     , solverExitCode
     , worst
@@ -177,6 +178,14 @@ runSolverCheck isFreeConsts showExplain showModel maybeP maybeTimeout maybeMem r
                 Right empties -> do
                     putStrLn ("❌ Unsatisfiable / empty concept(s): " ++ unwords empties)
                     return (ExitFailure 1)
+            -- An all-clear from a backend without arithmetic can miss numeric conflicts: say so.
+            let allClear = case (res, coh) of
+                    (Sat _, _)    -> True
+                    (_, Right []) -> True
+                    _             -> False
+            if allClear
+                then arithmeticCaveat prover reg >>= mapM_ (\w -> hPutStrLn stderr ("⚠️  " ++ w))
+                else return ()
             exitWith (worst [solverExitCode res, coherenceCode])
 
 processTarget :: Bool -> SourceTable -> String -> String -> Maybe String -> Maybe String -> Maybe String -> Bool -> Registry -> IO ()

@@ -32,6 +32,8 @@ module Solver
     , emitSMTForConsistency
     , emitSMTBase
     , untranslatedAxioms
+    , backendWithoutArithmetic
+    , arithmeticCaveat
     , worst
     , extractModel
     , UnsatExplanation(..)
@@ -52,11 +54,13 @@ import Emitters.TPTP (emitTPTP, emitTPTPSubsumption, emitTPTPCoherence)
 import FOLTheory (buildTheory, buildNamedTheory, theoryText, theorySkipped, conceptPred)
 import System.Process (readProcessWithExitCode)
 import System.Exit (ExitCode(..))
+import System.Directory (findExecutable)
 import System.IO.Error (isDoesNotExistError)
 import Control.Exception (try, IOException)
 import System.Timeout (timeout)
 import Data.List (isPrefixOf, isInfixOf)
 import Data.Char (toLower)
+import Data.Maybe (isNothing)
 import qualified Data.Map as Map
 
 -- | Supported automated theorem prover backends
@@ -222,6 +226,34 @@ worst codes
 -- | Axioms the SMT encoding leaves out, with the reason.
 untranslatedAxioms :: Registry -> [(FOL, String)]
 untranslatedAxioms = theorySkipped . buildTheory
+
+-- | The backend that answers for this prover, when that backend has no arithmetic and so reads
+--   ordering comparisons as uninterpreted predicates: the native prover, and Vampire on the
+--   TPTP encoding. 'AutoProver' reaches the native prover only when no external solver is on
+--   PATH; otherwise it sends SMT-LIB, where comparisons keep their arithmetic meaning.
+backendWithoutArithmetic :: Prover -> IO (Maybe Prover)
+backendWithoutArithmetic NativeProver = return (Just NativeProver)
+backendWithoutArithmetic Vampire      = return (Just Vampire)
+backendWithoutArithmetic AutoProver   = do
+    found <- mapM findExecutable ["z3", "cvc5", "vampire"]
+    return (if all isNothing found then Just NativeProver else Nothing)
+backendWithoutArithmetic _            = return Nothing
+
+-- | Caveat for an all-clear answer (SAT, every concept satisfiable, not subsumed) from a backend
+--   without arithmetic, on a theory that uses ordering comparisons. Such an answer can be wrong
+--   where the conflict needs arithmetic, so callers show this next to it. UNSAT needs no caveat:
+--   the background axioms given to these backends hold for every number.
+arithmeticCaveat :: Prover -> Registry -> IO (Maybe String)
+arithmeticCaveat p reg
+    | usesOrderingComparison reg = fmap caveat <$> backendWithoutArithmetic p
+    | otherwise = return Nothing
+  where
+    caveat backend =
+        who backend ++ " checks this theory without arithmetic: it catches numeric bounds that " ++
+        "directly exclude each other, but can miss conflicts that need arithmetic. " ++
+        "Confirm this answer with z3 or cvc5."
+    who NativeProver = "The native prover"
+    who other        = proverName other
 
 -- | Run raw SMT-LIB2 code through the Z3 solver via standard input
 runZ3 :: String -> IO (Either String String)

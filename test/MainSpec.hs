@@ -34,6 +34,12 @@ spec = do
       (_, _, err) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", "logic/fleet.logic", "--solve", "-p", "native", "--solve-memory", "512"] ""
       err `shouldContain` "--solve-memory is not supported by Native"
 
+    it "warns when a prover without arithmetic gives an all-clear on numeric comparisons" $ do
+      (code, out, err) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", "test/fixtures/integer_gap.logic", "--solve", "-p", "native"] ""
+      code `shouldBe` ExitSuccess
+      out `shouldContain` "SMT Satisfiable (SAT)"
+      err `shouldContain` "The native prover checks this theory without arithmetic"
+
     it "runs -t lint successfully without -o flag" $ do
       (exitCode, stdout, _) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", "logic/fleet.logic", "-t", "lint"] ""
       exitCode `shouldBe` ExitSuccess
