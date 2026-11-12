@@ -1,48 +1,63 @@
 {
   "Define Concept": {
     "prefix": "def-concept",
-    "body": [
-      "(def-concept ${1:ConceptName}",
-      "  (${2:propertyName} ${3|String,Integer,Float,Double,Boolean,DateTime,Decimal,URI|})$0)"
-    ],
-    "description": "Define a new ontology concept with properties"
+    "body": ["(def-concept ${1:ConceptName})$0"],
+    "description": "Define a new ontology concept"
   },
-  "Define Concept with Subclass": {
+  "Define Concept with Parent": {
     "prefix": "def-concept-subclass",
-    "body": [
-      "(def-concept ${1:SubclassName} (subclass-of ${2:ParentName})",
-      "  (${3:propertyName} ${4|String,Integer,Float,Double,Boolean,DateTime,Decimal,URI|})$0)"
-    ],
-    "description": "Define a new ontology subclass inheriting from a parent concept"
+    "body": ["(def-concept ${1:SubclassName} ${2:ParentName})$0"],
+    "description": "Define a concept that specialises (is subsumed by) a parent concept"
+  },
+  "Define Property": {
+    "prefix": "def-property",
+    "body": ["(def-property ${1:propertyName} ${2:ConceptName} ${3|Integer,Float,Double,String,Boolean|})$0"],
+    "description": "Define a typed data property on a concept"
+  },
+  "Define Optional Property": {
+    "prefix": "def-property-optional",
+    "body": ["(def-property ${1:propertyName} ${2:ConceptName} ${3|Integer,Float,Double,String,Boolean|} :cardinality ${4|0..1,1..1,0..*,1..*|})$0"],
+    "description": "Define a data property with an explicit cardinality"
   },
   "Define Relation": {
     "prefix": "def-relation",
-    "body": [
-      "(def-relation ${1:relationName} ${2:DomainConcept} ${3:RangeConcept})"
-    ],
+    "body": ["(def-relation ${1:relationName} ${2:DomainConcept} ${3:RangeConcept})$0"],
     "description": "Define a binary relational association between concepts"
   },
-  "Axiom Constraint": {
-    "prefix": "axiom",
-    "body": [
-      "(axiom (${1|gt,gte,lt,lte,eq,neq,between|} (${2:propertyName} ${3:x}) ${4:bound}))"
-    ],
-    "description": "Define an axiomatic constraint on a concept property"
+  "Define Individual": {
+    "prefix": "def-individual",
+    "body": ["(def-individual ${1:individualName} ${2:ConceptName})$0"],
+    "description": "Declare a named individual of a concept"
   },
-  "Axiom Universal Quantifier": {
-    "prefix": "axiom-forall",
+  "Universal Bound Axiom": {
+    "prefix": "forall-bound",
     "body": [
-      "(axiom (forall (${1:x})",
-      "  (=> (${2:ConceptName} ${1:x})",
-      "      (and (${3|gt,gte,lt,lte,eq,neq,between|} (${4:propertyName} ${1:x}) ${5:bound})))))"
+      "(forall (${1:x})",
+      "  (implies (${2:ConceptName} ${1:x})",
+      "           (${3|gte,gt,lte,lt,eq,ne|} ${4:propertyName} ${5:0})))$0"
     ],
-    "description": "Define a quantified first-order logic axiom"
+    "description": "Every instance of a concept satisfies a bound on a property"
+  },
+  "Universal Range Axiom": {
+    "prefix": "forall-range",
+    "body": [
+      "(forall (${1:x})",
+      "  (implies (${2:ConceptName} ${1:x})",
+      "           (and (gte ${3:propertyName} ${4:0}) (lte ${3:propertyName} ${5:100}))))$0"
+    ],
+    "description": "Every instance of a concept keeps a property within [min, max]"
+  },
+  "Existential Axiom": {
+    "prefix": "exists",
+    "body": [
+      "(exists (${1:x})",
+      "  (and (${2:ConceptName} ${1:x}) (${3|gte,gt,lte,lt,eq,ne|} ${4:propertyName} ${5:0})))$0"
+    ],
+    "description": "Assert that some instance of a concept exists with a property condition"
   },
   "Import File": {
     "prefix": "import",
-    "body": [
-      "(import \"${1:ontologic-lib/bfo_2020.logic}\")"
-    ],
+    "body": ["(import \"${1:ontologic-lib/bfo_2020.logic}\")$0"],
     "description": "Import an external ontology definition file"
   }
 }

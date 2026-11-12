@@ -53,7 +53,7 @@ Contradictions can be reported twice (once per operand order); fix the first and
 
 ### SAT from one prover, UNSAT from another
 
-The native prover and Vampire do not interpret numeric comparisons the way Z3 and CVC5 do. An ontology with contradictory numeric bounds that the linter did not catch (for example a universal lower bound and an existential witness below it) is UNSAT under `-p z3` or `-p cvc5` and can look SAT under `-p native` or `-p vampire`. Prefer Z3 or CVC5 whenever properties have numeric bounds.
+The native prover and Vampire have no arithmetic. They are told which pairs of numeric bounds in the file exclude each other, so a plain conflict (a universal `gte 100` and an existential witness with `lt 50`) is UNSAT on every backend. A contradiction that needs real arithmetic, such as an integer gap (`gt 5` and `lt 6` on an `Integer`), is UNSAT under `-p z3` or `-p cvc5` and can look SAT under `-p native` or `-p vampire`. Prefer Z3 or CVC5 whenever properties have numeric bounds.
 
 ### Auto picked the native prover
 
@@ -71,14 +71,11 @@ The native prover and Vampire do not interpret numeric comparisons the way Z3 an
 | No warning for `owl`, `shacl`, `smt`, `neo4j`, ... | They do not warn by default; add `--warn-unmapped` |
 | Output file overwritten | File names are fixed per target; use a separate `-o` directory per ontology |
 | `mmdc ... not found or failed` / `d2 CLI not found or failed` | Install the renderer or drop `--render`; see [Visualization](visualization.md) |
-| Generated Python or Java has the same bound repeated | Known limitation (as of 1.8.2): when a subclass restates a bound on a property it inherits, for example `Field(le=90, ge=0, le=130)`, the emitter lists both the subclass and inherited bounds. Python rejects a repeated keyword and Java rejects a repeated annotation. Put each bound on one concept only |
-| `openapi.yaml` fails to parse when a subclass has its own properties | Known limitation (as of 1.8.2): the properties of such a subclass are emitted at the wrong indentation. Check generated YAML before use, or use `jsonschema` |
 
 ## REPL and editor
 
 | Symptom | Fix |
 |---------|-----|
-| REPL `:explain` says "No contradictory axioms" right after `:solve` reported UNSAT | The solver returned an empty core; rely on `:solve` and the lint message |
 | REPL form spans several lines and fails | Each REPL line is parsed on its own; put the whole form on one line |
 | Editor shows no diagnostics | Check the "OntoLogic" output channel; run "OntoLogic: Restart Language Server"; make sure `ontologic-lsp` is found (set `ontologic.lsp.path`) |
 | Editor reports undeclared library concepts | `ONTOLOGIC_PATH` must be set in the environment the editor was launched from |

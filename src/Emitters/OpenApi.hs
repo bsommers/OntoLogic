@@ -52,10 +52,12 @@ emitOpenApiSchema cls =
 propsBlock :: String -> [CompiledProperty] -> String
 propsBlock indent ps
     | null ps   = indent ++ "properties: {}\n"
-    | otherwise = indent ++ "properties:\n" ++ concatMap emitOpenApiField ps
+    | otherwise = indent ++ "properties:\n" ++ concatMap (emitOpenApiField (indent ++ "  ")) ps
 
-emitOpenApiField :: CompiledProperty -> String
-emitOpenApiField p =
+-- | Emit one property entry; @ind@ is the indentation of the property key, which must sit one
+--   level under its @properties:@ key (deeper for subclasses, whose properties live in @allOf@).
+emitOpenApiField :: String -> CompiledProperty -> String
+emitOpenApiField ind p =
     let fName = sanitizeIdent (compPropName p)
         pType = compPropType p
         constraints = compConstraints p
@@ -66,24 +68,25 @@ emitOpenApiField p =
             PTCustom c -> indent ++ "$ref: '#/components/schemas/" ++ sanitizeIdent c ++ "'\n"
             _          -> indent ++ "type: " ++ openApiTypeName pType ++ "\n" ++
                           concatMap (emitOpenApiConstraint indent) constraints
+        ind2 = ind ++ "  "
     in case compCardinality p of
         CardZeroOrMore ->
-            "        " ++ fName ++ ":\n" ++
-            "          type: array\n" ++
-            defLine "          " ++
-            "          items:\n" ++
-            typeLines "            "
+            ind ++ fName ++ ":\n" ++
+            ind2 ++ "type: array\n" ++
+            defLine ind2 ++
+            ind2 ++ "items:\n" ++
+            typeLines (ind2 ++ "  ")
         CardOneOrMore ->
-            "        " ++ fName ++ ":\n" ++
-            "          type: array\n" ++
-            "          minItems: 1\n" ++
-            defLine "          " ++
-            "          items:\n" ++
-            typeLines "            "
+            ind ++ fName ++ ":\n" ++
+            ind2 ++ "type: array\n" ++
+            ind2 ++ "minItems: 1\n" ++
+            defLine ind2 ++
+            ind2 ++ "items:\n" ++
+            typeLines (ind2 ++ "  ")
         _ ->
-            "        " ++ fName ++ ":\n" ++
-            defLine "          " ++
-            typeLines "          "
+            ind ++ fName ++ ":\n" ++
+            defLine ind2 ++
+            typeLines ind2
 
 formatOpenApiDefault :: PropertyType -> String -> String
 formatOpenApiDefault PTString s = show s

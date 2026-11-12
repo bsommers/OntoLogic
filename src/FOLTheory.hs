@@ -38,7 +38,7 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 import Data.Containers.ListUtils (nubOrd)
 import OntoLogic
-import Emitters.SMT (smtNumeral, mapSmtType)
+import Emitters.SMT (smtNumeral, mapSmtType, emitSMTDeclarationsNamed)
 
 data TheoryOptions = TheoryOptions
     { optFreeConstants :: Bool
@@ -215,8 +215,11 @@ buildNamedTheoryWithOptions opts reg =
         decls =
             "(set-option :produce-unsat-cores true)\n" ++
             "(set-logic ALL)\n" ++
-            "(declare-sort Entity 0)\n" ++
+            boundDecls ++
             commonDecls env funs
+        -- Same declarations and property bounds the consistency check asserts (see
+        -- Solver.emitSMTForConsistency), with the bounds named so a core can cite them.
+        (boundDecls, boundEntries) = emitSMTDeclarationsNamed reg
         hierPairs = [ (c, p) | (c, Just p) <- nubOrd (concepts reg), p `elem` conceptNames ]
         hierEntries = [ ( "hier_" ++ sanitizeIdent c ++ "_" ++ sanitizeIdent p
                         , "(assert (! (forall ((x Entity)) (=> (" ++ conceptPred c ++ " x) (" ++ conceptPred p ++ " x))) :named hier_" ++ sanitizeIdent c ++ "_" ++ sanitizeIdent p ++ "))\n"
@@ -238,7 +241,7 @@ buildNamedTheoryWithOptions opts reg =
                     | (idx, (ax, Right s)) <- zip ([1..] :: [Int]) axResults
                     ]
         namedAsserts = concat [ stmt | (_, stmt, _) <- hierEntries ++ indEntries ++ axEntries ]
-        nameMap = Map.fromList [ (name, desc) | (name, _, desc) <- hierEntries ++ indEntries ++ axEntries ]
+        nameMap = Map.fromList ([ (name, desc) | (name, _, desc) <- hierEntries ++ indEntries ++ axEntries ] ++ boundEntries)
         smt = decls ++ namedAsserts ++ "(check-sat)\n(get-unsat-core)\n"
     in (smt, nameMap)
 

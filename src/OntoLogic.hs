@@ -460,3 +460,46 @@ formatConditional p c = "if " ++ formatFOL p ++ " then " ++ formatFOL c
 
 
 
+
+-- | Numeric bound literals @op(property, constant)@ in the axioms, normalised so the property
+--   is the left operand. Only the four ordering operators with numeric constants are collected.
+numericBoundLiterals :: [FOL] -> [(String, String)]
+numericBoundLiterals = nubOrd . concatMap go
+  where
+    ordOps = ["gt", "gte", "lt", "lte"]
+    go f = case f of
+        Predicate op [Var _, Constant c] | op `elem` ordOps, numeric c -> [(op, c)]
+        Predicate op [Constant c, Var _] | op `elem` ordOps, numeric c -> [(flipOp op, c)]
+        And a b -> go a ++ go b
+        Or a b -> go a ++ go b
+        Implies a b -> go a ++ go b
+        Iff a b -> go a ++ go b
+        Not a -> go a
+        ForAll _ b -> go b
+        Exists _ b -> go b
+        TypedForAll _ _ b -> go b
+        TypedExists _ _ b -> go b
+        _ -> []
+    numeric c = (readMaybe c :: Maybe Double) /= Nothing
+    flipOp "gt" = "lt"
+    flipOp "gte" = "lte"
+    flipOp "lt" = "gt"
+    flipOp "lte" = "gte"
+    flipOp o = o
+
+-- | Pairs of numeric bound literals that no real number satisfies together (a lower bound above
+--   an upper bound, or meeting it with a strict side). Provers without arithmetic (the native
+--   prover, Vampire on FOF) treat comparison predicates as uninterpreted, so callers assert
+--   @forall t. not (op1(t, a) and op2(t, b))@ for each pair. These are valid over the reals and
+--   hence over the integers too, so they never make a satisfiable theory unsatisfiable; they are
+--   incomplete (integer gaps such as gt 5 and lt 6 are not detected).
+disjointBoundPairs :: [FOL] -> [((String, String), (String, String))]
+disjointBoundPairs axs =
+    let lits = numericBoundLiterals axs
+        num c = maybe 0 id (readMaybe c :: Maybe Double)
+        lowers = [ l | l@(op, _) <- lits, op `elem` ["gt", "gte"] ]
+        uppers = [ u | u@(op, _) <- lits, op `elem` ["lt", "lte"] ]
+    in [ (l, u)
+       | l@(lop, a) <- lowers, u@(uop, b) <- uppers
+       , num a > num b || (num a == num b && (lop == "gt" || uop == "lt"))
+       ]

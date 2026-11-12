@@ -12,16 +12,16 @@ Official Visual Studio Code extension for **OntoLogic** — First-Order Logic Do
   - **Context-Aware Autocompletion**: Keywords, primitive types, concept classes, and properties.
   - **Type Definition & Hover**: Hover over concept names to inspect class inheritance and typed bounds.
   - **Jump to Definition**: Jump directly to concept declarations across files.
-- 🧩 **Code Snippets**: Quick templates for `def-concept`, `subclass-of`, `def-relation`, `axiom`, and `import`.
+- 🧩 **Code Snippets**: Quick templates for `def-concept` (with or without a parent), `def-property`, `def-relation`, `def-individual`, `forall` bound/range axioms, `exists` axioms, and `import`.
 - 🔍 **Interactive SMT Solver Integration**: Trigger Z3 and CVC5 satisfiability checks and concept emptiness tests directly from the editor command palette.
 
 ---
 
 ## Installation & Setup
 
-1. Install the `ontologic-1.0.0.vsix` extension package:
+1. Install the `ontologic-1.3.0.vsix` extension package:
    ```bash
-   code --install-extension ontologic-1.0.0.vsix
+   code --install-extension ontologic-1.3.0.vsix
    ```
 2. Ensure `ontologic-lsp` is in your `PATH` (e.g., `~/.local/bin/ontologic-lsp`) or configure `ontologic.lsp.path` in Settings.
 
