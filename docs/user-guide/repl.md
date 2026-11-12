@@ -36,6 +36,8 @@ Input is read one line at a time, so each form or command must fit on one line. 
 
 Anything that is not a command is parsed as DSL. A line may contain one or several top-level forms; they are merged into the session. The linter runs after each addition and, if it finds a problem, prints `⚠️ Lint warning: ...` for the first one; the forms stay in the session regardless.
 
+The `native` and `vampire` provers have no arithmetic. When one of them is active (or `auto` has no external solver to use) and the session uses `gt`, `gte`, `lt` or `lte`, an all-clear from `:solve`, `:model`, `:explain`, `:unsat` or `:prove` ends with `⚠️ ... checks this theory without arithmetic ...`. Confirm such an answer with `:prover z3` or `:prover cvc5`.
+
 ## Example session
 
 ```text

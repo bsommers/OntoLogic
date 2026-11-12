@@ -9,7 +9,18 @@ tagged after the fact, on their version-bump commits.
 
 ## [1.8.3] - 2026-11-11
 
-Emitter, REPL and prover fixes found while writing the user guide.
+Emitter, REPL and prover fixes found while writing the user guide, and a warning for answers
+reached without arithmetic.
+
+### Added
+- **Warning when a prover without arithmetic gives an all-clear.** The native prover and
+  Vampire read `gt`, `gte`, `lt` and `lte` without arithmetic, so their SAT can miss a conflict
+  that needs it (an integer gap such as `gt 5` with `lt 6`). When the ontology uses those
+  comparisons and one of them reports SAT or every concept satisfiable, `--solve` prints a
+  warning on stderr. The REPL adds the same line to `:solve`, `:model`, `:explain`, `:unsat`
+  and a refuted `:prove`, and the language server adds it to the `ontologic.solve` result.
+  `auto` warns only when it falls back to the native prover. Z3 and CVC5 answers, and every
+  UNSAT, are unchanged.
 
 ### Fixed
 - **Repeated bounds in generated Python and Java.** A subclass that restated an inherited

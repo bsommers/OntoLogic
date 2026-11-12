@@ -16,7 +16,7 @@ Capabilities reported by `initialize`:
 | Formatting | Re-indents the whole document (honours the editor's tab size) |
 | Semantic tokens | Keyword, type, class, property, function, variable, string, number, comment, operator |
 | Code actions | Quick-fix entries "Verify SMT Consistency", "Explain SMT Unsatisfiable Core", "Inspect SMT Satisfying Model" |
-| Execute command | `ontologic.solve`, `ontologic.explainUnsat`, `ontologic.inspectModel`. They run asynchronously with progress notifications and can be cancelled; they always use the `auto` prover |
+| Execute command | `ontologic.solve`, `ontologic.explainUnsat`, `ontologic.inspectModel`. They run asynchronously with progress notifications and can be cancelled; they always use the `auto` prover. When `auto` falls back to the native prover on an ontology with numeric comparisons, the `ontologic.solve` SAT `details` end with a warning that the theory was checked without arithmetic |
 
 Imports use the same search path as the CLI, including `$ONTOLOGIC_PATH` (set it in the environment the editor is launched from). The server has no `--lib-path` option.
 

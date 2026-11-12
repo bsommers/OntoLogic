@@ -48,12 +48,15 @@ Contradictions can be reported twice (once per operand order); fix the first and
 | `SMT Solver Error: Failed to execute Z3 solver: ... Ensure 'z3' is installed and available in PATH.` | You asked for a specific prover (`-p z3`) that is not installed. Install it, or use `-p auto`/`-p native` |
 | `Unknown prover 'x'. Valid options: z3, cvc5, vampire, native, auto` | Bad `-p` value |
 | `⚠️ --solve-memory is not supported by CVC5 and is ignored.` | Memory limits apply to Z3 only |
+| `⚠️ The native prover checks this theory without arithmetic: ...` (or `Vampire checks ...`) | The ontology uses `gt`, `gte`, `lt` or `lte`, and the all-clear came from `native` or `vampire`. It can miss a conflict that needs arithmetic. Re-run with `-p z3` or `-p cvc5`. See [below](#sat-from-one-prover-unsat-from-another) |
 | `Concept coherence check could not run: ...` | Exit 2; the second solver step failed. Usually the same cause as an adjacent solver error |
 | `Native resolution prover timed out / step limit / clause limit exceeded` | The built-in prover gave up (reported as unknown). Use `z3` or `cvc5` |
 
 ### SAT from one prover, UNSAT from another
 
 The native prover and Vampire have no arithmetic. They are told which pairs of numeric bounds in the file exclude each other, so a plain conflict (a universal `gte 100` and an existential witness with `lt 50`) is UNSAT on every backend. A contradiction that needs real arithmetic, such as an integer gap (`gt 5` and `lt 6` on an `Integer`), is UNSAT under `-p z3` or `-p cvc5` and can look SAT under `-p native` or `-p vampire`. Prefer Z3 or CVC5 whenever properties have numeric bounds.
+
+OntoLogic flags the answers this affects. When the ontology uses `gt`, `gte`, `lt` or `lte` and `native` or `vampire` gives an all-clear (SAT, or every concept satisfiable), `--solve` prints a warning on stderr that the theory was checked without arithmetic. The REPL adds the same line to its answer. `-p auto` warns only when it has fallen back to the native prover. An UNSAT from these provers needs no confirmation.
 
 ### Auto picked the native prover
 

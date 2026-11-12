@@ -19,6 +19,7 @@ import Solver
     , proveSubsumptionWith
     , findUnsatConceptsWith
     , untranslatedAxioms
+    , arithmeticCaveat
     , Prover(..)
     , parseProver
     , proverName
@@ -142,7 +143,11 @@ evalREPLCommand state input
                 Left err -> "⚠️  Concept coherence check could not run: " ++ err
                 Right [] -> "✅ All concepts are satisfiable (0 empty concepts)."
                 Right empties -> "❌ Unsatisfiable / empty concept(s): " ++ unwords empties
-        return (state, warning ++ consistency ++ "\n" ++ coherence)
+        note <- case (res, coh) of
+            (Sat _, _)    -> caveatLine state
+            (_, Right []) -> caveatLine state
+            _             -> return ""
+        return (state, warning ++ consistency ++ "\n" ++ coherence ++ note)
 
     | input `elem` [":explain", ":unsat-core", ":explain-unsat"] = do
         res <- explainUnsatWith (replProver state) (replRegistry state)
@@ -150,7 +155,9 @@ evalREPLCommand state input
             Left err -> return (state, "❌ SMT Explanation Error:\n" ++ err)
             Right explanation ->
                 if null (unsatCoreNames explanation)
-                then return (state, "✅ SMT Satisfiable (SAT) — No contradictory axioms or unsat cores detected.")
+                then do
+                    note <- caveatLine state
+                    return (state, "✅ SMT Satisfiable (SAT) — No contradictory axioms or unsat cores detected." ++ note)
                 else return (state, unlines
                     [ "❌ SMT Unsatisfiable (UNSAT) — Minimal Unsat Core Identified:"
                     , "  Core Assertions: " ++ unwords (unsatCoreNames explanation)
@@ -162,10 +169,11 @@ evalREPLCommand state input
     | input `elem` [":model", ":inspect-model"] = do
         res <- checkConsistencyWith (replProver state) (replRegistry state)
         case res of
-            Sat _ ->
+            Sat _ -> do
+                note <- caveatLine state
                 case extractModel res of
-                    Just m  -> return (state, "✅ SMT Satisfiable (SAT) — Extracted Valuation Model:\n" ++ m)
-                    Nothing -> return (state, "✅ SMT Satisfiable (SAT) — Valuation model is empty or implicit.")
+                    Just m  -> return (state, "✅ SMT Satisfiable (SAT) — Extracted Valuation Model:\n" ++ m ++ note)
+                    Nothing -> return (state, "✅ SMT Satisfiable (SAT) — Valuation model is empty or implicit." ++ note)
             Unsat -> return (state, "❌ SMT Unsatisfiable (UNSAT) — No satisfying model exists. Run ':explain' to view the unsat core.")
             Unknown out -> return (state, "⚠️  SMT Solver Result Inconclusive: " ++ out)
             SolverError err -> return (state, "❌ SMT Solver Error:\n" ++ err)
@@ -177,7 +185,9 @@ evalREPLCommand state input
                 res <- proveSubsumptionWith (replProver state) (replRegistry state) child parent
                 case res of
                     Subsumed -> return (state, "✅ Theorem Proved via " ++ proverName (replProver state) ++ ": '" ++ child ++ "' ⊑ '" ++ parent ++ "' (Every instance of " ++ child ++ " is necessarily a " ++ parent ++ ").")
-                    NotSubsumed model -> return (state, "❌ Theorem Disproved via " ++ proverName (replProver state) ++ ": '" ++ child ++ "' is NOT subsumed by '" ++ parent ++ "'. Counterexample model:\n" ++ model)
+                    NotSubsumed model -> do
+                        note <- caveatLine state
+                        return (state, "❌ Theorem Disproved via " ++ proverName (replProver state) ++ ": '" ++ child ++ "' is NOT subsumed by '" ++ parent ++ "'. Counterexample model:\n" ++ model ++ note)
                     ProofError err -> return (state, "❌ Solver Error in Subsumption Proof:\n" ++ err)
             _ -> return (state, "⚠️  Usage: :prove <ConceptA> <ConceptB>")
 
@@ -185,7 +195,9 @@ evalREPLCommand state input
         res <- findUnsatConceptsWith (replProver state) (replRegistry state)
         case res of
             Left err -> return (state, "❌ SMT Solver Error:\n" ++ err)
-            Right [] -> return (state, "✅ All concepts are satisfiable (0 empty concepts) via " ++ proverName (replProver state) ++ ".")
+            Right [] -> do
+                note <- caveatLine state
+                return (state, "✅ All concepts are satisfiable (0 empty concepts) via " ++ proverName (replProver state) ++ "." ++ note)
             Right unsatList -> return (state, "❌ Unsatisfiable / Contradictory Concepts Found via " ++ proverName (replProver state) ++ ":\n" ++ unlines (map ("  - " ++) unsatList))
 
     | input == ":clear" =
@@ -228,6 +240,10 @@ evalREPLCommand state input
                     errs = lintRegistry merged
                     lintMsg = if null errs then "" else "\n⚠️  Lint warning: " ++ head errs
                 in return (state { replRegistry = merged }, "Added to registry." ++ lintMsg)
+
+-- | Extra line for an all-clear answer from a prover without arithmetic; empty when none applies.
+caveatLine :: REPLState -> IO String
+caveatLine state = maybe "" ("\n⚠️  " ++) <$> arithmeticCaveat (replProver state) (replRegistry state)
 
 trim :: String -> String
 trim = f . f
