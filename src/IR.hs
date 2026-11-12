@@ -5,6 +5,8 @@ import GHC.Generics
 import Data.Graph (graphFromEdges, topSort)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
+import Data.List (maximumBy, minimumBy, nub)
+import Data.Ord (comparing)
 import OntoLogic
 
 -- | Compiled representation of a single property attached to a class
@@ -147,7 +149,7 @@ resolveProperty name conceptsList localMap mergedMap p
 -- | Group raw (prop, op, val) string triples into typed BoundConstraint records preserving order
 groupConstraints :: [(Name, String, String)] -> Map.Map Name [BoundConstraint]
 groupConstraints consts =
-    Map.fromListWith (\new old -> old ++ new)
+    Map.map tightenBounds $ Map.fromListWith (\new old -> old ++ new)
         [ (prop, [BoundConstraint op val])
         | (prop, opStr, valStr) <- consts
         , Just op <- [parseCompOp opStr]
@@ -205,3 +207,29 @@ formatUnmappedWarning style ir
     xmlSafe ('-' : '-' : rest) = "- " ++ xmlSafe ('-' : rest)
     xmlSafe (c : rest)         = c : xmlSafe rest
     xmlSafe []                 = []
+
+-- | A subclass that restates an inherited bound (or a concept that states two bounds of the
+--   same direction) yields several lower or upper bounds for one property. Emitters map each
+--   bound to a keyword or annotation that may appear only once (pydantic kwargs, Java @Min,
+--   OpenAPI keys), so keep only the tightest bound in each direction. Ties go to the strict
+--   operator. Equality and disequality constraints are kept, deduplicated. First-appearance
+--   order is preserved.
+tightenBounds :: [BoundConstraint] -> [BoundConstraint]
+tightenBounds cs = nub (go False False cs)
+  where
+    lowers = filter (isLower . constraintOp) cs
+    uppers = filter (isUpper . constraintOp) cs
+    bestLower = maximumBy (comparing (\c -> (numVal c, strictness c))) lowers
+    bestUpper = minimumBy (comparing (\c -> (numVal c, negate (strictness c)))) uppers
+    go _ _ [] = []
+    go seenL seenU (c:rest)
+        | isLower (constraintOp c) = if seenL then go seenL seenU rest else bestLower : go True seenU rest
+        | isUpper (constraintOp c) = if seenU then go seenL seenU rest else bestUpper : go seenL True rest
+        | otherwise                = c : go seenL seenU rest
+    isLower op = op `elem` [OpGt, OpGte]
+    isUpper op = op `elem` [OpLt, OpLte]
+    strictness c = if constraintOp c `elem` [OpGt, OpLt] then 1 else (0 :: Int)
+    numVal c = case constraintValue c of
+        VInt n    -> fromIntegral n
+        VDouble d -> d
+        _         -> 0 :: Double

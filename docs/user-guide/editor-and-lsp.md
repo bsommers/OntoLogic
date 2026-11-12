@@ -40,7 +40,7 @@ The extension activates for `.logic` files (language id `ontologic`). It finds t
 ### Features
 
 - TextMate syntax highlighting and bracket/comment configuration.
-- Snippets for `def-concept`, `def-concept-subclass`, `def-relation`, `axiom`, `axiom-forall`, and `import`. **Caution:** the concept, axiom, and subclass snippets were written for an older syntax (`(subclass-of ...)`, `(axiom ...)`, `=>`, inline property lists, `between`) and expand to forms the current parser rejects. Only `def-relation` and `import` expand to valid code; write concepts and axioms as shown in the [Language reference](language-reference.md).
+- Snippets: `def-concept`, `def-concept-subclass`, `def-property`, `def-property-optional`, `def-relation`, `def-individual`, `forall-bound`, `forall-range`, `exists`, and `import`. Each expands to current syntax (see the [Language reference](language-reference.md)).
 - Everything in the table above via the language server.
 
 ### Commands

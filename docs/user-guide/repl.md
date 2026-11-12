@@ -91,7 +91,6 @@ ontologic> :prove Vehicle Truck
 - There are no `-T`/`--solve-timeout` or `--solve-memory` controls; for bounded runs use the CLI.
 - `:solve` always prints the model on SAT; the CLI needs `--inspect-model`.
 - `:prove` exists only here.
-- `:explain` reports "No contradictory axioms or unsat cores detected" when the solver returns an empty core, which can happen even when `:solve` has just reported UNSAT. If so, rely on the `:solve` verdict and read the lint message.
 - Malformed input prints a parse error with a caret and leaves the session unchanged:
 
 ```text

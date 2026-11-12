@@ -1,6 +1,7 @@
 module Emitters.SMT
     ( emitSMT
     , emitSMTDeclarations
+    , emitSMTDeclarationsNamed
     , emitPropertyFunction
     , smtNumeral
     , mapSmtType
@@ -61,16 +62,56 @@ emitPropertyFunction cName p =
     in decl ++ concatMap (emitPropertyAssertion cName fName pType) (compConstraints p)
 
 emitPropertyAssertion :: String -> String -> PropertyType -> BoundConstraint -> String
-emitPropertyAssertion cName fName pType (BoundConstraint op val) =
+emitPropertyAssertion cName fName pType c =
+    "(assert " ++ propertyAssertionBody cName fName pType c ++ ")\n"
+
+propertyAssertionBody :: String -> String -> PropertyType -> BoundConstraint -> String
+propertyAssertionBody cName fName pType (BoundConstraint op val) =
     let app = "(" ++ fName ++ " " ++ cName ++ ")"
         lit = smtNumeral pType val
-    in case op of
-        OpGt  -> "(assert (> " ++ app ++ " " ++ lit ++ "))\n"
-        OpGte -> "(assert (>= " ++ app ++ " " ++ lit ++ "))\n"
-        OpLt  -> "(assert (< " ++ app ++ " " ++ lit ++ "))\n"
-        OpLte -> "(assert (<= " ++ app ++ " " ++ lit ++ "))\n"
-        OpEq  -> "(assert (= " ++ app ++ " " ++ lit ++ "))\n"
-        OpNe  -> "(assert (distinct " ++ app ++ " " ++ lit ++ "))\n"
+        rel = case op of
+            OpGt  -> ">"
+            OpGte -> ">="
+            OpLt  -> "<"
+            OpLte -> "<="
+            OpEq  -> "="
+            OpNe  -> "distinct"
+    in "(" ++ rel ++ " " ++ app ++ " " ++ lit ++ ")"
+
+-- | 'emitSMTDeclarations' with every property bound assertion named, so an unsat core can
+--   cite it. Returns the SMT text plus (name, description) pairs for each named bound.
+--   The consistency check asserts these bounds, so the unsat-core theory must assert them too,
+--   or ':explain' answers SAT for a contradiction ':solve' reported.
+emitSMTDeclarationsNamed :: Registry -> (String, [(String, String)])
+emitSMTDeclarationsNamed reg =
+    let modelIR = compileRegistry reg
+        classes = irClasses modelIR
+        bounds = [ (cls, p, c) | cls <- classes, p <- compProperties cls, c <- compConstraints p ]
+        named = [ ( nm
+                  , "(assert (! " ++ propertyAssertionBody cName fName (compPropType p) c ++ " :named " ++ nm ++ "))\n"
+                  , "Property bound: " ++ compClassName cls ++ "." ++ compPropName p ++ " "
+                      ++ compOpToString (constraintOp c) ++ " " ++ valueToString (constraintValue c)
+                  )
+                | (idx, (cls, p, c)) <- zip ([1..] :: [Int]) bounds
+                , let cName = sanitizeIdent (compClassName cls)
+                      fName = cName ++ "_" ++ sanitizeIdent (compPropName p)
+                      nm = "bound_" ++ show idx
+                ]
+        funDecls = concat [ "(declare-fun " ++ sanitizeIdent (compClassName cls) ++ "_" ++ sanitizeIdent (compPropName p)
+                              ++ " (Entity) " ++ mapSmtType (compPropType p) ++ ")\n"
+                          | cls <- classes, p <- compProperties cls ]
+        txt = "; Sort declarations\n" ++
+              "(declare-sort Entity 0)\n\n" ++
+              "; Entity Concept Constants\n" ++
+              concatMap emitConceptConst classes ++ "\n" ++
+              "; Subclass Hierarchy\n" ++
+              "(declare-fun subClassOf (Entity Entity) Bool)\n" ++
+              concatMap emitHierarchy classes ++ "\n" ++
+              "; Property Functions and Bound Assertions\n" ++
+              funDecls ++ concat [ a | (_, a, _) <- named ] ++ "\n" ++
+              "; Relational Declarations\n" ++
+              emitRelations (irRelations modelIR) ++ "\n"
+    in (txt, [ (n, d) | (n, _, d) <- named ])
 
 -- | SMT-LIB2 numeral: plain decimal notation, reals keep a fraction, negatives as (- n).
 smtNumeral :: PropertyType -> Value -> String

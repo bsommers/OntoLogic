@@ -157,7 +157,7 @@ A model is one possible world, usually a tiny one. Concepts that are empty in th
 | `native` | Built into the binary (tableau and resolution). No install needed; honours `-T`; reports unknown on step or clause limits |
 | `auto` | Tries `z3`, `cvc5`, `vampire` in order, skipping any that is not installed; if none is installed, falls back to `native`. A solver that is installed but fails is reported, not skipped |
 
-Practical guidance: use `z3` or `cvc5` for ontologies with numeric property bounds. On the balance example above, `z3` and `cvc5` report UNSAT while `native` and `vampire` report SAT, because they do not reason about the numeric comparisons the way an SMT solver does. The domain fixtures in `test/fixtures/domains/` are checked with Z3 (then CVC5) for the same reason. For purely taxonomic and relational reasoning, all backends agree. If two provers disagree, trust UNSAT from an SMT solver and treat the other's SAT as incomplete.
+Practical guidance: use `z3` or `cvc5` for ontologies with numeric property bounds. `native` and `vampire` have no arithmetic. OntoLogic gives them one background axiom for each pair of numeric bounds in the file that no number can meet together (such as `gte 100` and `lt 50`), so they catch contradictions like the balance example above. They still miss contradictions that need real arithmetic, such as integer gaps (`gt 5` and `lt 6` on an `Integer`) or bounds derived from sums. The domain fixtures in `test/fixtures/domains/` are checked with Z3 (then CVC5) for this reason. For purely taxonomic and relational reasoning, all backends agree. If two provers disagree, trust UNSAT from an SMT solver and treat the other's SAT as incomplete.
 
 ## Time and memory limits
 

@@ -9,7 +9,7 @@ module IR.Clausify
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 
-import OntoLogic (Name, FOL(..), Term(..), Registry(..), RelationDef(..))
+import OntoLogic (Name, FOL(..), Term(..), Registry(..), RelationDef(..), PropertyDef(..), disjointBoundPairs)
 import IR.CNF
 
 -- | State tracking variable renaming and Skolem constant/function generation
@@ -229,8 +229,40 @@ clausifyTheory reg = runClausifyM $ do
           ]
 
     -- 3. Explicit logical axioms from registry
-    let allAxioms = taxonomyAxioms ++ relationDomainAxioms ++ relationRangeAxioms ++ axioms reg
+    let propNames = map propName (properties reg)
+        regAxioms = map (bindPropertyTerms propNames []) (axioms reg)
+    -- 4. Arithmetic background: comparison predicates are uninterpreted here, so state which
+    --    numeric bounds exclude each other (see 'disjointBoundPairs').
+    let arithAxioms =
+          [ ForAll "t" (Not (And (Predicate op1 [Var "t", Constant a]) (Predicate op2 [Var "t", Constant b])))
+          | ((op1, a), (op2, b)) <- disjointBoundPairs (axioms reg)
+          ]
+    let allAxioms = taxonomyAxioms ++ relationDomainAxioms ++ relationRangeAxioms ++ regAxioms ++ arithAxioms
     clauseLists <- mapM clausifyFOL allAxioms
     let flatClauses = concat clauseLists
         uniqueNonTautologyClauses = Set.fromList (map canonicalizeClause (filter (not . isTautology) flatClauses))
     return (CNFTheory uniqueNonTautologyClauses)
+
+-- | In @(gte pressure 100)@ the property name is written bare. Read it as the property of the
+--   innermost quantified variable, @prop_pressure(p)@, as the SMT and TPTP backends do. Left
+--   alone it would be closed as a fresh universal variable, making every entity share one value.
+bindPropertyTerms :: [Name] -> [Name] -> FOL -> FOL
+bindPropertyTerms props bound f = case f of
+    Predicate op [Var p, Constant c] | isBound op p -> Predicate op [propTerm p, Constant c]
+    Predicate op [Constant c, Var p] | isBound op p -> Predicate op [Constant c, propTerm p]
+    And a b -> And (rec a) (rec b)
+    Or a b -> Or (rec a) (rec b)
+    Implies a b -> Implies (rec a) (rec b)
+    Iff a b -> Iff (rec a) (rec b)
+    Not a -> Not (rec a)
+    ForAll v b -> ForAll v (bindPropertyTerms props (v : bound) b)
+    Exists v b -> Exists v (bindPropertyTerms props (v : bound) b)
+    TypedForAll v s b -> TypedForAll v s (bindPropertyTerms props (v : bound) b)
+    TypedExists v s b -> TypedExists v s (bindPropertyTerms props (v : bound) b)
+    other -> other
+  where
+    rec = bindPropertyTerms props bound
+    isBound op p = op `elem` ["gt", "gte", "lt", "lte"] && p `elem` props && p `notElem` bound
+    propTerm p = case bound of
+        (subject : _) -> Apply ("prop_" ++ p) [Var subject]
+        []            -> Apply ("prop_" ++ p) []

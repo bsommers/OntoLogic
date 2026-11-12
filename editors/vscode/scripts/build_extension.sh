@@ -15,4 +15,5 @@ npm run compile
 echo "==> Packaging VSIX extension..."
 npx @vscode/vsce package --no-git-tag-version
 
-echo "==> VSIX Package created at $EXT_DIR/ontologic-1.0.0.vsix"
+VERSION="$(node -p "require('./package.json').version")"
+echo "==> VSIX Package created at $EXT_DIR/ontologic-$VERSION.vsix"

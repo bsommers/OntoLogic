@@ -9,9 +9,25 @@ tagged after the fact, on their version-bump commits.
 
 ## [1.8.2] - Unreleased
 
-Fixes to the v1.8.1 solver resource controls.
+Fixes to the v1.8.1 solver resource controls, plus emitter, REPL and prover fixes.
 
 ### Fixed
+- **Repeated bounds in generated Python and Java.** A subclass that restated an inherited
+  bound produced `Field(le=90, ge=0, le=130)` or two `@Max` annotations, which neither
+  language accepts. The IR now keeps only the tightest lower and upper bound per property.
+- **Invalid `openapi.yaml` for subclasses with their own properties.** Their properties
+  were emitted one level too shallow under `allOf`; they are now nested correctly.
+- **`:explain` / `--explain-unsat` answered SAT after `:solve` reported UNSAT.** The unsat-core
+  query left out the property bound assertions the consistency check makes. It now includes
+  them, named, so the core cites the conflicting bounds.
+- **Native prover and Vampire missed plain numeric-bound conflicts** (a universal `gte 100`
+  with an existential `lt 50`). Both now receive background axioms for each pair of bounds
+  that no number satisfies together. The native prover also reads a bare property name in a
+  comparison as that property of the quantified entity, as the SMT and TPTP backends do,
+  instead of as a free variable. Conflicts that need real arithmetic (integer gaps) still need
+  Z3 or CVC5.
+- **VS Code snippets expanded to obsolete syntax.** They now use the current grammar, and the
+  extension README and `build_extension.sh` report the real package version.
 - **`--solve-timeout` was ignored by CVC5.** `--tlimit` was passed after the `-` stdin
   marker, where cvc5 ignores options. It now comes before `-`.
 - **Timeouts behave the same on every backend.** External solvers now also run under a
