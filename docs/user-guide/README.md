@@ -35,7 +35,7 @@ New to OntoLogic: read 1 to 3 in order, then pick topics as needed.
                  SAT / UNSAT / unknown              code, schemas, diagrams
 ```
 
-The linter always runs first. If it finds an error, nothing else runs (no solving, no emission) and the exit code is 1.
+The linter always runs first. If it finds an error, nothing else runs (no solving, no emission) and the exit code is 1. Warnings are printed and the run continues.
 
 ## Related documents
 

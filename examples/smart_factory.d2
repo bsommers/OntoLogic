@@ -8,5 +8,7 @@
 "RobotArm" -> "IndustrialEntity"
 "IndustrialEntity"."safety_status": Boolean
 "RobotArm"."axis_count": Integer
+"Controller"."active": Boolean
 # WARNING: The following axioms could not be mapped to field constraints:
+#   forall r (RobotArm(r) implies axis_count = 6)
 #   forall c (Controller(c) and safety_status = False implies active = False)

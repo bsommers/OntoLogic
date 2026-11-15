@@ -7,6 +7,8 @@ import Solver (Prover(..))
 import Control.Exception (bracket_)
 import System.Timeout (timeout)
 import Data.Maybe (isJust)
+import System.Directory (findExecutable)
+import Loader (loadRegistryWithImports)
 import System.Environment (lookupEnv, setEnv, unsetEnv)
 import Targets (optBaseIri)
 
@@ -19,6 +21,10 @@ spec = describe "Interactive REPL Engine" $ do
         out `shouldContain` ":emit"
         out `shouldContain` ":lint"
         out `shouldContain` ":ir"
+
+    it "reports an unknown :command instead of parsing it as DSL" $ do
+        (_, out) <- evalREPLCommand initialREPLState ":frobnicate"
+        out `shouldContain` "Unknown command: :frobnicate"
 
     it "handles :show on empty state" $ do
         (_, out) <- evalREPLCommand initialREPLState ":show"
@@ -76,6 +82,24 @@ spec = describe "Interactive REPL Engine" $ do
         (clearedState, clearOut) <- evalREPLCommand loadedState ":clear"
         clearOut `shouldContain` "Session registry cleared."
         length (concepts (replRegistry clearedState)) `shouldBe` 0
+
+    it ":solve answers unknown, then lists the axioms, when some were not sent" $ do
+        z3 <- findExecutable "z3"
+        case z3 of
+            Nothing -> pendingWith "z3 not installed"
+            Just _ -> do
+                r <- loadRegistryWithImports "test/fixtures/failclosed/smt_arity.logic"
+                reg <- either fail return r
+                let st = initialREPLState { replRegistry = reg, replProver = Z3 }
+                (_, out) <- evalREPLCommand st ":solve"
+                out `shouldContain` "could not be checked"
+                out `shouldContain` "were not sent to the solver"
+                out `shouldNotContain` "SMT Satisfiable (SAT)"
+                (_, mout) <- evalREPLCommand st ":model"
+                mout `shouldContain` "could not be checked"
+                -- A refuted subsumption over a partial theory is not a disproof.
+                (_, pout) <- evalREPLCommand st ":prove A B"
+                pout `shouldNotContain` "Theorem Disproved"
 
     it "runs Z3 solver consistency check (:solve) from REPL" $ do
         (s1, _) <- evalREPLCommand initialREPLState "(def-concept Device)"

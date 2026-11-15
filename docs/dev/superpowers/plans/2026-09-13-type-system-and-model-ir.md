@@ -1,4 +1,5 @@
 # Milestone 4 Plan: Type System Refactoring & Compiler Intermediate Representation (IR)
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 > **Context:** Evolution from an ad-hoc pattern-matching emitter pipeline to a strongly typed compiler architecture with an Intermediate Representation (IR), premise-aware axiom extraction, and property-based verification.
 > **Tracking Document:** [`docs/dev/superpowers/REPLAY_PLAYBOOK.md`](../REPLAY_PLAYBOOK.md)

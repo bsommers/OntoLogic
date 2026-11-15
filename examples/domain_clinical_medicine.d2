@@ -55,7 +55,6 @@
 "ImagingResult": { shape: class }
 "DischargeSummary": { shape: class }
 "ClinicalNote": { shape: class }
-"EscalationRecord": { shape: class }
 "ClinicalOrder": { shape: class }
 "MedicationOrder": { shape: class }
 "ControlledSubstanceOrder": { shape: class }
@@ -128,7 +127,6 @@
 "ImagingResult" -> "Observation"
 "DischargeSummary" -> "InformationContentEntity"
 "ClinicalNote" -> "InformationContentEntity"
-"EscalationRecord" -> "InformationContentEntity"
 "ClinicalOrder" -> "InformationContentEntity"
 "MedicationOrder" -> "ClinicalOrder"
 "ControlledSubstanceOrder" -> "MedicationOrder"
@@ -179,5 +177,8 @@
 #   forall x (not Patient(x) and Clinician(x))
 #   forall x (not ClinicalOrder(x) and Observation(x))
 #   forall x (not Medication(x) and ActiveIngredient(x))
-#   forall p (forall a (forall m (forall o (has_allergy(p, a) and triggers_allergy(a, m) and orders_medication(o, m) implies not received_by(o, p)))))
-#   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists e (EscalationRecord(e)))
+#   forall p (forall a (forall m (has_allergy(p, a) and triggers_allergy(a, m) implies not exists o (MedicationOrder(o) and orders_medication(o, m) and received_by(o, p)))))
+#   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists n (ClinicalNote(n)))
+#   forall o (MedicationOrder(o) implies is_signed = True)
+#   forall c (forall o (prescribes(c, o) implies is_licensed_prescriber = True))
+#   forall d (Discharge(d) implies has_summary = True)

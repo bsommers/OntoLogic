@@ -1,0 +1,6 @@
+; Ground truth: UNSAT. Identifiers use characters the language reference allows (/ + ').
+(def-concept Read/Write)
+(def-concept C++Module)
+(def-relation uses C++Module Read/Write)
+(exists (x y) (uses x y))
+(forall (x y) (not (uses x y)))

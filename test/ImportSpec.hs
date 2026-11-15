@@ -11,7 +11,8 @@ import qualified Data.Text.IO as TIO
 
 import OntoLogic
 import Parser (parseRegistry, parseFOL)
-import Loader (loadRegistryWithImports, loadRegistryWithLibPaths)
+import Loader (loadRegistryWithImports, loadRegistryWithLibPaths, loadRegistryWithOptions)
+import Data.List (isInfixOf)
 import Linter (lintRegistry)
 import Emitters.Owl (emitOwl)
 
@@ -181,3 +182,48 @@ spec = do
       writeFile (tmp </> "sub" </> "m.logic") "(import \"bfo_2020.logic\")\n"
       res <- withCurrentDirectory tmp (loadRegistryWithLibPaths [repo </> "ontologic-lib"] "sub/m.logic")
       either expectationFailure (\reg -> lookup "Shadow" (concepts reg) `shouldBe` Nothing) res
+
+  describe "Import hardening (B7)" $ do
+    let setup name body = do
+          tmp <- (</> name) <$> getTemporaryDirectory
+          createDirectoryIfMissing True tmp
+          writeFile (tmp </> "secret.txt") "TOPSECRETLINE\n"
+          writeFile (tmp </> "ok.logic") "(def-concept Ok)\n"
+          writeFile (tmp </> "root.logic") body
+          return tmp
+
+    it "refuses an absolute import path by default and does not echo file contents" $ do
+      tmp <- setup "ontologic-b7-abs" ""
+      writeFile (tmp </> "root.logic") ("(import \"" ++ tmp ++ "/ok.logic\")\n")
+      res <- loadRegistryWithImports (tmp </> "root.logic")
+      case res of
+        Left err -> err `shouldSatisfy` ("Absolute import paths are not allowed" `isInfixOf`)
+        Right _ -> expectationFailure "absolute import was accepted"
+
+    it "accepts an absolute .logic import with the opt-in flag" $ do
+      tmp <- setup "ontologic-b7-abs-ok" ""
+      writeFile (tmp </> "root.logic") ("(import \"" ++ tmp ++ "/ok.logic\")\n")
+      res <- loadRegistryWithOptions True [] (tmp </> "root.logic")
+      either expectationFailure (\(reg, _) -> lookup "Ok" (concepts reg) `shouldBe` Just Nothing) res
+
+    it "rejects a non-.logic import even with the opt-in flag, without leaking contents" $ do
+      tmp <- setup "ontologic-b7-ext" ""
+      writeFile (tmp </> "root.logic") ("(import \"" ++ tmp ++ "/secret.txt\")\n")
+      res <- loadRegistryWithOptions True [] (tmp </> "root.logic")
+      case res of
+        Left err -> do
+          err `shouldSatisfy` ("must name a .logic file" `isInfixOf`)
+          err `shouldSatisfy` (not . ("TOPSECRETLINE" `isInfixOf`))
+        Right _ -> expectationFailure "non-.logic import was accepted"
+
+    it "rejects a relative non-.logic import" $ do
+      tmp <- setup "ontologic-b7-rel" "(import \"secret.txt\")\n"
+      res <- loadRegistryWithImports (tmp </> "root.logic")
+      either (\e -> e `shouldSatisfy` ("must name a .logic file" `isInfixOf`)) (const (expectationFailure "accepted")) res
+
+    it "still allows relative ../ imports" $ do
+      tmp <- setup "ontologic-b7-dots" ""
+      createDirectoryIfMissing True (tmp </> "sub")
+      writeFile (tmp </> "sub" </> "m.logic") "(import \"../ok.logic\")\n"
+      res <- loadRegistryWithImports (tmp </> "sub" </> "m.logic")
+      either expectationFailure (\reg -> lookup "Ok" (concepts reg) `shouldBe` Just Nothing) res

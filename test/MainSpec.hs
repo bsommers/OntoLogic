@@ -5,6 +5,11 @@ import System.Process (readProcessWithExitCode)
 import System.Exit (ExitCode(..))
 import System.Directory (removeDirectoryRecursive, doesFileExist, createDirectoryIfMissing, getTemporaryDirectory, getCurrentDirectory)
 import System.FilePath ((</>))
+import Data.Version (showVersion)
+import Paths_ontologic (version)
+import Data.List (isInfixOf, isPrefixOf)
+import System.Directory (findExecutable)
+import GHC.Clock (getMonotonicTime)
 
 spec :: Spec
 spec = do
@@ -212,3 +217,64 @@ spec = do
       exitCode `shouldBe` ExitSuccess
       stdout `shouldContain` "Satisfiable (SAT)"
       stdout `shouldContain` "All concepts are satisfiable"
+
+  describe "Partial checks are unknown, not consistent" $ do
+    let partial exe prover = it ("--solve -p " ++ prover ++ " answers unknown (exit 2) when axioms were not sent") $ do
+          found <- findExecutable exe
+          case found of
+            Nothing -> pendingWith (exe ++ " not installed")
+            Just _ -> do
+              (code, out, _) <- readProcessWithExitCode "stack"
+                ["exec", "ontologic-exe", "--", "-i", "test/fixtures/failclosed/free_var.logic", "-t", "solve", "-p", prover] ""
+              code `shouldBe` ExitFailure 2
+              out `shouldNotContain` "Satisfiable (SAT)"
+              out `shouldContain` "could not be checked"
+              -- the message comes first, then the list of axioms that were not sent
+              let (ahead, rest) = breakOn "could not be checked" out
+              rest `shouldContain` "were not sent to the solver"
+              ahead `shouldNotContain` "were not sent to the solver"
+    partial "z3" "z3"
+    partial "cvc5" "cvc5"
+
+  describe "Native prover honours the time limit" $ do
+    it "returns unknown within the limit plus grace on a theory it cannot saturate (two_color, -T 4)" $ do
+      t0 <- getMonotonicTime
+      -- Hard outer limit: if the in-process limit failed, the child is killed and the test fails.
+      (code, out, _) <- readProcessWithExitCode "timeout"
+        ["-s", "KILL", "40", "stack", "exec", "ontologic-exe", "--"
+        , "-i", "test/fixtures/failclosed/two_color.logic", "-t", "solve", "-p", "native", "-T", "4"] ""
+      t1 <- getMonotonicTime
+      code `shouldBe` ExitFailure 2
+      out `shouldContain` "unknown"
+      (t1 - t0) `shouldSatisfy` (< 9)  -- limit 4 s plus grace; one limit per phase would take 12 s
+
+  describe "CLI surface (B7, B8)" $ do
+    it "--version prints the package version" $ do
+      (code, out, _) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "--version"] ""
+      code `shouldBe` ExitSuccess
+      out `shouldContain` ("ontologic " ++ showVersion version)
+
+    it "--neo4j-edition rejects unknown values" $ do
+      (code, _, err) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", "logic/fleet.logic", "-t", "neo4j", "-o", "/tmp/ontologic-neo-edition", "--neo4j-edition", "bogus"] ""
+      code `shouldNotBe` ExitSuccess
+      err `shouldContain` "unknown Neo4j edition"
+
+    it "refuses absolute imports unless --allow-absolute-imports is given" $ do
+      tmp <- getTemporaryDirectory
+      let dir = tmp </> "ontologic-main-b7"
+      createDirectoryIfMissing True dir
+      writeFile (dir </> "ok.logic") "(def-concept Ok)\n"
+      writeFile (dir </> "root.logic") ("(import \"" ++ dir ++ "/ok.logic\")\n")
+      (c1, o1, _) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", dir </> "root.logic"] ""
+      c1 `shouldNotBe` ExitSuccess
+      o1 `shouldSatisfy` ("Absolute import paths are not allowed" `isInfixOf`)
+      (c2, _, _) <- readProcessWithExitCode "stack" ["exec", "ontologic-exe", "--", "-i", dir </> "root.logic", "--allow-absolute-imports"] ""
+      c2 `shouldBe` ExitSuccess
+
+breakOn :: String -> String -> (String, String)
+breakOn needle = go []
+  where
+    go acc rest@(c:cs)
+      | needle `isPrefixOf` rest = (reverse acc, rest)
+      | otherwise = go (c : acc) cs
+    go acc [] = (reverse acc, [])

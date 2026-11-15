@@ -196,11 +196,13 @@ classDiagram
 %% WARNING: The following axioms could not be mapped to field constraints:
 %%   forall s (HumanSubjectsStudy(s) and study_started = True implies exists a (approved_by_ethics(s, a)))
 %%   forall e (Enrolment(e) implies exists c (has_consent(e, c)))
+%%   forall e (Enrolment(e) implies consent_obtained = True)
 %%   forall g (Grant(g) and grant_active = True implies exists b (has_budget(g, b)))
 %%   forall d (Dataset(d) and data_is_personal = True and data_is_public = True implies data_is_anonymised = True)
 %%   forall d (Dataset(d) and data_is_public = True implies has_metadata = True)
 %%   forall p (Publication(p) and is_peer_reviewed = True implies exists r (reviewed_by(p, r)))
 %%   forall p (Publication(p) and is_peer_reviewed = True implies has_coi_declared = True)
+%%   forall t (ClinicalTrial(t) implies is_preregistered = True)
 %%   forall x (not Study(x) and Publication(x))
 %%   forall x (not Organization(x) and Person(x))
 %%   forall x (not RawDataset(x) and ProcessedDataset(x))

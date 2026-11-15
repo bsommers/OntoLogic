@@ -19,12 +19,12 @@ fi
 echo "Updating package lists..."
 sudo apt-get update
 
-echo "Installing haskell-stack and docker-compose..."
-sudo apt-get install -y haskell-stack docker-compose
+echo "Installing haskell-stack..."
+sudo apt-get install -y haskell-stack
 
 echo "Checking versions..."
 stack --version
-docker-compose --version
+if command -v docker >/dev/null; then docker compose version || true; else echo "docker not found (optional: only the neo4j test needs it)"; fi
 
 # --- SDKMAN Setup ---
 if [ ! -d "$HOME/.sdkman" ]; then

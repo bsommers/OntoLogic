@@ -364,6 +364,7 @@ translate env bound f = case f of
         | Map.member fn (envProps env) = do
             argStrs <- mapM translateTerm args
             Right ("(" ++ propFun fn ++ " " ++ unwords argStrs ++ ")")
+        | null args = Right (sanitizeIdent fn)   -- a nullary function is a constant: "(f)" is not SMT-LIB
         | otherwise = do
             argStrs <- mapM translateTerm args
             Right ("(" ++ sanitizeIdent fn ++ " " ++ unwords argStrs ++ ")")
@@ -383,10 +384,10 @@ translate env bound f = case f of
         | Just PTBoolean <- Map.lookup name (envProps env), Map.member v (envIndividuals env) =
             Right ("(" ++ propFun name ++ " " ++ individualConst v ++ ")")
     predicate name [t]
-        | name `elem` envConcepts env, isTermBoundOrConstant t = do
+        | name `elem` envConcepts env, isBoundEntityTerm t = do
             tStr <- translateTerm t
             Right ("(" ++ conceptPred name ++ " " ++ tStr ++ ")")
-        | Just PTBoolean <- Map.lookup name (envProps env), isTermBoundOrConstant t = do
+        | Just PTBoolean <- Map.lookup name (envProps env), isBoundEntityTerm t = do
             tStr <- translateTerm t
             Right ("(" ++ propFun name ++ " " ++ tStr ++ ")")
 
@@ -402,7 +403,9 @@ translate env bound f = case f of
             Right ("(not (= " ++ s1 ++ " " ++ s2 ++ "))")
 
     predicate name args
-        | name `elem` envRelations env, length args >= 2, all isTermBoundOrConstant args = do
+        | name `elem` envRelations env, length args >= 2
+        , length args == length (Map.findWithDefault ["Entity", "Entity"] name (envRelSigs env))
+        , all isBoundEntityTerm args = do
             argStrs <- mapM translateTerm args
             Right ("(" ++ relPred name ++ " " ++ unwords argStrs ++ ")")
 
@@ -434,10 +437,6 @@ translate env bound f = case f of
 
     isPropTerm (Var p) = Map.member p (envProps env)
     isPropTerm _ = False
-
-    isTermBoundOrConstant (Var v) = v `elem` bound || Map.member v (envIndividuals env)
-    isTermBoundOrConstant (Constant _) = True
-    isTermBoundOrConstant (Apply _ subArgs) = all isTermBoundOrConstant subArgs
 
     termVarsBound (Var v) = v `elem` bound || Map.member v (envIndividuals env)
     termVarsBound (Constant _) = True

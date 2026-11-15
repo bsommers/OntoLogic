@@ -1,4 +1,5 @@
 # OntoLogic Future Roadmap & Architectural Plan: 3-Tier Cyber, AI Governance, Threat Modeling & GRC Ontologies
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 > **Document ID:** `docs/dev/superpowers/plans/2026-09-14-3-tier-cyber-ai-governance-and-grc-roadmap.md`  
 > **Methodology:** OpenGSD (Get Stuff Done) Phased Architecture & Execution  

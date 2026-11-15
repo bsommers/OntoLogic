@@ -21,16 +21,38 @@ import Solver
     , proveSubsumptionWith
     , findUnsatConceptsWith
     , explainUnsatWith
+    , usesEquality
     )
+
+-- | The native prover has no equality reasoning and answers unknown for any theory that uses it
+--   (v1.8.4). These suites test its taxonomy reasoning, so they load the ontology without the
+--   axioms that use equality; the equality-bearing original is checked separately.
+loadNoEquality :: FilePath -> IO (Either String Registry)
+loadNoEquality path = fmap strip <$> loadRegistryWithImports path
+  where
+    strip reg = reg { axioms = [ a | a <- axioms reg, not (usesEquality reg { axioms = [a] }) ] }
 
 spec :: Spec
 spec = describe "Industrial Ontology Stress & Verification Suite" $ do
+
+    describe "Native prover and equality" $
+        mapM_ (\path -> it ("answers unknown for " ++ path ++ ", which uses equality") $ do
+                loadRes <- loadRegistryWithImports path
+                case loadRes of
+                    Left err -> expectationFailure err
+                    Right reg -> do
+                        usesEquality reg `shouldBe` True
+                        res <- checkConsistencyWith NativeProver reg
+                        case res of
+                            Unknown _ -> return ()
+                            _         -> expectationFailure $ "Expected Unknown, got: " ++ show res)
+            ["examples/bfo_manufacturing.logic", "examples/mqtt_ecosystem_unified.logic", "examples/domain_security_trust.logic"]
 
     describe "BFO Manufacturing Domain Ontology (bfo_manufacturing.logic)" $ do
         let path = "examples/bfo_manufacturing.logic"
 
         it "proves ontology consistency (SAT) natively in milliseconds" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -40,7 +62,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                         _     -> expectationFailure $ "Expected Sat, got: " ++ show res
 
         it "proves multi-level taxonomic subsumption (Robot <= Entity)" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -49,7 +71,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                     res `shouldBe` Subsumed
 
         it "proves process subsumption (WeldingProcess <= Process)" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -57,7 +79,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                     res `shouldBe` Subsumed
 
         it "disproves non-subsumption between disjoint BFO branches (Robot <= Process)" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -67,7 +89,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                         _             -> expectationFailure $ "Expected NotSubsumed, got: " ++ show res
 
         it "verifies full concept coherence across all 21 concepts" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -78,7 +100,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
         let path = "examples/mqtt_ecosystem_unified.logic"
 
         it "proves consistency (SAT) over large 100+ clause clausal theory" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -88,7 +110,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                         _     -> expectationFailure $ "Expected Sat, got: " ++ show res
 
         it "proves taxonomic inheritance (Object <= Entity)" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -96,7 +118,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                     res `shouldBe` Subsumed
 
         it "disproves subsumption across distinct branches (Process <= Continuant)" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -109,7 +131,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
         let path = "examples/domain_security_trust.logic"
 
         it "proves consistency natively" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right reg -> do
@@ -143,7 +165,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
         let path = "examples/bfo_manufacturing.logic"
 
         it "identifies injected contradictory concept as unsatisfiable" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right baseReg -> do
@@ -162,7 +184,7 @@ spec = describe "Industrial Ontology Stress & Verification Suite" $ do
                     unsatList `shouldBe` Right ["BrokenMachine"]
 
         it "detects full ontology UNSAT and extracts refutation core when instance is asserted" $ do
-            loadRes <- loadRegistryWithImports path
+            loadRes <- loadNoEquality path
             case loadRes of
                 Left err -> expectationFailure err
                 Right baseReg -> do

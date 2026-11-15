@@ -236,3 +236,4 @@ classDiagram
 %%   forall s (MoistureSensor(s) and lt(soil_moisture_percent, 20) implies exists i (IrrigationSystem(i)))
 %%   forall a (Livestock(a) and in_quarantine = True implies sold_for_slaughter = False)
 %%   forall s (Spraying(s) and pesticide_applied = True implies gte(days_before_harvest, 14))
+%%   forall l (HarvestLot(l) implies has_traceability_lot = True)

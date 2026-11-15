@@ -338,7 +338,8 @@ deduplicateRegistry reg = Registry
     , individuals = nubOrd (individuals reg)
     }
   where
-    nubByPrefix = foldr (\n acc -> if any (\x -> nsPrefix x == nsPrefix n) acc then acc else n : acc) []
+    -- Only exact repeats collapse: a prefix bound to two different URIs must reach the linter.
+    nubByPrefix = foldr (\n acc -> if n `elem` acc then acc else n : acc) []
 
 data PropertyDef = PropertyDef 
     { propName        :: Name
@@ -461,31 +462,51 @@ formatConditional p c = "if " ++ formatFOL p ++ " then " ++ formatFOL c
 
 
 
+-- | The comparison with its operands swapped: @gt a b@ is @lt b a@. Equality, disequality and
+--   anything that is not an ordering operator are symmetric and come back unchanged. This is
+--   the one definition every emitter and prover helper shares.
+flipOp :: String -> String
+flipOp "gt"  = "lt"
+flipOp "gte" = "lte"
+flipOp "lt"  = "gt"
+flipOp "lte" = "gte"
+flipOp o     = o
+
+-- | Every direct sub-formula of a formula (one level). Shared by the walks below.
+subformulas :: FOL -> [FOL]
+subformulas f = case f of
+    And a b -> [a, b]
+    Or a b -> [a, b]
+    Implies a b -> [a, b]
+    Iff a b -> [a, b]
+    Not a -> [a]
+    ForAll _ b -> [b]
+    Exists _ b -> [b]
+    TypedForAll _ _ b -> [b]
+    TypedExists _ _ b -> [b]
+    _ -> []
+
+-- | The formula and all of its descendants.
+universeFOL :: FOL -> [FOL]
+universeFOL f = f : concatMap universeFOL (subformulas f)
+
+-- | The four ordering operators, minus any the ontology declares as a relation. A declared
+--   relation called @gt@ is a relation, not a comparison.
+orderingOps :: Registry -> [String]
+orderingOps reg = filter (`notElem` map relName (relations reg)) ["gt", "gte", "lt", "lte"]
+
 -- | Numeric bound literals @op(property, constant)@ in the axioms, normalised so the property
---   is the left operand. Only the four ordering operators with numeric constants are collected.
-numericBoundLiterals :: [FOL] -> [(String, String)]
-numericBoundLiterals = nubOrd . concatMap go
+--   is the left operand. Only the four ordering operators with numeric constants are collected,
+--   and an operator the ontology declares as a relation is not one of them.
+numericBoundLiterals :: Registry -> [(String, String)]
+numericBoundLiterals reg = nubOrd (concatMap literals (concatMap universeFOL (axioms reg)))
   where
-    ordOps = ["gt", "gte", "lt", "lte"]
-    go f = case f of
+    ordOps = orderingOps reg
+    literals f = case f of
         Predicate op [Var _, Constant c] | op `elem` ordOps, numeric c -> [(op, c)]
         Predicate op [Constant c, Var _] | op `elem` ordOps, numeric c -> [(flipOp op, c)]
-        And a b -> go a ++ go b
-        Or a b -> go a ++ go b
-        Implies a b -> go a ++ go b
-        Iff a b -> go a ++ go b
-        Not a -> go a
-        ForAll _ b -> go b
-        Exists _ b -> go b
-        TypedForAll _ _ b -> go b
-        TypedExists _ _ b -> go b
         _ -> []
     numeric c = (readMaybe c :: Maybe Double) /= Nothing
-    flipOp "gt" = "lt"
-    flipOp "gte" = "lte"
-    flipOp "lt" = "gt"
-    flipOp "lte" = "gte"
-    flipOp o = o
 
 -- | Pairs of numeric bound literals that no real number satisfies together (a lower bound above
 --   an upper bound, or meeting it with a strict side). Provers without arithmetic (the native
@@ -493,9 +514,9 @@ numericBoundLiterals = nubOrd . concatMap go
 --   @forall t. not (op1(t, a) and op2(t, b))@ for each pair. These are valid over the reals and
 --   hence over the integers too, so they never make a satisfiable theory unsatisfiable; they are
 --   incomplete (integer gaps such as gt 5 and lt 6 are not detected).
-disjointBoundPairs :: [FOL] -> [((String, String), (String, String))]
-disjointBoundPairs axs =
-    let lits = numericBoundLiterals axs
+disjointBoundPairs :: Registry -> [((String, String), (String, String))]
+disjointBoundPairs reg =
+    let lits = numericBoundLiterals reg
         num c = maybe 0 id (readMaybe c :: Maybe Double)
         lowers = [ l | l@(op, _) <- lits, op `elem` ["gt", "gte"] ]
         uppers = [ u | u@(op, _) <- lits, op `elem` ["lt", "lte"] ]
@@ -507,18 +528,5 @@ disjointBoundPairs axs =
 -- | Whether any axiom compares values with an ordering operator (gt, gte, lt, lte). A declared
 --   relation that shares one of those names is a relation, not a comparison.
 usesOrderingComparison :: Registry -> Bool
-usesOrderingComparison reg = any go (axioms reg)
-  where
-    ordOps = filter (`notElem` map relName (relations reg)) ["gt", "gte", "lt", "lte"]
-    go f = case f of
-        Predicate op _ -> op `elem` ordOps
-        And a b -> go a || go b
-        Or a b -> go a || go b
-        Implies a b -> go a || go b
-        Iff a b -> go a || go b
-        Not a -> go a
-        ForAll _ b -> go b
-        Exists _ b -> go b
-        TypedForAll _ _ b -> go b
-        TypedExists _ _ b -> go b
-        _ -> False
+usesOrderingComparison reg =
+    or [ op `elem` orderingOps reg | ax <- axioms reg, Predicate op _ <- universeFOL ax ]

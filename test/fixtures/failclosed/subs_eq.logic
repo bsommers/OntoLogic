@@ -1,0 +1,5 @@
+; Ground truth: A ⊑ B. Every A equals its own image under f, and every image under f is a B.
+(def-concept A)
+(def-concept B)
+(forall (x) (implies (A x) (= (f x) x)))
+(forall (x) (B (f x)))

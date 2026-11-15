@@ -191,6 +191,7 @@
 #   forall i (Instrument(i) and gt(days_since_calibration, 365) implies calibration_valid = False)
 #   forall e (forall p (Experiment(e) and follows_protocol(e, p) implies protocol_approved = True))
 #   forall t (CustodyTransfer(t) implies exists r (recorded_in(t, r)))
+#   forall r (CustodyRecord(r) implies custody_gap = False)
 #   forall s (Sample(s) and is_biohazard = True implies exists d (handled_under(s, d)))
 #   forall e (Experiment(e) and experiment_complete = True implies gte(replicate_count, 3))
 #   forall e (forall s (Experiment(e) and uses_sample(e, s) implies is_expired = False))

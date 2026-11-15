@@ -1,0 +1,7 @@
+; Ground truth: consistent (SAT). Tank is merely empty: no Integer is > 5 and < 6, and nothing asserts a Tank exists.
+; Expected: consistency SAT, coherence reports Tank as empty.
+(def-concept Tank)
+(def-concept Valve)
+(def-property level Tank Integer)
+(forall (t) (implies (Tank t) (gt level 5)))
+(forall (t) (implies (Tank t) (lt level 6)))

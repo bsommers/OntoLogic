@@ -2,7 +2,7 @@
   "name": "ontologic",
   "displayName": "OntoLogic",
   "description": "Rich Language Server Protocol, syntax highlighting, snippets, and SMT solver tooling for OntoLogic DSL.",
-  "version": "1.3.0",
+  "version": "1.8.4",
   "publisher": "bsommers",
   "license": "Apache-2.0",
   "repository": {

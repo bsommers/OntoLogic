@@ -1,0 +1,7 @@
+; Ground truth: UNSAT. plant1 is located in "Berlin"; nothing is located anywhere.
+(def-concept Plant)
+(def-concept Place)
+(def-relation located_in Plant Place)
+(def-individual plant1 Plant)
+(located_in plant1 "Berlin")
+(forall (x y) (not (located_in x y)))

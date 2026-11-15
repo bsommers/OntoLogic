@@ -40,7 +40,7 @@ Declares a concept (class). With a parent it is a subclass; the parent must be d
 (def-property name Domain Type [:cardinality C] [:optional True|False] [:default V])
 ```
 
-A typed attribute of the domain concept. Types: `Integer`, `Float`, `Double`, `Boolean`, `String`; any other name is a custom type, treated as a reference to another concept (an entity-valued property, which the solver models as a relation).
+A typed attribute of the domain concept. Types: `Integer`, `Float`, `Double`, `Boolean`, `String`; any other name must be a declared concept and is treated as a reference to it (an entity-valued property, which the solver models as a relation). A name that is not a declared concept, such as `Int` or `DateTime`, is a lint error (`Undeclared property type`).
 
 Options can be given in any order:
 
@@ -71,7 +71,7 @@ A relation between concepts. The first two concepts are domain and range; any fu
 (def-relation drives Driver Vehicle :cardinality 0..*)
 ```
 
-Domain and range must be declared concepts.
+Domain and range must be declared concepts; an undeclared range is a lint error.
 
 ### `def-individual`
 
@@ -93,7 +93,7 @@ Declares a named individual (a constant), optionally typed by a concept. Individ
 (namespace prefix)
 ```
 
-Declares a prefix and optionally its IRI. The prefix is a bare identifier, not a quoted string (`(namespace "bfo" "...")` is a parse error). The first declared namespace becomes the default base IRI for the `owl` and `shacl` targets (override with `--base-iri`). Duplicate prefixes are lint errors. Prefixes are conventionally used in concept names (`bfo:Entity`) but a name containing `:` is just an identifier; nothing expands it.
+Declares a prefix and optionally its IRI. The prefix is a bare identifier, not a quoted string (`(namespace "bfo" "...")` is a parse error). The first declared namespace becomes the default base IRI for the `owl` and `shacl` targets (override with `--base-iri`). Declaring one prefix with two different URIs is a lint error (`Duplicate namespace prefix declaration`); repeating the same prefix with the same URI is fine. Prefixes are conventionally used in concept names (`bfo:Entity`) but a name containing `:` is just an identifier; nothing expands it.
 
 ### `import`
 
@@ -101,7 +101,7 @@ Declares a prefix and optionally its IRI. The prefix is a bare identifier, not a
 (import "relative/or/library/file.logic")
 ```
 
-Loads another `.logic` file and merges its declarations and axioms. See [Imports and search path](#imports-and-search-path).
+Loads another `.logic` file and merges its declarations and axioms. The path must name a `.logic` file; anything else is refused. See [Imports and search path](#imports-and-search-path).
 
 ## Axioms
 
@@ -133,7 +133,7 @@ The optional label is documentation only.
 | `(eq a b)` or `(= a b)` | equality |
 | `(!= a b)` | disequality |
 | `(gt p v)` `(gte p v)` `(lt p v)` `(lte p v)` `(ne p v)` `(eq p v)` | comparison of a property with a value |
-| `top`, `true`, `bottom`, `false` | truth and falsity (any capitalization of the first letter) |
+| `top`, `true`, `bottom`, `false` | truth and falsity (any capitalization of the first letter). They may appear anywhere a formula may, for example `(implies P false)` or `(not false)` |
 
 Subformulas of connectives must be parenthesized or one of the constants above.
 
@@ -179,7 +179,7 @@ Axioms of the shape `forall x. Concept(x) implies <comparisons>` are the ones em
 6. `./ontologic-lib` in the current directory (running from a source checkout).
 7. The current directory, last, so a stray file there cannot shadow a library module.
 
-Only directories that exist are searched. An absolute import path is used as is. Imports are transitive, imported files may import others, and a file imported by several paths is loaded once. A circular import is reported:
+Only directories that exist are searched. Absolute import paths are refused unless you pass `--allow-absolute-imports`. Relative paths with `../` are allowed. Imports are transitive, imported files may import others, and a file imported by several paths is loaded once. A circular import is reported:
 
 ```text
 Circular import dependency detected: /path/a.logic -> /path/b.logic -> /path/a.logic
@@ -205,11 +205,15 @@ The REPL's `:load` uses the default search path but has no `--lib-path`; set `ON
 
 | Check | Example message |
 |-------|-----------------|
-| Undeclared parent / domain / range | `Undeclared parent concept: B referenced by A` |
+| Undeclared parent / domain / range / property type | `Undeclared parent concept: B referenced by A`; `Undeclared range concept`; `Undeclared property type` |
+| Duplicate namespace prefix | `Duplicate namespace prefix declaration: bfo` |
+| Undeclared predicate or property name in an axiom | warning, not an error |
 | Duplicates | `Duplicate concept definition: Bus` |
 | Circular inheritance | `Circular inheritance: ...` |
 | Contradictory bounds | `Property contradiction on methane_level: gt 5 and lt 3` |
 | Inherited-bound clash | `Cross-axiom contradiction on GasSensor.methane_level: ...` |
-| Disjointness violation | `Semantic contradiction: Concept Hybrid implies both Truck and Car, but Truck is disjoint with Car.` |
+| Disjointness violation (warning) | `Semantic contradiction: Concept Hybrid implies both Truck and Car, but Truck is disjoint with Car.` |
+
+Structural findings (undeclared symbols and types, duplicates, cycles) and numeric bound contradictions are errors and give exit code 1. The disjointness row comes from the propositional pass, which only warns: it prints `warning:` and exits 0. The solver (`--solve`) is the authority on whether the ontology is consistent.
 
 Next: [Axioms and reasoning](axioms-and-reasoning.md)

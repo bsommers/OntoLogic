@@ -328,3 +328,4 @@ MATCH (n:`Reheating`) WHERE NOT (n.`reheat_temp_c` >= 74) RETURN elementId(n) AS
 //   forall b (FoodBatch(b) and gt(hours_in_danger_zone, 4) implies is_discarded = True)
 //   forall o (Order(o) and has_allergy_flag = True implies is_allergen_free_prepared = True)
 //   forall m (MenuItem(m) and is_available = True implies contains_allergen_declared = True)
+//   forall k (KitchenStaff(k) implies food_handler_certified = True)

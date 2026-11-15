@@ -222,3 +222,4 @@ classDiagram
 %%   forall x (not FrozenGoods(x) and ChilledGoods(x))
 %%   forall x (not HazmatStore(x) and ColdStore(x))
 %%   forall s (Shipment(s) and is_delivered = True implies has_proof_of_delivery = True)
+%%   forall s (InternationalShipment(s) implies has_customs_declaration = True)

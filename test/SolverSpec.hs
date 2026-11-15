@@ -56,9 +56,11 @@ spec = describe "Multi-Prover SMT Solver & Automated Proof-Checking Engine" $ do
             let reg = emptyRegistry
                     { concepts = [("Sensor", Nothing)]
                     , properties = [Property "temp" "Sensor" PTInteger]
-                    , axioms = [ForAll "s" (Implies (Predicate "Sensor" [Var "s"])
+                    , axioms = [ ForAll "s" (Implies (Predicate "Sensor" [Var "s"])
                                                    (And (Predicate "gt" [Var "temp", Constant "100"])
-                                                        (Predicate "lt" [Var "temp", Constant "50"])))]
+                                                        (Predicate "lt" [Var "temp", Constant "50"])))
+                               -- An instance is asserted: without one the conflict only empties Sensor.
+                               , Exists "s" (Predicate "Sensor" [Var "s"]) ]
                     , relations = []
                     , namespaces = []
                     , imports = []
@@ -98,9 +100,10 @@ spec = describe "Multi-Prover SMT Solver & Automated Proof-Checking Engine" $ do
             let reg = emptyRegistry
                     { concepts = [("Alarm", Nothing)]
                     , properties = [Property "level" "Alarm" PTInteger]
-                    , axioms = [ForAll "a" (Implies (Predicate "Alarm" [Var "a"])
+                    , axioms = [ ForAll "a" (Implies (Predicate "Alarm" [Var "a"])
                                                    (And (Predicate "gt" [Var "level", Constant "10"])
-                                                        (Predicate "lt" [Var "level", Constant "5"])))]
+                                                        (Predicate "lt" [Var "level", Constant "5"])))
+                               , Exists "a" (Predicate "Alarm" [Var "a"]) ]
                     , relations = []
                     , namespaces = []
                     , imports = []
@@ -470,8 +473,8 @@ spec = describe "Multi-Prover SMT Solver & Automated Proof-Checking Engine" $ do
                     unlines (unsatCoreDetails expl) `shouldContain` "BrokenNode"
 
     describe "Solver Options & Resource Limits" $ do
-        it "provides defaultSolverOptions with no timeout or memory limits" $ do
-            optTimeoutSeconds defaultSolverOptions `shouldBe` Nothing
+        it "provides defaultSolverOptions with a 60 second timeout and no memory limit" $ do
+            optTimeoutSeconds defaultSolverOptions `shouldBe` Just 60
             optMemoryLimitMb defaultSolverOptions `shouldBe` Nothing
 
         it "passes timeout and memory limits to Z3 without error" $ do

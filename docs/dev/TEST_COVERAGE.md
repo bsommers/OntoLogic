@@ -1,7 +1,7 @@
 # Test Suite & Coverage Report — OntoLogic
 
-**Date:** 2026-10-18  
-**Tooling used:** Haskell Program Coverage (HPC 0.6.1.0 via `stack test --coverage`), JUnit 5 (Gradle 8.5)
+**Coverage last measured:** 2026-10-18 at 685 Hspec examples. It has not been re-measured since; the percentages below are that snapshot, not the 770-example suite at 8a6ae1a (v1.8.3).  
+**Tooling used:** Haskell Program Coverage (HPC 0.6.1.0 via `stack test --coverage`), JUnit 5 (Gradle 8.4)
 
 ---
 
@@ -10,9 +10,9 @@
 | Dimension | Value |
 |---|---|
 | Test framework(s) | Hspec 2.10+ (Haskell `ontologic-test`), JUnit 5 (Java `models-java`) |
-| Total test files | 55 (54 Hspec specs in `test/`, 1 JUnit test in `models-java/`) |
-| Total test cases | 689 (685 Hspec examples, 4 JUnit test cases) |
-| CI-enforced? | Yes (`.github/workflows/ci.yml`, jobs `haskell-test` and `java-gradle-test`, and `scripts/check_coverage.sh`) |
+| Total test files | 57 (56 Hspec spec files in `test/`, 1 JUnit test in `models-java/`), counted 2026-11-15 |
+| Total test cases | 770 Hspec examples at 8a6ae1a (v1.8.3), plus 4 JUnit test cases; 685 Hspec examples at the 2026-10-18 coverage measurement |
+| Enforced on GitHub? | No. The full gate (tests, `scripts/check_coverage.sh`, pending check) is run locally before every push. `.github/workflows/ci.yml` (jobs `haskell-test` and `java-gradle-test`) runs only when started by hand (`workflow_dispatch`). GitHub runs automatically only the docs link check and the Pages deployment. |
 | Runtime | ~32s wall-clock (`ontologic-test`), ~3s (`gradlew :models-java:test`) |
 
 ---
@@ -78,34 +78,18 @@
 
 ---
 
-## 4. Coverage Gaps (Prioritized)
+## 4. Remaining Coverage Gaps
 
-### P0 — Untested code on the critical/security path
+The earlier P0/P1/P2 gap tables were removed on 2026-11-15: every item in them was already listed as done in section 6 (`LSPSpec`, `Neo4jSpec`, `SqlSpec`, `SolverSpec`, `TPTPSpec`, `PythonSpec`, `JavaSpec`). Gaps that remain, from the 2026-10-18 measurement:
 
-| Function / Module | File | Why it matters |
+| Area | Measured | Gap |
 |---|---|---|
-| `handleLSPRequest` (malformed JSON / unhandled methods) | `src/LSP.hs` | Language server is exposed to untrusted external editor clients; unhandled JSON-RPC parse exceptions can crash or hang the LSP stdio daemon. Verified in `test/LSPSpec.hs`. |
-| `escapeTargetString` / sanitizer escaping edge cases | `src/Emitters/Neo4j.hs`, `src/Emitters/Sql.hs` | Neo4j Cypher and SQL query generation could be susceptible to injection or malformed syntax if identifiers contain unescaped quotes, backslashes, or control characters. Verified in `test/Neo4jSpec.hs` and `test/SqlSpec.hs`. |
-| Subprocess crash / error diagnostics handling in `classifyOutput` | `src/Solver.hs` | Non-zero exit codes from external solvers (Z3, CVC5, Vampire) that print error banners or get killed by OS memory manager (OOM) must be captured and parsed reliably without crashing the reasoning pipeline. Verified in `test/SolverSpec.hs`. |
-
-### P1 — Untested core execution paths
-
-| Function / Module | File | Why it matters |
-|---|---|---|
-| `folToTPTP` (quantified / typed / arithmetic branches) | `src/Emitters/TPTP.hs` (80% expr) | TPTP emitter covers 80% of expressions; `TypedForAll`, `TypedExists`, comparison predicate branches (`lt`, `lte`, `gt`, `gte`), and custom property types (`PTCustom`) verified in `test/TPTPSpec.hs`. |
-| `emitPythonExpr` / `emitFieldWithConstraints` | `src/Emitters/Python.hs` (74% expr) | Python Pydantic emitter covers 74% of expressions; compound conditional validators (`And`, `Or`, `Not`, `ne`), regex pattern constraints, and optional/list field wrappers verified in `test/PythonSpec.hs`. |
-| `emitJava` (complex validation & array/set properties) | `src/Emitters/Java.hs` (72% expr) | Java model emitter covers 72% of expressions; tests for multi-dimensional range bounds, inverse comparison operators (`invertCompOp`), and non-numeric value bounds verified in `test/JavaSpec.hs`. |
-| `runREPL.loop` / interactive commands | `src/REPL.hs` (52% expr) | The interactive REPL loop and several command branches (`:tree`, `:trace`, `:save`, error message rendering) are only tested via static evaluation rather than interactive streams. |
-| `Tableau.formatTableauProof` / countermodel branches | `src/Prover/Tableau.hs` (68% expr) | Tableau refutation engine proof trace serialization and certain equality unification branches are not fully exercised by tests. |
-
-### P2 — Untested edge cases / error handling
-
-| Function / Module | File | Missing scenario |
-|---|---|---|
-| `extractModel` (Vampire definitions block) | `src/Solver.hs` | Parsing model valuations from Vampire when output starts with `% SZS output start Definitions and Model Updates.`. Verified in `test/SolverSpec.hs`. |
-| `buildDerivationChain` / SAT conflict tracing | `src/Linter/SAT.hs` (75% expr) | Complex circular or multi-step contradiction chains formatting in `chainConflict` / `chainDerived`. |
-| `resolveImportsWithSource` cycle handling | `src/Loader.hs` (77% expr) | Multi-hop circular import error chain diagnostics (`cycleChain`). |
-| `defaultSolverOptions` resource exhaustion | `src/Solver.hs` | Explicit memory exhaustion (`-memory:<MB>`) triggering solver failure. |
+| `REPL` | 56% expressions | Interactive loop and several command branches are only exercised through static evaluation |
+| `LSP` | 65% expressions | Request handlers beyond malformed-input recovery |
+| `Prover.Tableau` | 70% expressions | Proof formatting and equality unification branches |
+| `IR.CNF`, `OntoLogic`, `Prover.*` | 31% to 45% top-level declarations | Mostly derived instances; see the measurement caveat in section 2 |
+| Scripts | n/a | No fake-`PATH` testing of external binaries (section 5) |
+| Docker Neo4j | n/a | Container teardown is untested |
 
 ---
 
@@ -143,7 +127,7 @@ Evaluated for `scripts/regenerate_examples.sh`, `scripts/package_release.sh`, an
 
 ## 7. What's Already Solid
 
-- **Semantic Parser (`src/Parser.hs`)**: **87% expressions, 100% top-level declarations, 0 boolean errors**. Thoroughly tested across 10 CLIF fixtures and all 54 spec suites.
+- **Semantic Parser (`src/Parser.hs`)**: **87% expressions, 100% top-level declarations, 0 boolean errors**. Thoroughly tested across 10 CLIF fixtures and the Hspec suites.
 - **FOL Theory & Translation (`src/FOLTheory.hs`)**: **69% expressions, 74% declarations, 100% coverage on concept and relation translation**, with 0 unmapped axioms in the standard library.
 - **Automated SMT Solver Engine (`src/Solver.hs`)**: **73% expressions, 98% local declarations**, with multi-prover support (Z3, CVC5, Vampire, Native), SAT/UNSAT detection, unsatisfiable core extraction, and resource limits.
 - **Clausal Normal Form & Unification (`src/IR/Clausify.hs`, `src/Prover/Unification.hs`)**: **86% and 79% expression coverage**, testing Robinson MGU, occurs-check soundness, and clausal normal form translation.

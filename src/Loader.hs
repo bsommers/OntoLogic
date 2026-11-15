@@ -11,17 +11,20 @@ module Loader
     , resolveImportsWithSource
     , findImportFile
     , loadImportFrom
+    , loadRegistryWithOptions
+    , ontologicVersion
     ) where
 
 import qualified Data.Text.IO as TIO
 import qualified Data.Map as Map
 import Text.Megaparsec (parse, errorBundlePretty)
-import System.FilePath ((</>), takeDirectory, isAbsolute, normalise)
+import System.FilePath ((</>), takeDirectory, isAbsolute, normalise, takeExtension)
 import System.Directory (doesFileExist, doesDirectoryExist, canonicalizePath)
 import System.Environment (lookupEnv, getExecutablePath)
 import System.FilePath (splitSearchPath)
 import Control.Monad (filterM)
-import Paths_ontologic (getDataDir)
+import Paths_ontologic (getDataDir, version)
+import Data.Version (showVersion)
 import qualified Data.Set as Set
 import Data.List (intercalate)
 
@@ -44,6 +47,17 @@ stdlibSearchPaths = do
         ]
 
 
+-- | Package version, taken from the cabal package so it cannot drift.
+ontologicVersion :: String
+ontologicVersion = showVersion version
+
+-- | Load with extra search paths; the Bool permits absolute import paths
+--   (the --allow-absolute-imports flag).
+loadRegistryWithOptions :: Bool -> [FilePath] -> FilePath -> IO (Either String (Registry, SourceTable))
+loadRegistryWithOptions allowAbs extra rootFile = do
+    defaults <- stdlibSearchPaths
+    loadWith allowAbs (extra ++ defaults) rootFile
+
 -- | Load a .logic file and its transitive imports returning (Registry, SourceTable).
 loadRegistryWithImportsAndSource :: FilePath -> IO (Either String (Registry, SourceTable))
 loadRegistryWithImportsAndSource = loadRegistryWithLibPathsAndSource []
@@ -56,13 +70,16 @@ loadRegistryWithLibPathsAndSource extra rootFile = do
 
 -- | Load with explicit search paths returning (Registry, SourceTable).
 loadRegistryWithImportsFromSearchPathsAndSource :: [FilePath] -> FilePath -> IO (Either String (Registry, SourceTable))
-loadRegistryWithImportsFromSearchPathsAndSource searchPaths rootFile = do
+loadRegistryWithImportsFromSearchPathsAndSource = loadWith False
+
+loadWith :: Bool -> [FilePath] -> FilePath -> IO (Either String (Registry, SourceTable))
+loadWith allowAbs searchPaths rootFile = do
     exists <- doesFileExist rootFile
     if not exists
     then return $ Left ("File not found: " ++ rootFile)
     else do
         canonRoot <- canonicalizePath rootFile
-        resolveImportsWithSource searchPaths canonRoot
+        resolveImportsWithSource' allowAbs searchPaths canonRoot
 
 -- | Load a .logic file and its transitive imports using the default library paths.
 loadRegistryWithImports :: FilePath -> IO (Either String Registry)
@@ -79,18 +96,27 @@ loadRegistryWithImportsFromSearchPaths searchPaths rootFile =
 
 -- | Locate one import by name in the given directories, in order.
 findImportFile :: [FilePath] -> FilePath -> IO (Either String FilePath)
-findImportFile _ rawPath | isAbsolute rawPath = do
+findImportFile = findImportFile' False
+
+-- | Imports must name a .logic file, so an import can never be used to read
+--   arbitrary files. Absolute paths are refused unless explicitly allowed.
+findImportFile' :: Bool -> [FilePath] -> FilePath -> IO (Either String FilePath)
+findImportFile' _ _ rawPath | takeExtension rawPath /= ".logic" =
+    return $ Left ("Import must name a .logic file: " ++ rawPath)
+findImportFile' False _ rawPath | isAbsolute rawPath =
+    return $ Left ("Absolute import paths are not allowed (use --allow-absolute-imports): " ++ rawPath)
+findImportFile' _ _ rawPath | isAbsolute rawPath = do
     exists <- doesFileExist rawPath
     if exists
     then return $ Right (normalise rawPath)
     else return $ Left ("Import not found: " ++ rawPath)
-findImportFile [] rawPath = return $ Left ("Import not found: " ++ rawPath)
-findImportFile (dir:dirs) rawPath = do
+findImportFile' _ [] rawPath = return $ Left ("Import not found: " ++ rawPath)
+findImportFile' allowAbs (dir:dirs) rawPath = do
     let candidate = dir </> rawPath
     exists <- doesFileExist candidate
     if exists
     then return $ Right (normalise candidate)
-    else findImportFile dirs rawPath
+    else findImportFile' allowAbs dirs rawPath
 
 -- | Resolve one import by name and load it with its own transitive imports.
 --   The language server needs the resolved path as well as the registry.
@@ -110,7 +136,10 @@ resolveImports searchPaths rootCanonPath = fmap (fmap fst) (resolveImportsWithSo
 
 -- | Internal recursive import resolver returning Registry and SourceTable
 resolveImportsWithSource :: [FilePath] -> FilePath -> IO (Either String (Registry, SourceTable))
-resolveImportsWithSource searchPaths rootCanonPath = do
+resolveImportsWithSource = resolveImportsWithSource' False
+
+resolveImportsWithSource' :: Bool -> [FilePath] -> FilePath -> IO (Either String (Registry, SourceTable))
+resolveImportsWithSource' allowAbs searchPaths rootCanonPath = do
     res <- go Set.empty [] rootCanonPath
     case res of
         Left err -> return $ Left err
@@ -143,7 +172,7 @@ resolveImportsWithSource searchPaths rootCanonPath = do
     foldMImport :: [FilePath] -> Set.Set FilePath -> [FilePath] -> Registry -> SourceTable -> [ImportDecl] -> IO (Either String (Set.Set FilePath, Registry, SourceTable))
     foldMImport _ finished _ accReg accTbl [] = return $ Right (finished, accReg, accTbl)
     foldMImport searchDirs finished visiting accReg accTbl (imp:rest) = do
-        foundPathRes <- findImportFile searchDirs (importPath imp)
+        foundPathRes <- findImportFile' allowAbs searchDirs (importPath imp)
         case foundPathRes of
             Left err -> return $ Left err
             Right targetPath -> do

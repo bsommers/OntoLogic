@@ -290,3 +290,4 @@ MATCH (n:`InternalRunbook`) WHERE NOT (n.`is_internal_only` = true) RETURN eleme
 //   forall x (not OpenStatus(x) and ClosedStatus(x))
 //   forall t (Ticket(t) and is_breached = True implies is_escalated = True)
 //   forall t (Ticket(t) and gt(reopen_count, 3) implies is_escalated = True)
+//   forall k (InternalRunbook(k) implies is_internal_only = True)

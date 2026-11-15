@@ -1,4 +1,5 @@
 # Codebase-Wide Architectural Review & Remediation Plan
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 - **Date**: 2026-09-26
 - **Repository**: `bsommers/OntoLogic`

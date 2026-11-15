@@ -141,13 +141,16 @@ spec = do
 
   describe "unsat-core explanation agrees with the consistency check" $ do
     it "cites the conflicting property bounds (Z3)" $ withProver "z3" $ do
-      checkConsistencyWith Z3 sensorReg >>= (`shouldSatisfy` isUnsat)
-      res <- explainUnsatWith Z3 sensorReg
+      -- The bounds hold for every SmartSensor, so they contradict only once one exists.
+      let reg = sensorReg { axioms = axioms sensorReg ++ [Exists "s" (Predicate "SmartSensor" [Var "s"])] }
+      checkConsistencyWith Z3 sensorReg >>= (`shouldSatisfy` isSat)
+      checkConsistencyWith Z3 reg >>= (`shouldSatisfy` isUnsat)
+      res <- explainUnsatWith Z3 reg
       case res of
         Left err -> expectationFailure err
         Right e  -> do
           unsatCoreNames e `shouldSatisfy` (not . null)
-          unwords (unsatCoreDetails e) `shouldSatisfy` ("SmartSensor.batteryLevel" `isInfixOf`)
+          unwords (unsatCoreDetails e) `shouldSatisfy` ("batteryLevel" `isInfixOf`)
 
   describe "all-clear answers from provers without arithmetic" $ do
     it "recognises ordering comparisons, but not a relation that shares an operator name" $ do

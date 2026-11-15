@@ -21,7 +21,8 @@ models-java/src/generated/
 .hpc/
 
 
-# Private planning/session notes (kept locally, not published)
+# Private planning/session notes (not published). Files already tracked stay tracked;
+# new files here need `git add -f`. See .planning/STATE.md.
 .planning/
 .agents/
 agy-evaluation/

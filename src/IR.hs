@@ -5,7 +5,8 @@ import GHC.Generics
 import Data.Graph (graphFromEdges, topSort)
 import qualified Data.Map as Map
 import qualified Data.Set as Set
-import Data.List (maximumBy, minimumBy, nub)
+import Data.List (maximumBy, minimumBy, nub, find)
+import Text.Read (readMaybe)
 import Data.Ord (comparing)
 import OntoLogic
 
@@ -26,6 +27,12 @@ data CompiledClass = CompiledClass
     , compParentClass       :: Maybe Name
     , compProperties        :: [CompiledProperty]
     , compConditionalAxioms :: [ConditionalConstraint]
+      -- ^ Conditionals as written (SQL reads relations between properties from these).
+    , compEnforced          :: [ConditionalConstraint]
+      -- ^ What the application-tier emitters (Python, Java, Rust, Go, TypeScript, SHACL) check:
+      --   the conditionals every translator can state exactly, normalised, plus simple rules
+      --   no field bound carries (string and Boolean equality, disequality) with an empty
+      --   premise. Everything else is only in 'irUnmappedAxioms'.
     } deriving (Show, Eq, Generic)
 
 -- | Compiled representation of a relationship connecting two classes
@@ -50,7 +57,7 @@ compileRegistry reg =
     let sortedConcepts = topologicalSortConcepts (concepts reg)
         classes = map (compileClass (concepts reg) (axioms reg) (properties reg) (relations reg)) sortedConcepts
         compiledRels = map (compileRelation (axioms reg)) (relations reg)
-        unmapped = filter (isUnmappedAxiom (concepts reg) (relations reg)) (axioms reg)
+        unmapped = filter (isUnmappedAxiom reg) (axioms reg)
     in ModelIR
         { irClasses = classes
         , irRelations = compiledRels
@@ -70,6 +77,17 @@ compileClass :: [(Name, Maybe Name)] -> [FOL] -> [Property] -> [Relation] -> (Na
 compileClass conceptsList axs allProps allRels (name, parent) =
     let localMap       = groupConstraints (getLocalConstraints name axs)
         mergedMap      = groupConstraints (getInheritedConstraints name conceptsList axs)
+        look = visibleProperty conceptsList allProps name
+        -- A conditional an emitter would have to guess at (an undeclared property, a type that
+        -- does not fit, a shape no translator reads) is not handed to any emitter. It stays in
+        -- 'irUnmappedAxioms', so it is reported instead of turning into a check that cannot fail.
+        enforced =
+            [ c { condPremise = pre, condConclusion = con }
+            | c <- getLocalConditionalConstraints name axs
+            , Just pre <- [normalizeCondition look (condPremise c)]
+            , Just con <- [normalizeCondition look (condConclusion c)]
+            ]
+            ++ residualRequirements look (getLocalConstraints name axs)
         conditionalAxs = getLocalConditionalConstraints name axs
 
         -- Preserves original definition order from allProps
@@ -91,6 +109,7 @@ compileClass conceptsList axs allProps allRels (name, parent) =
         , compParentClass = parent
         , compProperties = resolvedProps ++ resolvedRelProps
         , compConditionalAxioms = conditionalAxs
+        , compEnforced = enforced
         }
 
 compileRelation :: [FOL] -> Relation -> CompiledRelation
@@ -157,30 +176,126 @@ groupConstraints consts =
         , isNumericValue val
         ]
 
--- | Identify whether an axiom contains complex/conditional/relational logic unmapped to simple field bounds
-isUnmappedAxiom :: [(Name, Maybe Name)] -> [Relation] -> FOL -> Bool
-isUnmappedAxiom conceptsList rels ax =
-    case ax of
-        ForAll var (Implies cond body) ->
-            not (isSimpleConceptMembership var conceptsList cond && isSimpleFieldPredicate body)
-        TypedForAll var _ (Implies cond body) ->
-            not (isSimpleConceptMembership var conceptsList cond && isSimpleFieldPredicate body)
-        _ -> not (isKnownRelationAxiom rels ax)
+-- | The property called @pname@ as seen from a class: declared on it or on an ancestor.
+visibleProperty :: [(Name, Maybe Name)] -> [Property] -> Name -> Name -> Maybe Property
+visibleProperty conceptsList props cls pname =
+    find (\p -> propName p == pname && domain p `elem` (cls : getAncestors cls conceptsList)) props
+
+-- | Conditionals are checked in generated code only when every atom is one a translator can
+--   state exactly: a comparison of a declared, scalar property with a constant of a fitting
+--   type, or a declared Boolean property used as a flag. The result is normalised so that all
+--   emitters see one shape: @Predicate op [Var property, Constant value]@ (never @Eq@, never
+--   the constant on the left) and @Predicate flag []@. 'Nothing' means: do not emit, report.
+normalizeCondition :: (Name -> Maybe Property) -> FOL -> Maybe FOL
+normalizeCondition look = go
   where
+    go Top = Just Top
+    go Bottom = Just Bottom
+    go (And a b) = And <$> go a <*> go b
+    go (Or a b) = Or <$> go a <*> go b
+    go (Not a) = Not <$> go a
+    go (Implies a b) = Or <$> (Not <$> go a) <*> go b
+    go (Eq (Var p) (Constant v)) = atom "eq" p v
+    go (Eq (Constant v) (Var p)) = atom "eq" p v
+    go (Predicate op [Var p, Constant v]) | op `elem` comparisonOps = atom op p v
+    go (Predicate op [Constant v, Var p]) | op `elem` comparisonOps = atom (flipOp op) p v
+    go (Predicate n []) = flag n
+    go (Predicate n [Var v]) = maybe (flag v) Just (flag n)
+    go _ = Nothing
+
+    atom op p v = do
+        prop <- look p
+        if scalar (propCardinality prop) && atomFits (rangeType prop) op v
+            then Just (Predicate op [Var p, Constant v])
+            else Nothing
+
+    flag n = do
+        prop <- look n
+        if scalar (propCardinality prop) && rangeType prop == PTBoolean
+            then Just (Predicate n [])
+            else Nothing
+
+    scalar c = c `elem` [CardDefault, CardExactlyOne, CardZeroOrOne]
+
+comparisonOps :: [String]
+comparisonOps = ["eq", "ne", "gt", "gte", "lt", "lte"]
+
+-- | Whether comparing a property of this type with the constant using the operator is meaningful.
+atomFits :: PropertyType -> String -> String -> Bool
+atomFits ty op v = case ty of
+    PTInteger -> numeric
+    PTFloat   -> numeric
+    PTDouble  -> numeric
+    PTBoolean -> op `elem` ["eq", "ne"] && v `elem` ["True", "true", "False", "false"]
+    PTString  -> op `elem` ["eq", "ne"] && not numeric
+    PTCustom _ -> False
+  where
+    numeric = (readMaybe v :: Maybe Double) /= Nothing
+
+-- | A simple rule @(C x) => op(property, value)@ that no field bound can carry (a string or
+--   Boolean value, equality, disequality) is still enforceable as a requirement with an empty
+--   premise, provided the property is declared on C or an ancestor and the value fits its type.
+residualRequirements :: (Name -> Maybe Property) -> [(Name, String, String)] -> [ConditionalConstraint]
+residualRequirements look triples =
+    [ ConditionalConstraint Top atom' ("require " ++ formatFOL atom')
+    | (p, op, v) <- triples
+    , not (isFieldBound look (p, op, v))
+    , Just atom' <- [normalizeCondition look (Predicate op [Var p, Constant v])]
+    ]
+
+-- | Whether a simple rule is carried by the numeric bound of a declared numeric property.
+isFieldBound :: (Name -> Maybe Property) -> (Name, String, String) -> Bool
+isFieldBound look (p, op, v) =
+    op `elem` ["gt", "gte", "lt", "lte"]
+    && (readMaybe v :: Maybe Double) /= Nothing
+    && maybe False (\prop -> rangeType prop `elem` [PTInteger, PTFloat, PTDouble]) (look p)
+
+-- | Find the declaration of a property as seen from a compiled class: the class itself or the
+--   nearest ancestor that declares it. Returns the declaring class and the number of
+--   inheritance steps between the two.
+findDeclaredProperty :: [CompiledClass] -> CompiledClass -> Name -> Maybe (CompiledClass, Int, CompiledProperty)
+findDeclaredProperty classes = go (0 :: Int) (length classes + 1)
+  where
+    go depth fuel cls pname
+        | fuel <= 0 = Nothing
+        | otherwise = case [ p | p <- compProperties cls, compPropName p == pname, not (compIsInherited p) ] of
+            (p : _) -> Just (cls, depth, p)
+            [] -> do
+                parentName <- compParentClass cls
+                parent <- find ((== parentName) . compClassName) classes
+                go (depth + 1) (fuel - 1) parent pname
+
+-- | Identify whether an axiom is not carried exactly by a field bound or a relation, so that
+--   some target may have to drop or approximate it. Only a numeric ordering bound on a
+--   declared numeric property of the concept (or an ancestor) counts as carried.
+isUnmappedAxiom :: Registry -> FOL -> Bool
+isUnmappedAxiom reg ax =
+    case ax of
+        ForAll var (Implies cond body) -> not (carried var cond body)
+        TypedForAll var _ (Implies cond body) -> not (carried var cond body)
+        _ -> not (isKnownRelationAxiom (relations reg) ax)
+  where
+    conceptsList = concepts reg
     knownConceptNames = Set.fromList (map fst conceptsList)
 
-    isSimpleConceptMembership var _ (Predicate cName [Var v]) =
+    carried var (Predicate cName [Var v]) body =
         v == var && Set.member cName knownConceptNames
-    isSimpleConceptMembership _ _ _ = False
+        && all (\t -> isFieldBound (visibleProperty conceptsList (properties reg) cName) t) (atoms body)
+        && not (null (atoms body)) && simpleBody body
+    carried _ _ _ = False
 
-    isSimpleFieldPredicate (Predicate _ [Var _, Constant _]) = True
-    isSimpleFieldPredicate (Eq (Var _) (Constant _)) = True
-    isSimpleFieldPredicate (And p1 p2) = isSimpleFieldPredicate p1 && isSimpleFieldPredicate p2
-    isSimpleFieldPredicate _ = False
+    atoms (Predicate op [Var p, Constant c]) = [(p, op, c)]
+    atoms (And p1 p2) = atoms p1 ++ atoms p2
+    atoms _ = []
 
-    isKnownRelationAxiom knownRels (Predicate rName args) =
-        any (\r -> relName r == rName && length args >= 2) knownRels
-    isKnownRelationAxiom _ _ = False
+    simpleBody (Predicate _ [Var _, Constant _]) = True
+    simpleBody (And p1 p2) = simpleBody p1 && simpleBody p2
+    simpleBody _ = False
+
+isKnownRelationAxiom :: [Relation] -> FOL -> Bool
+isKnownRelationAxiom knownRels (Predicate rName args) =
+    any (\r -> relName r == rName && length args >= 2) knownRels
+isKnownRelationAxiom _ _ = False
 -- | How a target writes comments.
 data CommentStyle
     = LineComment String   -- ^ a line prefix such as "//", "#", "--", ";" or "%%"

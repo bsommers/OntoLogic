@@ -1,19 +1,11 @@
-version: '3.8'
+# Local Neo4j used by the optional CompileSpec test that applies generated Cypher
+# (`docker compose up -d neo4j`). Bound to localhost only; the password is a local test value.
 services:
   neo4j:
     image: neo4j:5.12
-    ports: ["7474:7474", "7687:7687"]
+    ports: ["127.0.0.1:7474:7474", "127.0.0.1:7687:7687"]
     environment:
       - NEO4J_AUTH=${NEO4J_AUTH:-neo4j/password}
     healthcheck:
       test: ["CMD", "cypher-shell", "RETURN 1"]
       interval: 10s
-
-  validator:
-    build: 
-      context: .
-      dockerfile: Dockerfile.python
-    depends_on:
-      neo4j:
-        condition: service_healthy
-    volumes: ["./generated/python:/app/models"]

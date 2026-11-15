@@ -1,0 +1,10 @@
+; Ground truth: SAT and coherent (adult member fee 10, child member fee 2).
+(def-concept Person)
+(def-concept Adult Person)
+(def-concept Child Person)
+(def-concept Member Person)
+(def-property fee Member Integer)
+(forall ((x Adult)) (implies (Member x) (gt fee 5)))
+(forall ((x Child)) (implies (Member x) (lt fee 6)))
+(exists (x) (and (Member x) (Adult x) (eq fee 10)))
+(exists (x) (and (Member x) (Child x) (eq fee 2)))

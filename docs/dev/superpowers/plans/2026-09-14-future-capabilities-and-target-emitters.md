@@ -1,4 +1,5 @@
 # Future Capabilities & Target Emitters Master Plan
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 **Document:** `docs/dev/superpowers/plans/2026-09-14-future-capabilities-and-target-emitters.md`  
 **Date:** 2026-09-14  

@@ -27,7 +27,8 @@ stack test --ghc-options="-Wall -Werror"
 ```
 
 For a standalone binary, `./scripts/package_release.sh` builds an archive under
-`dist/`; extract it and copy `bin/ontologic` onto your `PATH`. Details are in
+`dist/` (it needs Stack, Node.js and npm); extract it and copy `bin/ontologic`
+onto your `PATH`. Details are in
 [installation](user-guide/installation.md).
 
 ## Write a first ontology
@@ -64,10 +65,14 @@ See the [language reference](user-guide/language-reference.md).
 ontologic -i sensors.logic -t lint
 ```
 
-Lint catches undeclared parents, domains and relation endpoints, taxonomy cycles,
-duplicate definitions, contradictory axioms, and empty numeric intervals across
-axioms. Findings print as `file:line:col: error: message` and the exit code is
-non-zero. Add `--warn-unmapped` to see axioms a given target cannot express
+Lint catches undeclared parents, domains, ranges and relation endpoints,
+undeclared property types (such as `Int` or `DateTime`, which are not types),
+taxonomy cycles, duplicate definitions, duplicate namespace prefixes, contradictory axioms and
+empty numeric intervals across axioms. Errors
+print as `file:line:col: error: message` and the exit code is non-zero. The
+propositional pass (a concept forced to be empty by disjointness, for example)
+prints `warning:` and does not change the exit code; so does an axiom that uses
+an undeclared predicate or property name. Add `--warn-unmapped` to see axioms a given target cannot express
 instead of having them dropped quietly.
 
 ## Prove things about it
@@ -84,7 +89,11 @@ ontologic -i sensors.logic --solve --inspect-model # print a satisfying model
 (which concepts can have no instance). Exit code `0` means both pass, `1` means
 unsatisfiable or an error, `2` means the solver answered unknown. Axioms the
 solver encoding cannot express are listed first. With no external prover
-installed, `auto` falls back to the built-in native prover.
+installed, `auto` falls back to the built-in native prover. The solver fails
+closed: a solver error message, a parse failure, or a missing verdict is
+reported as an error, never as satisfiable. Without `-T` every backend gets 60
+seconds; very large `-T` values are clamped. The native prover answers unknown
+(exit `2`) when the axioms use equality.
 
 Other useful switches: `--free-constants` treats undeclared free variables as
 constants, `--solve-memory MB` limits Z3 memory, and `--cnf` prints the clausal
@@ -127,15 +136,17 @@ Visual output: [visualization](user-guide/visualization.md).
 ## Reuse the standard library
 
 ```lisp
-(namespace "bfo" "http://purl.obolibrary.org/obo/bfo.owl#")
+(namespace bfo "http://purl.obolibrary.org/obo/bfo.owl#")
 (import "bfo_2020.logic")
 (import "cco_core.logic")
 ```
 
-Library files resolve by bare name. The search order is the importing file's
-directory, `$ONTOLOGIC_PATH` (`:`-separated), the directory beside the binary, the
-package data directory, `./ontologic-lib`, then the current directory. Add your
-own folders with `--lib-path DIR` (repeatable). See the
+Library files resolve by bare name. An import must name a `.logic` file. Absolute
+paths are refused unless you pass `--allow-absolute-imports`; relative paths such
+as `../shared/base.logic` are fine. The search order is the importing file's
+directory, each `--lib-path DIR` (repeatable), `$ONTOLOGIC_PATH` (`:`-separated),
+the directory beside the binary, the package data directory, `./ontologic-lib`,
+then the current directory. Add your own folders with `--lib-path DIR`. See the
 [standard library](standard-library.md) for what each module contains and the
 [domain gallery](domains/README.md) for complete models built on it.
 
@@ -179,7 +190,7 @@ formatting, semantic highlighting, and solver commands as code actions.
 
 ```bash
 ./editors/vscode/scripts/build_extension.sh        # builds the .vsix
-code --install-extension <path-to-built>.vsix
+code --install-extension editors/vscode/ontologic-*.vsix
 ```
 
 For Neovim, point `nvim-lspconfig` at `ontologic-lsp` for `logic` files. See
@@ -187,10 +198,12 @@ For Neovim, point `nvim-lspconfig` at `ontologic-lsp` for `logic` files. See
 
 ## Integrate with other tools
 
-- **Gradle.** `./gradlew lintOntology` runs the linter; `./gradlew
-  generateJavaModels` writes Java models into the `models-java` subproject.
-- **Docker.** `docker-compose up -d` starts a local Neo4j (ports 7474 and 7687)
-  for loading generated Cypher. Credentials come from `NEO4J_AUTH`.
+- **Gradle.** `./gradlew generateJavaModels` writes Java models into the
+  `models-java` subproject. `./gradlew lintOntology` only lints the repository's
+  own `logic/fleet.logic`; it does not lint your model, so call `ontologic -t lint`
+  directly.
+- **Neo4j.** Generated Cypher loads into any Neo4j instance; see
+  [installation](user-guide/installation.md#neo4j-optional).
 - **CI.** Run `ontologic -i model.logic -t lint` and `--solve` as gates; both exit
   non-zero on failure.
 

@@ -3,14 +3,36 @@
   "name": "OntoLogic",
   "scopeName": "source.ontologic",
   "patterns": [
-    { "include": "#comments" },
-    { "include": "#strings" },
-    { "include": "#numbers" },
-    { "include": "#keywords" },
-    { "include": "#operators" },
-    { "include": "#types" },
-    { "include": "#concepts" },
-    { "include": "#identifiers" }
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#options"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#operators"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#concepts"
+    },
+    {
+      "include": "#identifiers"
+    }
   ],
   "repository": {
     "comments": {
@@ -18,6 +40,20 @@
         {
           "name": "comment.line.semicolon.ontologic",
           "match": ";.*$"
+        },
+        {
+          "name": "comment.line.double-slash.ontologic",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.ontologic",
+          "begin": "/\\*",
+          "end": "\\*/"
+        },
+        {
+          "name": "comment.block.lisp.ontologic",
+          "begin": "#\\|",
+          "end": "\\|#"
         }
       ]
     },
@@ -48,11 +84,11 @@
       "patterns": [
         {
           "name": "keyword.declaration.ontologic",
-          "match": "\\b(def-concept|def-relation|axiom|import|subclass-of)\\b"
+          "match": "(?<![\\w:.-])(def-concept|def-property|def-relation|def-individual|def-axiom|namespace|import)(?![\\w:.-])"
         },
         {
           "name": "keyword.control.quantifier.ontologic",
-          "match": "\\b(forall|exists)\\b"
+          "match": "(?<![\\w:.-])(forall|exists)(?![\\w:.-])"
         }
       ]
     },
@@ -60,11 +96,11 @@
       "patterns": [
         {
           "name": "keyword.operator.logical.ontologic",
-          "match": "\\b(and|or|not|implies|iff)\\b|=>|<=>"
+          "match": "(?<![\\w:.-])(and|or|not|implies|if|iff)(?![\\w:.-])"
         },
         {
           "name": "keyword.operator.comparison.ontologic",
-          "match": "\\b(gt|gte|lt|lte|eq|neq|between|in)\\b|>|>=|<|<=|=|!="
+          "match": "(?<![\\w:.-])(gt|gte|lt|lte|eq|ne)(?![\\w:.-])|(?<=\\()\\s*(=|!=)(?=\\s)"
         }
       ]
     },
@@ -72,7 +108,7 @@
       "patterns": [
         {
           "name": "support.type.primitive.ontologic",
-          "match": "\\b(String|Integer|Float|Double|Boolean|DateTime|Decimal|URI)\\b"
+          "match": "\\b(String|Integer|Float|Double|Boolean)\\b"
         }
       ]
     },
@@ -89,6 +125,22 @@
         {
           "name": "variable.other.property.ontologic",
           "match": "\\b[a-z][a-zA-Z0-9_\\-]*\\b"
+        }
+      ]
+    },
+    "options": {
+      "patterns": [
+        {
+          "name": "keyword.other.option.ontologic",
+          "match": "(?<![\\w-]):(cardinality|optional|default)(?![\\w-])"
+        }
+      ]
+    },
+    "constants": {
+      "patterns": [
+        {
+          "name": "constant.language.ontologic",
+          "match": "(?<![\\w:.-])(true|false|True|False|top|bottom|Top|Bottom)(?![\\w:.-])"
         }
       ]
     }

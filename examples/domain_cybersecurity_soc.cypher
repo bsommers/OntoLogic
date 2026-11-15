@@ -356,8 +356,10 @@ MATCH (n:`Incident`) WHERE NOT (n.`minutes_to_acknowledge` <= 240) RETURN elemen
 
 // WARNING: The following axioms could not be mapped to field constraints:
 //   forall i (Incident(i) and incident_severity = 4 implies is_escalated = True)
+//   forall a (PrivilegedAccount(a) implies is_mfa_enabled = True)
 //   forall c (DisableAccount(c) implies exists a (Analyst(a) and approved_by(c, a)))
 //   forall c (IsolateHost(c) implies exists a (Analyst(a) and approved_by(c, a)))
+//   forall e (Evidence(e) implies chain_of_custody_intact = True)
 //   forall i (Incident(i) implies exists p (Playbook(p) and handled_by_playbook(i, p)))
 //   forall i (Incident(i) and is_closed = True implies has_post_incident_review = True)
 //   forall a (FalsePositiveAlert(a) implies not TruePositiveAlert(a))

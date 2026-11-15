@@ -1,0 +1,3 @@
+(def-concept Node)
+(def-concept Red Node)
+(forall (x) (exists (y) (iff (Red x) (not (Red y)))))

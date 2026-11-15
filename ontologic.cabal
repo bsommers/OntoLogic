@@ -5,7 +5,7 @@ cabal-version: 1.12
 -- see: https://github.com/sol/hpack
 
 name:           ontologic
-version:        1.8.3
+version:        1.8.4
 homepage:       https://github.com/bsommers/OntoLogic#readme
 bug-reports:    https://github.com/bsommers/OntoLogic/issues
 author:         OntoLogic Team
@@ -184,10 +184,13 @@ test-suite ontologic-test
       ComplianceGRCSpec
       CppSpec
       D2Spec
+      DocSamplesSpec
       DomainExamplesSpec
       EcosystemSpec
       EcosystemUnifiedSpec
+      EmitterParitySpec
       ExamplesSpec
+      FailClosedSpec
       FOLTheorySpec
       GoSpec
       GraphQLSpec
@@ -199,6 +202,7 @@ test-suite ontologic-test
       JavaSpec
       JsonSchemaSpec
       LinterSpec
+      LintSoundnessSpec
       LSPSpec
       MainSpec
       MermaidSpec

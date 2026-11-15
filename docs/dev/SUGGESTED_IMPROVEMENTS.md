@@ -104,7 +104,14 @@ flowchart TD
 
 > **Status (verified 2026-11-07):** all five items below are fixed on `main` and covered by
 > regression tests (`OwlSpec`, `IRSpec`/`PythonSpec`, `Neo4jSpec`, `JavaSpec`/`PythonSpec`, `Neo4jSpec`/`GoSpec`).
-> Status of later sections is tracked in `.planning/ROADMAP.md`.
+> Status of later sections, checked 2026-11-15: fixed are 4.1, 4.3, 5.2, 5.3 (top-level
+> symbols only), 7.1 and 7.3. Open: 4.4 (no `profile` option). Partial: 4.2 (only
+> `def-relation` gives an OWL object property or edge), 5.1 (undeclared property ranges
+> and axiom terms are not linted yet), 6.1 (`--java-package` exists; no Jackson
+> annotations or builders), 6.2 (`@model_validator` done; `Field(...)` assignment
+> remains), 6.3 (`elementId` done; edges use a generic `:RELATION` label), 7.2 (Gradle
+> still generates under `src/generated/`). The checklists in this document are not
+> ticked; treat this note and `CHANGELOG.md` as the record.
 
 ### 3.1 OWL Emitter Produces Malformed XML
 - **Location**: [`src/Emitters/Owl.hs:13-20`](../../src/Emitters/Owl.hs#L13-L20)

@@ -4,25 +4,32 @@ import Options.Applicative
 import System.Exit (exitFailure, exitWith, ExitCode(..))
 import System.IO (hPutStrLn, stderr)
 import System.Process (callProcess)
-import System.Directory (createDirectoryIfMissing)
+import System.Directory (createDirectoryIfMissing, findExecutable)
 import System.FilePath ((</>))
 import Control.Exception (try, IOException)
+import Control.Monad (when)
+import Data.Maybe (isNothing)
 
 import OntoLogic
 import IR (compileRegistry, irUnmappedAxioms)
 import IR.CNF (formatCNFTheory)
 import IR.Clausify (clausifyTheory)
-import Loader (loadRegistryWithLibPathsAndSource)
-import Linter (lintRegistryDiagnosticsWithSource)
+import Loader (loadRegistryWithOptions, ontologicVersion)
+import Linter (lintRegistryFindingsWithSource, formatLintFinding, isLintError)
 import REPL (runREPL)
+import GHC.Clock (getMonotonicTime)
 import Solver
     ( checkConsistencyWithOptions
     , findUnsatConceptsWithOptions
     , explainUnsatWithOptions
     , untranslatedAxioms
+    , usesSmtTheory
+    , clampTimeoutSeconds
+    , defaultSolveTimeoutSeconds
     , arithmeticCaveat
     , resolveProver
     , solverExitCode
+    , partialVerdict
     , worst
     , extractModel
     , UnsatExplanation(..)
@@ -55,10 +62,11 @@ data Args = Args
   , solveTimeout  :: Maybe Int
   , solveMemory   :: Maybe Int
   , libPaths      :: [String]
+  , allowAbsImports :: Bool
   }
 
 argsParser :: ParserInfo Args
-argsParser = info (helper <*> opts) fullDesc
+argsParser = info (helper <*> versionOpt <*> opts) fullDesc
   where
     opts = Args
       <$> optional (strOption (long "input" <> short 'i' <> help "Path to .logic file"))
@@ -67,7 +75,7 @@ argsParser = info (helper <*> opts) fullDesc
       <*> optional (strOption (long "java-package" <> help "Java package for generated models (default: ontologic.generated)"))
       <*> optional (strOption (long "base-iri" <> metavar "IRI" <> help "Base IRI for OWL/SHACL output (default: the ontology's first namespace)"))
       <*> optional (strOption (long "prover" <> short 'p' <> help "Theorem prover backend: z3, cvc5, vampire, native, auto (default: auto)"))
-      <*> optional (strOption (long "neo4j-edition" <> metavar "EDITION" <> help "Neo4j Edition for constraints: community, enterprise (default: enterprise)"))
+      <*> optional (option neo4jEditionReader (long "neo4j-edition" <> metavar "EDITION" <> help "Neo4j Edition for constraints: community, enterprise (default: enterprise)"))
       <*> switch (long "render" <> help "Render output to image (requires mmdc or d2 CLI installed)")
       <*> switch (long "repl" <> help "Start interactive ontology REPL session")
       <*> switch (long "cnf" <> help "Emit ontology clausal normal form (CNF) theory to stdout")
@@ -80,12 +88,20 @@ argsParser = info (helper <*> opts) fullDesc
       <*> optional (option positiveInt (long "solve-timeout" <> short 'T' <> metavar "SECONDS" <> help "Solver time limit in seconds, a positive integer (enforced for Z3, CVC5, Vampire, and Native)"))
       <*> optional (option positiveInt (long "solve-memory" <> metavar "MB" <> help "Solver memory limit in megabytes, a positive integer (Z3 only; ignored with a warning for other provers)"))
       <*> many (strOption (long "lib-path" <> metavar "DIR" <> help "Extra directory searched for imports (repeatable; also $ONTOLOGIC_PATH)"))
+      <*> switch (long "allow-absolute-imports" <> help "Permit absolute paths in (import ...) declarations (refused by default)")
+
+    versionOpt = infoOption ("ontologic " ++ ontologicVersion) (long "version" <> help "Show version")
 
 -- | Reject 0 and negatives: backends disagree on what they mean (Z3 reads -T:0 as
 --   "no limit", System.Timeout reads 0 as "already expired").
+neo4jEditionReader :: ReadM String
+neo4jEditionReader = eitherReader $ \s -> case parseNeo4jEdition s of
+    Just _  -> Right s
+    Nothing -> Left ("unknown Neo4j edition '" ++ s ++ "'; expected community or enterprise")
+
 positiveInt :: ReadM Int
 positiveInt = eitherReader $ \s -> case reads s of
-    [(n, "")] | n > 0 -> Right n
+    [(n, "")] | n > (0 :: Integer) -> Right (fromInteger (min n 2147483647))
     _ -> Left ("expected a positive integer, got '" ++ s ++ "'")
 
 main :: IO ()
@@ -98,7 +114,7 @@ main = do
         else case input args of
             Nothing -> putStrLn "Error: --input is required (or use --repl / --lsp)" >> exitFailure
             Just inpFile -> do
-                loadRes <- loadRegistryWithLibPathsAndSource (libPaths args) inpFile
+                loadRes <- loadRegistryWithOptions (allowAbsImports args) (libPaths args) inpFile
                 case loadRes of
                     Left err -> do
                         putStrLn err
@@ -107,7 +123,10 @@ main = do
                         let registry = if freeConstants args
                                        then promoteFreeConstants rawRegistry
                                        else rawRegistry
-                            errors = lintRegistryDiagnosticsWithSource sourceTable registry
+                            findings = lintRegistryFindingsWithSource sourceTable registry
+                            errors = map formatLintFinding (filter isLintError findings)
+                            warnings = map formatLintFinding (filter (not . isLintError) findings)
+                        mapM_ putStrLn warnings
                         if not (null errors)
                             then mapM_ putStrLn errors >> exitFailure
                             else if cnfMode args
@@ -124,29 +143,31 @@ runSolverCheck isFreeConsts showExplain showModel maybeP maybeTimeout maybeMem r
     case resolveProver maybeP of
         Left msg -> putStrLn msg >> exitFailure
         Right prover -> do
-            let solverOpts = SolverOptions
-                    { optTimeoutSeconds = maybeTimeout
+            started <- getMonotonicTime
+            let effectiveSeconds = maybe defaultSolveTimeoutSeconds clampTimeoutSeconds maybeTimeout
+                solverOpts = SolverOptions
+                    { optTimeoutSeconds = Just effectiveSeconds
                     , optMemoryLimitMb  = maybeMem
                     }
             case (maybeMem, prover) of
                 (Just _, Z3) -> return ()
-                (Just _, AutoProver) -> hPutStrLn stderr "⚠️  --solve-memory is applied only if Z3 is the prover selected; other backends run without a memory limit."
+                (Just _, AutoProver) -> do
+                    z3 <- findExecutable "z3"
+                    when (isNothing z3) $
+                        hPutStrLn stderr "⚠️  --solve-memory applies only to Z3, which is not on PATH; the backend that runs has no memory limit."
                 (Just _, p) -> hPutStrLn stderr ("⚠️  --solve-memory is not supported by " ++ proverName p ++ " and is ignored.")
                 (Nothing, _) -> return ()
             if isFreeConsts
                 then putStrLn "ℹ️  Free constants mode enabled (--free-constants): undeclared free variables are treated as Entity constants."
                 else return ()
-            let skipped = untranslatedAxioms reg
-            if null skipped then return () else do
-                putStrLn ("⚠️  " ++ show (length skipped) ++ " axiom(s) were not sent to the solver:")
-                mapM_ (\(ax, why) -> putStrLn ("   - " ++ show ax ++ " (" ++ why ++ ")")) skipped
-
+            -- The notice describes the SMT-LIB theory: Vampire and the native prover do not read it.
+            smtRoute <- usesSmtTheory prover
+            let skipped = if smtRoute then untranslatedAxioms reg else []
             -- Consistency: can the axioms be satisfied at all?
-            res <- checkConsistencyWithOptions solverOpts prover reg
+            res <- partialVerdict (length skipped) <$> checkConsistencyWithOptions solverOpts prover reg
             case res of
                 Sat _ -> do
-                    putStrLn $ "✅ SMT Satisfiable (SAT) — Ontology is logically consistent" ++
-                               (if null skipped then "." else " for the " ++ show (length (axioms reg) - length skipped) ++ " axioms checked.")
+                    putStrLn "✅ SMT Satisfiable (SAT) — Ontology is logically consistent."
                     if showModel
                         then case extractModel res of
                             Just m  -> putStrLn ("\n📋 SMT Model Valuation:\n" ++ m)
@@ -165,9 +186,23 @@ runSolverCheck isFreeConsts showExplain showModel maybeP maybeTimeout maybeMem r
                         else return ()
                 Unknown out -> putStrLn $ "⚠️  SMT Solver Result (unknown): " ++ out
                 SolverError err -> putStrLn $ "❌ SMT Solver Error: " ++ err
+            -- The axioms the verdict does not cover come right after it.
+            if null skipped then return () else do
+                putStrLn ("⚠️  " ++ show (length skipped) ++ " axiom(s) were not sent to the solver:")
+                mapM_ (\(ax, why) -> putStrLn ("   - " ++ show ax ++ " (" ++ why ++ ")")) skipped
 
             -- Coherence: which concepts can have no instance at all?
-            coh <- findUnsatConceptsWithOptions solverOpts prover reg
+            -- The native prover has no process to kill, so the limit is one budget shared by the
+            -- consistency check and the coherence sweep rather than a fresh limit for each.
+            elapsed <- subtract started <$> getMonotonicTime
+            let sharedBudget = prover == NativeProver || (prover == AutoProver && not smtRoute)
+                limit = effectiveSeconds
+                remaining = limit - ceiling elapsed
+            coh <- if sharedBudget && remaining < 1
+                then return (Left "the time limit was used up before the concept check could start")
+                else findUnsatConceptsWithOptions
+                        (if sharedBudget then solverOpts { optTimeoutSeconds = Just remaining } else solverOpts)
+                        prover reg
             coherenceCode <- case coh of
                 Left err -> do
                     putStrLn ("⚠️  Concept coherence check could not run: " ++ err)
