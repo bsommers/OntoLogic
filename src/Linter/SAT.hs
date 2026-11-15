@@ -69,26 +69,52 @@ data DerivationChain = DerivationChain
 -- | Strip the quantifier prefix from a FOL formula, keeping concept-sort guards:
 --   (forall ((x C)) f) becomes (implies (C x) f) and (exists ((x C)) f) becomes (and (C x) f).
 --   Sorts that are not concepts (Int, String, ...) carry no guard.
+--   A unary atom over a symbol the prefix does not bind is a ground fact about
+--   an individual: it becomes a separate atom, never the universal one.
 stripQuantifiers :: [Name] -> FOL -> FOL
-stripQuantifiers cs = go
+stripQuantifiers cs = go []
   where
-    go (ForAll _ f)        = go f
-    go (Exists _ f)        = go f
-    go (TypedForAll v s f)
-        | s `elem` cs      = Implies (Predicate s [Var v]) (go f)
-        | otherwise        = go f
-    go (TypedExists v s f)
-        | s `elem` cs      = And (Predicate s [Var v]) (go f)
-        | otherwise        = go f
-    go f                   = f
+    go bound (ForAll v f)        = go (v : bound) f
+    go bound (Exists v f)        = go (v : bound) f
+    go bound (TypedForAll v s f)
+        | s `elem` cs      = Implies (Predicate s [Var v]) (go (v : bound) f)
+        | otherwise        = go (v : bound) f
+    go bound (TypedExists v s f)
+        | s `elem` cs      = And (Predicate s [Var v]) (go (v : bound) f)
+        | otherwise        = go (v : bound) f
+    go bound f             = groundFree bound f
 
--- | Count the existential quantifiers in the formula's outer quantifier prefix.
-countExistentials :: FOL -> Int
-countExistentials (ForAll _ f)        = countExistentials f
-countExistentials (TypedForAll _ _ f) = countExistentials f
-countExistentials (Exists _ f)        = 1 + countExistentials f
-countExistentials (TypedExists _ _ f) = 1 + countExistentials f
-countExistentials _                   = 0
+groundFree :: [Name] -> FOL -> FOL
+groundFree bound = walk
+  where
+    walk (Predicate p [Var v]) | v `notElem` bound = Predicate p [Constant v]
+    walk (And a b)     = And (walk a) (walk b)
+    walk (Or a b)      = Or (walk a) (walk b)
+    walk (Not a)       = Not (walk a)
+    walk (Implies a b) = Implies (walk a) (walk b)
+    walk (Iff a b)     = Iff (walk a) (walk b)
+    walk f             = f
+
+-- | How an axiom's quantifier prefix constrains the propositional abstraction.
+data QuantShape = Universal | Witness | Dependent
+    deriving (Eq, Show)
+
+-- | A prefix with no existential is Universal. A single existential not under
+--   a universal is a Witness. An existential under a universal depends on it
+--   and cannot be collapsed onto one element, so it is dropped (Dependent),
+--   as is any prefix with more than one existential.
+quantShape :: FOL -> QuantShape
+quantShape = go False (0 :: Int)
+  where
+    go _ n (ForAll _ f)        = go True n f
+    go _ n (TypedForAll _ _ f) = go True n f
+    go seenAll n (Exists _ f)
+        | seenAll   = Dependent
+        | otherwise = go seenAll (n + 1) f
+    go seenAll n (TypedExists _ _ f)
+        | seenAll   = Dependent
+        | otherwise = go seenAll (n + 1) f
+    go _ n _ = if n == 0 then Universal else if n == 1 then Witness else Dependent
 
 -- | Convert formula to Negation Normal Form (NNF).
 toNNF :: FOL -> FOL
@@ -147,8 +173,8 @@ registryToClauses reg = (inheritanceClauses ++ concat universals, existentials)
         | (child, Just parent) <- concepts reg
         ]
     indexed = zip [1..] (axioms reg)
-    universals   = [ axiomClauses idx ax | (idx, ax) <- indexed, countExistentials ax == 0 ]
-    existentials = [ axiomClauses idx ax | (idx, ax) <- indexed, countExistentials ax == 1 ]
+    universals   = [ axiomClauses idx ax | (idx, ax) <- indexed, quantShape ax == Universal ]
+    existentials = [ axiomClauses idx ax | (idx, ax) <- indexed, quantShape ax == Witness ]
     axiomClauses idx ax =
         map (\lits -> Clause lits (classifyOrigin idx ax lits)) (toCNFClauses (toNNF (stripQuantifiers conceptNames ax)))
     classifyOrigin idx ax lits =

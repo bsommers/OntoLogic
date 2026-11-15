@@ -36,9 +36,9 @@ import Data.Char (isAlphaNum, isSpace, isHexDigit, chr, isUpper, isDigit)
 
 import OntoLogic
 import Parser (parseRegistry, parseRegistryWithSource)
-import Linter (lintRegistryFindings, lintRegistryFindingsWithSource, LintFinding(..))
+import Linter (lintRegistryFindings, lintRegistryFindingsWithSource, LintFinding(..), isLintError)
 import IR (compileRegistry, irClasses, compClassName, compParentClass, compProperties, compPropName, compPropType, compConstraints, CompiledProperty, compCardinality, compDefaultValue)
-import Solver (checkConsistencyWith, explainUnsatWith, extractModel, arithmeticCaveat, Prover(AutoProver), UnsatExplanation(..))
+import Solver (partialVerdict, usesSmtTheory, untranslatedAxioms, checkConsistencyWith, explainUnsatWith, extractModel, arithmeticCaveat, Prover(AutoProver), UnsatExplanation(..))
 
 data LSPState = LSPState
     { lspDocs :: Map.Map String String            -- URI -> Content
@@ -298,7 +298,7 @@ updateDocWith impReg impErrs state uri content =
     case parse parseRegistryWithSource uri (T.pack content) of
         Left bundle ->
             let (l, c) = parseErrorPosition bundle
-                diag = mkDiag l c "ontologic-parser" (errorBundlePretty bundle)
+                diag = mkDiag 1 l c "ontologic-parser" (errorBundlePretty bundle)
             in ( state { lspDocs = Map.insert uri content (lspDocs state) }
                , publishDiagnostics uri [diag] )
         Right (reg, sourceTbl) ->
@@ -310,18 +310,19 @@ updateDocWith impReg impErrs state uri content =
                     Nothing  -> case lintSymbol f >>= symbolPosition content of
                         Just (l, c) -> (l, c)
                         Nothing     -> (0, 0)
-                diags = [ mkDiag (importLine content e) 0 "ontologic-imports" e | e <- impErrs ] ++
-                        [ let (l, c) = place f in mkDiag l c "ontologic-linter" (lintMessage f) | f <- own ]
+                diags = [ mkDiag 1 (importLine content e) 0 "ontologic-imports" e | e <- impErrs ] ++
+                        [ let (l, c) = place f in mkDiag (if isLintError f then 1 else 2) l c "ontologic-linter" (lintMessage f) | f <- own ]
                 newState = state
                     { lspDocs = Map.insert uri content (lspDocs state)
                     , lspRegistries = Map.insert uri merged (lspRegistries state)
                     }
             in (newState, publishDiagnostics uri diags)
 
-mkDiag :: Int -> Int -> String -> String -> String
-mkDiag line char source msg =
+-- | Severity follows the LSP spec: 1 = error, 2 = warning.
+mkDiag :: Int -> Int -> Int -> String -> String -> String
+mkDiag sev line char source msg =
     "{\"range\":{\"start\":{\"line\":" ++ show line ++ ",\"character\":" ++ show char ++
-    "},\"end\":{\"line\":" ++ show line ++ ",\"character\":100}},\"severity\":1,\"source\":\"" ++ source ++
+    "},\"end\":{\"line\":" ++ show line ++ ",\"character\":100}},\"severity\":" ++ show sev ++ ",\"source\":\"" ++ source ++
     "\",\"message\":\"" ++ escapeJson msg ++ "\"}"
 
 publishDiagnostics :: String -> [String] -> String
@@ -439,7 +440,7 @@ handleLSPRequestIO state raw
             reg = Map.findWithDefault emptyRegistry targetUri (lspRegistries state)
         case cmd of
             "ontologic.solve" -> do
-                res <- checkConsistencyWith AutoProver reg
+                res <- partialVerdict <$> skippedCount reg <*> checkConsistencyWith AutoProver reg
                 caveat <- arithmeticCaveat AutoProver reg
                 let (status, details) = case res of
                         Sat _        -> ("sat", "Satisfiable (SAT): Consistent Model Found" ++ maybe "" (". " ++) caveat)
@@ -456,7 +457,7 @@ handleLSPRequestIO state raw
                     resp = "{\"jsonrpc\":\"2.0\",\"id\":" ++ formatId reqId ++ ",\"result\":{\"status\":\"" ++ status ++ "\",\"core\":" ++ coreStr ++ ",\"details\":\"" ++ escapeJson details ++ "\"}}"
                 return (state, Just resp, [])
             "ontologic.inspectModel" -> do
-                res <- checkConsistencyWith AutoProver reg
+                res <- partialVerdict <$> skippedCount reg <*> checkConsistencyWith AutoProver reg
                 let (status, modelStr) = case res of
                         Sat m        -> ("sat", maybe m id (extractModel res))
                         Unsat        -> ("unsat", "No satisfying model (UNSAT)")
@@ -476,6 +477,12 @@ handleLSPRequestIO state raw
         case findDefinitionLine word (lines content) 0 ("file://" ++ f) of
             Just l  -> return (Just l)
             Nothing -> searchImports word fs
+
+-- | Number of axioms the SMT theory leaves out, when the answer comes from SMT-LIB.
+skippedCount :: Registry -> IO Int
+skippedCount reg = do
+    smtRoute <- usesSmtTheory AutoProver
+    return (if smtRoute then length (untranslatedAxioms reg) else 0)
 
 getCompletions :: Registry -> String
 getCompletions reg =

@@ -168,9 +168,6 @@ MERGE (n)-[:SUBCLASS_OF]->(p);
 MERGE (n:OntologyClass {name: 'ClinicalNote'})
 MERGE (p:OntologyClass {name: 'InformationContentEntity'})
 MERGE (n)-[:SUBCLASS_OF]->(p);
-MERGE (n:OntologyClass {name: 'EscalationRecord'})
-MERGE (p:OntologyClass {name: 'InformationContentEntity'})
-MERGE (n)-[:SUBCLASS_OF]->(p);
 MERGE (n:OntologyClass {name: 'ClinicalOrder'})
 MERGE (p:OntologyClass {name: 'InformationContentEntity'})
 MERGE (n)-[:SUBCLASS_OF]->(p);
@@ -268,8 +265,6 @@ MATCH (n:`Patient`) WHERE NOT (n.`oxygen_saturation` <= 100) RETURN elementId(n)
 MATCH (n:`Patient`) WHERE NOT (n.`heart_rate` >= 0) RETURN elementId(n) AS invalid_node_id;
 // Axiom validation: Patient heart_rate lte 300
 MATCH (n:`Patient`) WHERE NOT (n.`heart_rate` <= 300) RETURN elementId(n) AS invalid_node_id;
-// Axiom validation: Physician is_licensed_prescriber eq True
-MATCH (n:`Physician`) WHERE NOT (n.`is_licensed_prescriber` = true) RETURN elementId(n) AS invalid_node_id;
 // Axiom validation: EmergencyVisit triage_level gte 1
 MATCH (n:`EmergencyVisit`) WHERE NOT (n.`triage_level` >= 1) RETURN elementId(n) AS invalid_node_id;
 // Axiom validation: EmergencyVisit triage_level lte 5
@@ -287,5 +282,8 @@ MATCH (n:`ControlledSubstanceOrder`) WHERE NOT (n.`dose_mg` <= 200) RETURN eleme
 //   forall x (not Patient(x) and Clinician(x))
 //   forall x (not ClinicalOrder(x) and Observation(x))
 //   forall x (not Medication(x) and ActiveIngredient(x))
-//   forall p (forall a (forall m (forall o (has_allergy(p, a) and triggers_allergy(a, m) and orders_medication(o, m) implies not received_by(o, p)))))
-//   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists e (EscalationRecord(e)))
+//   forall p (forall a (forall m (has_allergy(p, a) and triggers_allergy(a, m) implies not exists o (MedicationOrder(o) and orders_medication(o, m) and received_by(o, p)))))
+//   forall p (Patient(p) and lt(oxygen_saturation, 90) implies exists n (ClinicalNote(n)))
+//   forall o (MedicationOrder(o) implies is_signed = True)
+//   forall c (forall o (prescribes(c, o) implies is_licensed_prescriber = True))
+//   forall d (Discharge(d) implies has_summary = True)

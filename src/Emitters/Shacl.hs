@@ -41,7 +41,7 @@ emitNodeShape fmt cls =
         targetIri = fmt cName
         props = compProperties cls
         propShapes = map (emitPropertyShape fmt) props
-        condShapes = map (emitConditionalShape fmt) (compConditionalAxioms cls)
+        condShapes = map (emitConditionalShape fmt) (compEnforced cls)
         allShapes = propShapes ++ condShapes
         propBlock = if null allShapes
                     then "    sh:targetClass " ++ targetIri ++ " .\n\n"
@@ -121,26 +121,16 @@ emitConditionalShape fmt ax =
     "        ]\n" ++
     "    )"
 
+-- | Total on what 'IR.normalizeCondition' produces; anything else was kept out upstream and
+--   fails loudly here instead of becoming an empty shape (which conforms to everything).
+--   An empty shape is written only for Top, where it is the right answer.
 emitShaclShapePattern :: (Name -> String) -> FOL -> String
-emitShaclShapePattern fmt (Predicate op args)
-    | op `elem` ["eq", "ne", "gt", "gte", "lt", "lte"] =
-        case args of
-            [Var prop, Constant val] -> emitShaclPropBound fmt op prop val
-            [Constant val, Var prop] -> emitShaclPropBound fmt (invertCompOp op) prop val
-            _ -> ""
-    | otherwise =
-        case args of
-            (Var prop:_) ->
-                "            sh:property [\n" ++
-                "                sh:path " ++ fmt prop ++ " ;\n" ++
-                "                sh:hasValue true ;\n" ++
-                "            ] ;\n"
-            [] ->
-                "            sh:property [\n" ++
-                "                sh:path " ++ fmt op ++ " ;\n" ++
-                "                sh:hasValue true ;\n" ++
-                "            ] ;\n"
-            _ -> ""
+emitShaclShapePattern fmt (Predicate op [Var prop, Constant val]) | op `elem` comparisonOps = emitShaclPropBound fmt op prop val
+emitShaclShapePattern fmt (Predicate flag []) =
+    "            sh:property [\n" ++
+    "                sh:path " ++ fmt flag ++ " ;\n" ++
+    "                sh:hasValue true ;\n" ++
+    "            ] ;\n"
 emitShaclShapePattern fmt (And p1 p2) =
     emitShaclShapePattern fmt p1 ++ emitShaclShapePattern fmt p2
 emitShaclShapePattern fmt (Or p1 p2) =
@@ -150,7 +140,9 @@ emitShaclShapePattern fmt (Or p1 p2) =
     "            ) ;\n"
 emitShaclShapePattern fmt (Not p) =
     "            sh:not [\n" ++ emitShaclShapePattern fmt p ++ "            ] ;\n"
-emitShaclShapePattern _ _ = ""
+emitShaclShapePattern _ Top = ""
+emitShaclShapePattern _ Bottom = "            sh:not [ ] ;\n"
+emitShaclShapePattern _ other = error ("SHACL emitter: untranslatable conditional " ++ formatFOL other)
 
 emitShaclPropBound :: (Name -> String) -> String -> Name -> String -> String
 emitShaclPropBound fmt op prop val =
@@ -164,16 +156,17 @@ emitShaclPropBound fmt op prop val =
                   | val `elem` ["False", "false"] -> "                sh:hasValue false ;\n"
                   | isNumber val                  -> "                sh:hasValue " ++ val ++ " ;\n"
                   | otherwise                     -> "                sh:hasValue \"" ++ val ++ "\" ;\n"
-            "ne"  -> "                sh:not [ sh:hasValue " ++ val ++ " ] ;\n"
-            _     -> ""
+            "ne"  -> "                sh:not [ sh:hasValue " ++ shaclLiteral val ++ " ] ;\n"
+            _     -> error ("SHACL emitter: unknown comparison " ++ op)
     in "            sh:property [\n" ++ pathLine ++ boundLine ++ "            ] ;\n"
 
-invertCompOp :: String -> String
-invertCompOp "gt"  = "lt"
-invertCompOp "gte" = "lte"
-invertCompOp "lt"  = "gt"
-invertCompOp "lte" = "gte"
-invertCompOp op    = op
+-- | A Turtle literal for a constant: boolean, number or quoted string.
+shaclLiteral :: String -> String
+shaclLiteral val
+    | val `elem` ["True", "true"]   = "true"
+    | val `elem` ["False", "false"] = "false"
+    | isNumber val                  = val
+    | otherwise                     = "\"" ++ val ++ "\""
 
 isNumber :: String -> Bool
 isNumber s = case (readMaybe s :: Maybe Double) of

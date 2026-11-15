@@ -1,6 +1,6 @@
 # String constants in the FOL backends
 
-**Status:** proposal from clif2OntoLogic (2026-10-03). Not scheduled. Additive to
+Status: historical plan. See CHANGELOG.md for what shipped.
 `2026-10-01-clif-interop-fol-port.md`; does not touch the v1.7.0 work.
 
 ## Problem
@@ -54,5 +54,5 @@ literal as an argument of an entity predicate is ill-sorted.
 ## Affected clif2OntoLogic inputs
 
 Five COLORE files carry CLIF strings that reach `--solve`; see
-clif2OntoLogic `.planning/phases/16-reverse-transpiler-round-trip-semantic-fidelity/16-05-PLAN.md`
+clif2OntoLogic plan 16-05 (reverse-transpiler round-trip semantic fidelity)
 ("Known upstream limitation").

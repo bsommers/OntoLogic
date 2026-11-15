@@ -326,7 +326,7 @@ OntoLogic/
 │   ├── OwlSpec.hs              # OWL XML structure tests
 │   ├── MermaidSpec.hs          # Mermaid diagram tests
 │   ├── D2Spec.hs               # D2 diagram tests
-│   ├── ExamplesSpec.hs         # Integration tests running all 12 example models against all targets
+│   ├── ExamplesSpec.hs         # Integration tests running all 30 example models against all targets
 │   └── MainSpec.hs             # CLI argument & driver tests
 ├── examples/                   # Real-world domain models (.logic)
 ├── models-java/                # Java Gradle subproject with Bean Validation & JUnit tests
@@ -337,3 +337,5 @@ OntoLogic/
 │       └── plans/              # Master plan documents
 └── gradlew                     # Pinned Gradle 8.4 wrapper
 ```
+
+The tree above lists only a selection: `test/` now holds 60 `*Spec.hs` files and `examples/` holds 30 `.logic` models.

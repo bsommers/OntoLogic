@@ -1,0 +1,7 @@
+; Ground truth: UNSAT. A ternary relation is declared but used with two arguments.
+(def-concept A)
+(def-concept B)
+(def-concept C)
+(def-relation between A B C)
+(exists (x y) (between x y))
+(forall (x y) (not (between x y)))

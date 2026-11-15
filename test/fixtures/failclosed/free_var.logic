@@ -1,0 +1,6 @@
+; "plant1" is not declared. Ground truth with plant1 read as a constant: UNSAT.
+(def-concept Plant)
+(def-concept Place)
+(def-relation located_in Plant Place)
+(located_in plant1 berlin)
+(forall (x y) (not (located_in x y)))

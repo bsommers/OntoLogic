@@ -16,8 +16,8 @@ spec = describe "Registry helpers (#34)" $ do
         (a <> mempty) `shouldBe` a
         (mempty <> a) `shouldBe` a
 
-    it "deduplicates entries and keeps the last namespace per prefix (current Loader behavior)" $ do
+    it "deduplicates entries and collapses exact namespace repeats but keeps conflicting URIs for the linter" $ do
         let d = deduplicateRegistry (a <> b)
         concepts d `shouldBe` [("A", Nothing), ("B", Just "A")]
-        namespaces d `shouldBe` [NamespaceDecl "x" (Just "http://other/")]
+        namespaces d `shouldBe` [NamespaceDecl "x" (Just "http://x/"), NamespaceDecl "x" (Just "http://other/")]
         individuals d `shouldBe` [("i1", Nothing), ("i2", Just "A")]

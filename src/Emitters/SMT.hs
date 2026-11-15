@@ -2,6 +2,7 @@ module Emitters.SMT
     ( emitSMT
     , emitSMTDeclarations
     , emitSMTDeclarationsNamed
+    , emitSMTDeclarationsUnbounded
     , emitPropertyFunction
     , smtNumeral
     , mapSmtType
@@ -24,8 +25,19 @@ emitSMT reg =
        "(get-model)\n"
 
 -- | Sort, concept constants, hierarchy, property bounds and relation facts (no set-logic, no check-sat).
+--   This is the standalone specification target: the bounds are asserted on the concept constant.
 emitSMTDeclarations :: Registry -> String
-emitSMTDeclarations reg =
+emitSMTDeclarations = declarations True
+
+-- | The same declarations without the property bound assertions. The solver checks use this:
+--   a bound asserted on the concept constant holds for one fictitious entity whether or not the
+--   source states it for every instance, so it can turn an empty concept into a global
+--   contradiction. The real bounds reach the solver through the axioms of the first-order theory.
+emitSMTDeclarationsUnbounded :: Registry -> String
+emitSMTDeclarationsUnbounded = declarations False
+
+declarations :: Bool -> Registry -> String
+declarations withBounds reg =
     let modelIR = compileRegistry reg
         classes = irClasses modelIR
     in "; Sort declarations\n" ++
@@ -35,8 +47,8 @@ emitSMTDeclarations reg =
        "; Subclass Hierarchy\n" ++
        "(declare-fun subClassOf (Entity Entity) Bool)\n" ++
        concatMap emitHierarchy classes ++ "\n" ++
-       "; Property Functions and Bound Assertions\n" ++
-       concatMap emitClassProperties classes ++ "\n" ++
+       "; Property Functions" ++ (if withBounds then " and Bound Assertions" else "") ++ "\n" ++
+       concatMap (emitClassProperties withBounds) classes ++ "\n" ++
        "; Relational Declarations\n" ++
        emitRelations (irRelations modelIR) ++ "\n"
 
@@ -50,16 +62,19 @@ emitHierarchy cls =
         Just p  -> "(assert (subClassOf " ++ sanitizeIdent (compClassName cls) ++ " " ++ sanitizeIdent p ++ "))\n"
         Nothing -> ""
 
-emitClassProperties :: CompiledClass -> String
-emitClassProperties cls =
-    concatMap (emitPropertyFunction (sanitizeIdent (compClassName cls))) (compProperties cls)
+emitClassProperties :: Bool -> CompiledClass -> String
+emitClassProperties withBounds cls =
+    concatMap (emitProperty withBounds (sanitizeIdent (compClassName cls))) (compProperties cls)
 
 emitPropertyFunction :: String -> CompiledProperty -> String
-emitPropertyFunction cName p =
+emitPropertyFunction = emitProperty True
+
+emitProperty :: Bool -> String -> CompiledProperty -> String
+emitProperty withBounds cName p =
     let fName = cName ++ "_" ++ sanitizeIdent (compPropName p)
         pType = compPropType p
         decl = "(declare-fun " ++ fName ++ " (Entity) " ++ mapSmtType pType ++ ")\n"
-    in decl ++ concatMap (emitPropertyAssertion cName fName pType) (compConstraints p)
+    in decl ++ (if withBounds then concatMap (emitPropertyAssertion cName fName pType) (compConstraints p) else "")
 
 emitPropertyAssertion :: String -> String -> PropertyType -> BoundConstraint -> String
 emitPropertyAssertion cName fName pType c =
@@ -78,40 +93,11 @@ propertyAssertionBody cName fName pType (BoundConstraint op val) =
             OpNe  -> "distinct"
     in "(" ++ rel ++ " " ++ app ++ " " ++ lit ++ ")"
 
--- | 'emitSMTDeclarations' with every property bound assertion named, so an unsat core can
---   cite it. Returns the SMT text plus (name, description) pairs for each named bound.
---   The consistency check asserts these bounds, so the unsat-core theory must assert them too,
---   or ':explain' answers SAT for a contradiction ':solve' reported.
+-- | 'emitSMTDeclarationsUnbounded' for the unsat-core theory, which must match the consistency
+--   check: no bound assertions, hence no named bounds for a core to cite. Returns the SMT text
+--   plus the (name, description) pairs of named bounds, which is empty.
 emitSMTDeclarationsNamed :: Registry -> (String, [(String, String)])
-emitSMTDeclarationsNamed reg =
-    let modelIR = compileRegistry reg
-        classes = irClasses modelIR
-        bounds = [ (cls, p, c) | cls <- classes, p <- compProperties cls, c <- compConstraints p ]
-        named = [ ( nm
-                  , "(assert (! " ++ propertyAssertionBody cName fName (compPropType p) c ++ " :named " ++ nm ++ "))\n"
-                  , "Property bound: " ++ compClassName cls ++ "." ++ compPropName p ++ " "
-                      ++ compOpToString (constraintOp c) ++ " " ++ valueToString (constraintValue c)
-                  )
-                | (idx, (cls, p, c)) <- zip ([1..] :: [Int]) bounds
-                , let cName = sanitizeIdent (compClassName cls)
-                      fName = cName ++ "_" ++ sanitizeIdent (compPropName p)
-                      nm = "bound_" ++ show idx
-                ]
-        funDecls = concat [ "(declare-fun " ++ sanitizeIdent (compClassName cls) ++ "_" ++ sanitizeIdent (compPropName p)
-                              ++ " (Entity) " ++ mapSmtType (compPropType p) ++ ")\n"
-                          | cls <- classes, p <- compProperties cls ]
-        txt = "; Sort declarations\n" ++
-              "(declare-sort Entity 0)\n\n" ++
-              "; Entity Concept Constants\n" ++
-              concatMap emitConceptConst classes ++ "\n" ++
-              "; Subclass Hierarchy\n" ++
-              "(declare-fun subClassOf (Entity Entity) Bool)\n" ++
-              concatMap emitHierarchy classes ++ "\n" ++
-              "; Property Functions and Bound Assertions\n" ++
-              funDecls ++ concat [ a | (_, a, _) <- named ] ++ "\n" ++
-              "; Relational Declarations\n" ++
-              emitRelations (irRelations modelIR) ++ "\n"
-    in (txt, [ (n, d) | (n, _, d) <- named ])
+emitSMTDeclarationsNamed reg = (emitSMTDeclarationsUnbounded reg, [])
 
 -- | SMT-LIB2 numeral: plain decimal notation, reals keep a fraction, negatives as (- n).
 smtNumeral :: PropertyType -> Value -> String

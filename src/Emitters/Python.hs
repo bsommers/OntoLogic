@@ -9,7 +9,7 @@ emitPython :: Registry -> String
 emitPython reg =
     let modelIR = compileRegistry reg
         classes = irClasses modelIR
-        hasConditional = any (not . null . compConditionalAxioms) classes
+        hasConditional = any (not . null . compEnforced) classes
         pydanticImport = if hasConditional
                          then "from pydantic import BaseModel, Field, model_validator\n"
                          else "from pydantic import BaseModel, Field\n"
@@ -33,40 +33,42 @@ emitPython reg =
 emitPythonClass :: CompiledClass -> String
 emitPythonClass cls =
     "class " ++ sanitizeIdent (compClassName cls) ++ "(" ++ maybe "BaseModel" sanitizeIdent (compParentClass cls) ++ "):\n" ++
-    (if null (compProperties cls) && null (compConditionalAxioms cls)
+    (if null (compProperties cls) && null (compEnforced cls)
      then "    pass\n\n"
      else concatMap emitFieldWithConstraints (compProperties cls) ++
-          emitPythonConditionalValidators (compConditionalAxioms cls) ++ "\n")
+          emitPythonConditionalValidators (compClassName cls) (compEnforced cls) ++ "\n")
 
-emitPythonConditionalValidators :: [ConditionalConstraint] -> String
-emitPythonConditionalValidators [] = ""
-emitPythonConditionalValidators axs =
+-- | The method name carries the class name: a subclass that reused one name would replace the
+--   inherited validator and silently stop enforcing the parent's conditionals.
+emitPythonConditionalValidators :: Name -> [ConditionalConstraint] -> String
+emitPythonConditionalValidators _ [] = ""
+emitPythonConditionalValidators cName axs =
     "\n    @model_validator(mode=\"after\")\n" ++
-    "    def validate_conditional_constraints(self):\n" ++
+    "    def validate_conditional_constraints_" ++ sanitizeIdent cName ++ "(self):\n" ++
     concatMap emitSingleValidator axs ++
     "        return self\n"
 
 emitSingleValidator :: ConditionalConstraint -> String
 emitSingleValidator ax =
-    "        if " ++ emitPythonExpr (condPremise ax) ++ " and not (" ++ emitPythonExpr (condConclusion ax) ++ "):\n" ++
+    "        if " ++ guardExpr ++ ":\n" ++
     "            raise ValueError(\"Constraint failed: " ++ escapePy (condDescription ax) ++ "\")\n"
+  where
+    guardExpr = case condPremise ax of
+        Top -> "not (" ++ emitPythonExpr (condConclusion ax) ++ ")"
+        pre -> emitPythonExpr pre ++ " and not (" ++ emitPythonExpr (condConclusion ax) ++ ")"
 
+-- | Total on what 'IR.normalizeCondition' produces. Anything else was kept out of the
+--   conditional list upstream; reaching it here is a bug, so it fails loudly instead of
+--   becoming a check that cannot fail.
 emitPythonExpr :: FOL -> String
-emitPythonExpr (Predicate op args)
-    | op `elem` ["eq", "ne", "gt", "gte", "lt", "lte"] =
-        case args of
-            [Var prop, Constant val] -> emitPythonBinary op prop val
-            [Constant val, Var prop] -> emitPythonBinary (invertCompOp op) prop val
-            _ -> "True"
-    | otherwise =
-        case args of
-            (Var prop:_) -> "(str(getattr(self, '" ++ sanitizeIdent prop ++ "', None)).lower() == 'true')"
-            []           -> "(str(getattr(self, '" ++ sanitizeIdent op ++ "', None)).lower() == 'true')"
-            _            -> "True"
+emitPythonExpr (Predicate op [Var prop, Constant val]) | op `elem` comparisonOps = emitPythonBinary op prop val
+emitPythonExpr (Predicate flag []) = "(str(getattr(self, '" ++ sanitizeIdent flag ++ "', None)).lower() == 'true')"
 emitPythonExpr (And p1 p2) = "(" ++ emitPythonExpr p1 ++ " and " ++ emitPythonExpr p2 ++ ")"
 emitPythonExpr (Or p1 p2)  = "(" ++ emitPythonExpr p1 ++ " or " ++ emitPythonExpr p2 ++ ")"
 emitPythonExpr (Not p)     = "not (" ++ emitPythonExpr p ++ ")"
-emitPythonExpr _           = "True"
+emitPythonExpr Top         = "True"
+emitPythonExpr Bottom      = "False"
+emitPythonExpr other       = error ("Python emitter: untranslatable conditional " ++ formatFOL other)
 
 emitPythonBinary :: String -> Name -> String -> String
 emitPythonBinary op prop val =
@@ -84,14 +86,7 @@ emitPythonBinary op prop val =
         "gte" -> "(" ++ fld ++ " is not None and " ++ fld ++ " >= " ++ val ++ ")"
         "lt"  -> "(" ++ fld ++ " is not None and " ++ fld ++ " < " ++ val ++ ")"
         "lte" -> "(" ++ fld ++ " is not None and " ++ fld ++ " <= " ++ val ++ ")"
-        _     -> "True"
-
-invertCompOp :: String -> String
-invertCompOp "gt"  = "lt"
-invertCompOp "gte" = "lte"
-invertCompOp "lt"  = "gt"
-invertCompOp "lte" = "gte"
-invertCompOp op    = op
+        _     -> error ("Python emitter: unknown comparison " ++ op)
 
 escapePy :: String -> String
 escapePy = escapeTargetString

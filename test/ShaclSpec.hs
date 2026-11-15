@@ -129,5 +129,5 @@ spec = describe "SHACL Shapes Emitter" $ do
                          ]
               }
           shacl = emitShacl reg
-      shacl `shouldContain` "sh:not [ sh:hasValue error ]"
+      shacl `shouldContain` "sh:not [ sh:hasValue \"error\" ]"
       shacl `shouldContain` "sh:hasValue 200"

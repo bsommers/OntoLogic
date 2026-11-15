@@ -8,7 +8,8 @@ ontologic-exe [-i|--input FILE] [-t|--target TARGET] [-o|--output PATH]
               [--neo4j-edition EDITION] [--render] [--repl] [--cnf] [--lsp]
               [--solve] [--warn-unmapped] [--explain-unsat] [--inspect-model]
               [--free-constants] [-T|--solve-timeout SECONDS]
-              [--solve-memory MB] [--lib-path DIR]
+              [--solve-memory MB] [--lib-path DIR] [--allow-absolute-imports]
+              [--version]
 ```
 
 ## Flags
@@ -22,7 +23,7 @@ ontologic-exe [-i|--input FILE] [-t|--target TARGET] [-o|--output PATH]
 | `--java-package` | PKG | Package for the `java` target. Default `ontologic.generated` |
 | `--base-iri` | IRI | Base IRI for `owl` and `shacl`. Default: the ontology's first namespace IRI (trailing `#` or `/` stripped), else `http://example.org/ontologic` |
 | `-p`, `--prover` | z3, cvc5, vampire, native, auto | Solver backend for `--solve`. Default `auto` |
-| `--neo4j-edition` | community, enterprise | Edition for `neo4j` constraints. Default `enterprise`; with `community`, node-property-existence constraints are written commented out |
+| `--neo4j-edition` | community, enterprise | Any other value is rejected with an error. Edition for `neo4j` constraints. Default `enterprise`; with `community`, node-property-existence constraints are written commented out |
 | `--render` | | After `mermaid` or `d2` generation, call `mmdc` or `d2` to write an `.svg` |
 | `--repl` | | Start the interactive REPL (same as `-t repl`) |
 | `--cnf` | | Print the clausal normal form of the (linted) ontology to stdout and exit |
@@ -32,9 +33,11 @@ ontologic-exe [-i|--input FILE] [-t|--target TARGET] [-o|--output PATH]
 | `--explain-unsat` | | With `--solve`: on UNSAT print the unsatisfiable core |
 | `--inspect-model` | | With `--solve`: on SAT print the full model valuation |
 | `--free-constants` | | Treat undeclared free variables in axioms as `Entity` constants (applied before linting and solving) |
-| `-T`, `--solve-timeout` | SECONDS | Positive integer. Enforced for z3, cvc5, vampire, and native |
+| `-T`, `--solve-timeout` | SECONDS | Positive integer. Enforced for z3, cvc5, vampire, and native. Default 60 seconds when not given; very large values are clamped |
 | `--solve-memory` | MB | Positive integer. Z3 only; ignored with a warning for other provers |
 | `--lib-path` | DIR | Extra import search directory; repeatable. Also `$ONTOLOGIC_PATH` |
+| `--allow-absolute-imports` | | Allow `(import "/abs/path/file.logic")`. Without it absolute import paths are refused. Relative `../` imports always work. Every import must name a `.logic` file |
+| `--version` | | Print `ontologic 1.8.4` and exit |
 
 ## Which mode runs
 
@@ -44,7 +47,7 @@ Checked in this order after the file loads and lints cleanly:
 2. `--repl` or `-t repl`: start the REPL (no input needed).
 3. Otherwise `-i` is required (`Error: --input is required (or use --repl / --lsp)`, exit 1).
 4. Load the file and its imports. Failure: parse or import error printed, exit 1.
-5. Lint. Any error: errors printed, exit 1. Nothing further runs.
+5. Lint. Any error: errors printed, exit 1. Nothing further runs. Warnings (for example from the propositional pass) are printed but do not stop the run.
 6. `--cnf`: print CNF, exit 0.
 7. `--solve` or `-t solve`: run the solver.
 8. Otherwise the target: `lint` (the default) prints `✅ Logic Validated successfully.`; an emitter writes files into `-o`.
@@ -94,7 +97,7 @@ External solvers (`z3`, `cvc5`, `vampire`) and renderers (`d2`, `mmdc`) are loca
 |------|------|
 | 0 | Lint passed; files emitted; `--cnf` printed; `--solve` found the ontology consistent and every concept satisfiable; REPL/LSP exited normally |
 | 1 | Missing `--input`; file not found; parse error; import error (not found, circular); any lint error; unknown target; missing `-o`; unknown `--prover`; `--solve` reported UNSAT, empty concepts, or a solver error |
-| 2 | `--solve` was inconclusive: the solver answered `unknown` (including a timeout), or the coherence check could not run |
+| 2 | `--solve` was inconclusive: the solver answered `unknown` (including a timeout, the native prover meeting equality, or axioms that were not sent to the solver when the rest is satisfiable), or the coherence check could not run |
 
 Command-line parse errors (for example a non-positive `-T`) print the message plus usage and exit 1. For `--solve` with several results, the worst wins (1 over 2 over 0), which makes it safe in CI:
 

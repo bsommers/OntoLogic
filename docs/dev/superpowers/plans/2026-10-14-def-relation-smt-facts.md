@@ -1,6 +1,6 @@
 # `def-relation` as an asserted fact in the SMT backend
 
-**Status:** proposal from clif2OntoLogic (2026-10-14). Not scheduled. Additive; touches only
+Status: SHIPPED in v1.8.1.
 `src/Emitters/SMT.hs` (`emitRelations`) if adopted.
 
 ## Problem

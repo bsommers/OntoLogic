@@ -1,4 +1,5 @@
 # Milestone 6 Plan: Modular Namespacing & Multi-File Imports
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 > **Context:** Expands OntoLogic's DSL, parser, linter, and IR to support modular multi-file ontologies (`(import "path/to/file.logic")` and `(namespace "prefix")`), enabling the decomposition of large enterprise ontologies (BFO, CCO, MITRE, NIST AI RMF) into reusable components.
 > **Tracking Document:** [`docs/dev/superpowers/REPLAY_PLAYBOOK.md`](../REPLAY_PLAYBOOK.md)

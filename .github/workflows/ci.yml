@@ -1,28 +1,15 @@
-name: CI
+name: Full gate (manual)
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# Manual only. The full build-and-test gate is a local gate (AGENTS.md, "Pre-Push Verification
+# Gate") and is deliberately not run automatically on GitHub, to conserve Actions minutes. Start
+# this workflow by hand (Actions tab, "Run workflow") for a clean-room run. The automatic GitHub
+# checks are docs.yml (link check) and pages.yml (site deployment).
 on:
-  push:
-    # Feature branches are covered by their pull_request run; also pushing them
-    # here ran CI twice per change (the two refs never share a concurrency group).
-    branches: [ main ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '**.svg'
-      - '.codegraph/**'
-      - 'LICENSE'
-  pull_request:
-    branches: [ main ]
-    paths-ignore:
-      - 'docs/**'
-      - '**.md'
-      - '**.svg'
-      - '.codegraph/**'
-      - 'LICENSE'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -30,7 +17,6 @@ permissions:
 jobs:
   haskell-test:
     name: Haskell Build & Test
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04  # standard GitHub-hosted runner: free for public repos
     timeout-minutes: 60  # a cold-cache stack build on a hosted runner is slow
 
@@ -47,13 +33,16 @@ jobs:
             unzip -q /tmp/cvc5.zip -d /tmp/cvc5
             sudo install -m 0755 "$(find /tmp/cvc5 -type f -name cvc5 | head -1)" /usr/local/bin/cvc5
           }
-          curl -fsSL -o /tmp/vampire https://github.com/vprover/vampire/releases/download/v4.9casc2024/vampire || true
-          if [ -s /tmp/vampire ]; then
-            sudo install -m 0755 /tmp/vampire /usr/local/bin/vampire
-            vampire --version || true
-          fi
+          # No `|| true`: a missing Vampire must fail the job, not skip its specs silently.
+          curl -fsSL --retry 3 -o /tmp/vampire https://github.com/vprover/vampire/releases/download/v4.9casc2024/vampire
+          test -s /tmp/vampire
+          sudo install -m 0755 /tmp/vampire /usr/local/bin/vampire
+          vampire --version
           z3 --version
           cvc5 --version
+          command -v vampire
+          g++ --version | head -1
+          sqlite3 --version
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -70,6 +59,9 @@ jobs:
         run: |
           # rdflib: IriSpec resolves the OWL and SHACL output with a real RDF parser (#49)
           pip install pydantic rdflib
+
+      - name: Check relative documentation links
+        run: python3 scripts/check_links.py
 
       - name: Set up Node for the TypeScript check
         uses: actions/setup-node@v4
@@ -113,29 +105,33 @@ jobs:
       # Every stack call in this workflow (both jobs) passes the same
       # --ghc-options: stack recompiles the package whenever they change, and
       # the two jobs share one .stack-work cache.
-      - name: Install Stack dependencies & Build
+      - name: Install Stack dependencies
         run: |
-          stack build --test --no-run-tests --ghc-options="-Wall -Werror"
+          stack build --test --no-run-tests --only-dependencies
 
       - name: Warm Gradle dependencies for Java validation smoke test
         run: |
           chmod +x gradlew
           ./gradlew :models-java:compileJava
 
-      - name: Run Haskell Test Suite
+      # One test run does three jobs: -Wall -Werror build, the HPC coverage gate
+      # (scripts/check_coverage.sh, threshold 74%), and the pending-example check.
+      - name: Run Haskell test suite with coverage gate
         env:
           # Turn a missing toolchain into a failure: the generated-code checks in
           # CompileSpec must actually run here, not silently report PENDING. This covers
-          # go, rustc, pydantic, npm, d2 and rdflib — the ones installed above. The genuinely
-          # optional checks (mmdc, which pulls chromium, and the neo4j service) use
-          # withOptionalTool and always skip when absent.
+          # go, rustc, pydantic, npm, d2 and rdflib. The genuinely optional check
+          # (mmdc, which pulls chromium) uses withOptionalTool and always skips.
           ONTOLOGIC_REQUIRE_TOOLCHAINS: '1'
         run: |
-          stack test --ghc-options="-Wall -Werror"
+          set -o pipefail
+          scripts/check_coverage.sh --ghc-options="-Wall -Werror" 2>&1 | tee "$RUNNER_TEMP/hspec.log"
+
+      - name: Fail on unexpected pending examples
+        run: .github/scripts/check_pending.sh "$RUNNER_TEMP/hspec.log"
 
   java-gradle-test:
     name: Java & Gradle Verification
-    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04  # standard GitHub-hosted runner: free for public repos
     timeout-minutes: 45
 

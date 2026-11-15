@@ -8,6 +8,8 @@ classDiagram
     IndustrialEntity <|-- RobotArm
     IndustrialEntity : +Boolean safety_status
     RobotArm : +Integer axis_count
+    Controller : +Boolean active
 
 %% WARNING: The following axioms could not be mapped to field constraints:
+%%   forall r (RobotArm(r) implies axis_count = 6)
 %%   forall c (Controller(c) and safety_status = False implies active = False)

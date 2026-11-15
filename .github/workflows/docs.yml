@@ -1,0 +1,29 @@
+name: Docs
+
+# The only automatic check on GitHub besides the Pages deployment. It needs no Haskell, Java or
+# solver. The full build-and-test gate is local; see ci.yml (manual) and AGENTS.md.
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: docs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Check relative documentation links
+        run: python3 -I scripts/check_links.py

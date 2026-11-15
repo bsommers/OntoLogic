@@ -100,7 +100,11 @@ and records about them (information content entities). That keeps a socket, a
 cable and a social tie from collapsing into one `Connection`, lets mining, cloud
 and manufacturing models merge without collisions, and gives you a principled
 check against nonsense such as "the software weighs 5 kg" (software is a
-generically dependent continuant; only material entities have mass).
+generically dependent continuant; only material entities have mass). Be aware
+of the current limit: the bundled `bfo_2020.logic` declares the BFO categories
+and relations but has almost no axioms yet, so it does not by itself reject such
+statements; you add the axioms that say so. Making the shipped BFO file carry
+them is planned for v2.0.0.
 
 **First-order logic as the language of definition.** Triples cannot express
 "all pumps have a safety valve" or "if a mining process runs, some excavator
@@ -120,9 +124,10 @@ deterministic for the same input, and Megaparsec gives a precise, testable
 parser for untrusted `.logic` files.
 
 The trade is explicit: setup cost is higher than a loose graph, maintenance cost
-is much lower, and ambiguity is removed once, at the foundation. Alerts become
-explainable ("violated axiom 4: active oven must have temperature above 100")
-instead of a bare score.
+is much lower, and ambiguity is removed once, at the foundation. The aim is
+that alerts become explainable ("violated axiom 4: active oven must have
+temperature above 100") instead of a bare score; today `--explain-unsat` does
+that for contradictions in the ontology itself, not for data.
 
 ## Where it pays off
 
@@ -131,9 +136,11 @@ instead of a bare score.
 - **Security, threat intelligence and compliance.** The standard library covers
   STIX, ATT&CK, D3FEND, NIST and AI-governance frameworks; compliance rules are
   axioms you can check. See the [standard library](standard-library.md).
-- **Grounding AI agents.** An agent's proposed actions can be checked against
-  domain invariants before they run, so a violation is rejected
-  deterministically.
+- **Grounding AI agents.** The aim is that an agent's proposed actions can be
+  checked against domain invariants before they run. That is not built yet:
+  OntoLogic has no instance-data or runtime-check feature today. What works now
+  is proving the invariants consistent and generating validators for them; wiring
+  those validators into an agent is up to you.
 - **Software and systems engineering.** Architecture, delivery and requirements
   models stay consistent with the code generated from them. See the
   [domain gallery](domains/README.md).

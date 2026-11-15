@@ -64,8 +64,8 @@
 ;; ----------------------------------------------------------------------------
 ;; Domain Metadata Properties
 ;; ----------------------------------------------------------------------------
-(def-property dsf:tenet_number dsf:ConstitutionalTenet Int)
-(def-property dsf:standard_number dsf:OperationalStandard Int)
-(def-property dsf:poset_tier_level dsf:PosetStratum Int)
+(def-property dsf:tenet_number dsf:ConstitutionalTenet Integer)
+(def-property dsf:standard_number dsf:OperationalStandard Integer)
+(def-property dsf:poset_tier_level dsf:PosetStratum Integer)
 (def-property dsf:capability_id dsf:CapabilityRecord String)
 (def-property dsf:verification_command dsf:CapabilityRecord String)

@@ -43,7 +43,7 @@ emitTypeScriptClass isCyclic cls =
                 "export const " ++ cName ++ "Schema = " ++ sanitizeIdent pName ++
                 "Schema.extend({\n" ++ fields ++ "})"
 
-        refines = concatMap emitTsRefine (compConditionalAxioms cls)
+        refines = concatMap emitTsRefine (compEnforced cls)
         schemaDef = baseSchema ++ refines ++ ";\n\n"
 
         typeAlias = "export type " ++ cName ++ " = z.infer<typeof " ++ cName ++ "Schema>;\n\n"
@@ -103,28 +103,25 @@ mapNumericBound _                           = ""
 emitTsRefine :: ConditionalConstraint -> String
 emitTsRefine ax =
     "\n  .refine((data: any) => {\n" ++
-    "    if (" ++ emitTsExpr (condPremise ax) ++ ") {\n" ++
-    "      return " ++ emitTsExpr (condConclusion ax) ++ ";\n" ++
-    "    }\n" ++
-    "    return true;\n" ++
+    (case condPremise ax of
+        Top -> "    return " ++ emitTsExpr (condConclusion ax) ++ ";\n"
+        pre -> "    if (" ++ emitTsExpr pre ++ ") {\n" ++
+               "      return " ++ emitTsExpr (condConclusion ax) ++ ";\n" ++
+               "    }\n" ++
+               "    return true;\n") ++
     "  }, { message: \"Axiom violation: " ++ escapeJson (condDescription ax) ++ "\" })"
 
+-- | Total on what 'IR.normalizeCondition' produces; anything else was kept out upstream and
+--   fails loudly here instead of becoming a check that cannot fail.
 emitTsExpr :: FOL -> String
-emitTsExpr (Predicate op args)
-    | op `elem` ["eq", "ne", "gt", "gte", "lt", "lte"] =
-        case args of
-            [Var prop, Constant val] -> emitTsBinary op prop val
-            [Constant val, Var prop] -> emitTsBinary (invertCompOp op) prop val
-            _ -> "true"
-    | otherwise =
-        case args of
-            (Var prop:_) -> "Boolean(data." ++ sanitizeIdent prop ++ ")"
-            []           -> "Boolean(data." ++ sanitizeIdent op ++ ")"
-            _            -> "true"
+emitTsExpr (Predicate op [Var prop, Constant val]) | op `elem` comparisonOps = emitTsBinary op prop val
+emitTsExpr (Predicate flag []) = "Boolean(data." ++ sanitizeIdent flag ++ ")"
 emitTsExpr (And p1 p2) = "(" ++ emitTsExpr p1 ++ " && " ++ emitTsExpr p2 ++ ")"
 emitTsExpr (Or p1 p2)  = "(" ++ emitTsExpr p1 ++ " || " ++ emitTsExpr p2 ++ ")"
 emitTsExpr (Not p)     = "!(" ++ emitTsExpr p ++ ")"
-emitTsExpr _           = "true"
+emitTsExpr Top         = "true"
+emitTsExpr Bottom      = "false"
+emitTsExpr other       = error ("TypeScript emitter: untranslatable conditional " ++ formatFOL other)
 
 emitTsBinary :: String -> Name -> String -> String
 emitTsBinary op prop val =
@@ -132,6 +129,8 @@ emitTsBinary op prop val =
         valExpr = case val of
             "True"  -> "true"
             "False" -> "false"
+            "true"  -> "true"
+            "false" -> "false"
             v | isNumber v -> v
             v -> "\"" ++ escapeJson v ++ "\""
         tsOp = case op of
@@ -141,15 +140,8 @@ emitTsBinary op prop val =
             "gte" -> ">="
             "lt"  -> "<"
             "lte" -> "<="
-            _     -> "==="
+            _     -> error ("TypeScript emitter: unknown comparison " ++ op)
     in "(" ++ fld ++ " " ++ tsOp ++ " " ++ valExpr ++ ")"
-
-invertCompOp :: String -> String
-invertCompOp "gt"  = "lt"
-invertCompOp "gte" = "lte"
-invertCompOp "lt"  = "gt"
-invertCompOp "lte" = "gte"
-invertCompOp op    = op
 
 escapeJson :: String -> String
 escapeJson = escapeTargetString

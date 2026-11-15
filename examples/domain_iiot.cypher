@@ -322,6 +322,7 @@ MATCH (n:`Alert`) WHERE NOT (n.`alert_severity` >= 1) RETURN elementId(n) AS inv
 MATCH (n:`Alert`) WHERE NOT (n.`alert_severity` <= 5) RETURN elementId(n) AS invalid_node_id;
 
 // WARNING: The following axioms could not be mapped to field constraints:
+//   forall m (TelemetryMessage(m) implies is_encrypted_in_transit = True)
 //   forall a (ConditionAlert(a) implies exists x (Asset(x) and raised_for(a, x)))
 //   forall w (PredictiveWorkOrder(w) implies exists a (Alert(a) and triggers(a, w)))
 //   forall g (EdgeGateway(g) implies exists c (Certificate(c) and authenticated_with(g, c)))

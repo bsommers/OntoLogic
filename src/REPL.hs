@@ -9,16 +9,18 @@ import Data.List (isPrefixOf, intercalate)
 import OntoLogic
 import Parser (parseRegistry)
 import Linter (lintRegistry)
-import Loader (loadRegistryWithImports)
+import Loader (loadRegistryWithImports, ontologicVersion)
 import IR (compileRegistry)
 import IR.CNF (formatCNFTheory)
 import IR.Clausify (clausifyTheory)
 import Targets (lookupTarget, targets, targetName, targetEmit, defaultEmitOptions, EmitOptions(..))
 import Solver
     ( checkConsistencyWith
+    , usesSmtTheory
     , proveSubsumptionWith
     , findUnsatConceptsWith
     , untranslatedAxioms
+    , partialVerdict
     , arithmeticCaveat
     , Prover(..)
     , parseProver
@@ -38,11 +40,18 @@ data REPLState = REPLState
 initialREPLState :: REPLState
 initialREPLState = REPLState emptyRegistry Nothing AutoProver defaultEmitOptions
 
+-- | Centre a title inside the 60-column banner box.
+bannerLine :: String -> String
+bannerLine t = "║" ++ replicate l ' ' ++ t ++ replicate r ' ' ++ "║"
+  where pad = max 0 (60 - length t)
+        l = pad `div` 2
+        r = pad - l
+
 -- | Main interactive REPL loop
 runREPL :: IO ()
 runREPL = do
     putStrLn "╔════════════════════════════════════════════════════════════╗"
-    putStrLn "║              OntoLogic Interactive REPL v1.0               ║"
+    putStrLn (bannerLine ("OntoLogic Interactive REPL v" ++ ontologicVersion))
     putStrLn "║   Type ':help' for commands or enter DSL expressions       ║"
     putStrLn "╚════════════════════════════════════════════════════════════╝"
     loop initialREPLState
@@ -126,12 +135,12 @@ evalREPLCommand state input
         in return (state, "Compiled ModelIR:\n" ++ show ir)
 
     | input `elem` [":solve", ":check"] = do
-        let skipped = untranslatedAxioms (replRegistry state)
-            warning
+        skipped <- skippedAxioms state
+        let warning
               | null skipped = ""
-              | otherwise = "⚠️  " ++ show (length skipped) ++ " axiom(s) were not sent to the solver:\n"
-                            ++ unlines [ "   - " ++ show ax ++ " (" ++ why ++ ")" | (ax, why) <- skipped ]
-        res <- checkConsistencyWith (replProver state) (replRegistry state)
+              | otherwise = "\n⚠️  " ++ show (length skipped) ++ " axiom(s) were not sent to the solver:\n"
+                            ++ init (unlines [ "   - " ++ show ax ++ " (" ++ why ++ ")" | (ax, why) <- skipped ])
+        res <- partialVerdict (length skipped) <$> checkConsistencyWith (replProver state) (replRegistry state)
         let consistency = case res of
                 Sat model -> "✅ SMT Satisfiable (SAT) via " ++ proverName (replProver state) ++ " — Consistent Model Found:\n" ++ model
                 Unsat -> "❌ SMT Unsatisfiable (UNSAT) via " ++ proverName (replProver state) ++ " — Logical Contradiction Detected!"
@@ -147,27 +156,37 @@ evalREPLCommand state input
             (Sat _, _)    -> caveatLine state
             (_, Right []) -> caveatLine state
             _             -> return ""
-        return (state, warning ++ consistency ++ "\n" ++ coherence ++ note)
+        return (state, consistency ++ warning ++ "\n" ++ coherence ++ note)
 
     | input `elem` [":explain", ":unsat-core", ":explain-unsat"] = do
-        res <- explainUnsatWith (replProver state) (replRegistry state)
-        case res of
-            Left err -> return (state, "❌ SMT Explanation Error:\n" ++ err)
-            Right explanation ->
-                if null (unsatCoreNames explanation)
-                then do
-                    note <- caveatLine state
-                    return (state, "✅ SMT Satisfiable (SAT) — No contradictory axioms or unsat cores detected." ++ note)
-                else return (state, unlines
-                    [ "❌ SMT Unsatisfiable (UNSAT) — Minimal Unsat Core Identified:"
-                    , "  Core Assertions: " ++ unwords (unsatCoreNames explanation)
-                    , ""
-                    , "Conflicting Axioms Trace:"
-                    , unlines (unsatCoreDetails explanation)
-                    ])
+        -- A core exists only for an unsatisfiable theory: decide that first, from the verdict,
+        -- so a satisfiable answer is never mistaken for an empty core.
+        skipped <- skippedAxioms state
+        verdict <- partialVerdict (length skipped) <$> checkConsistencyWith (replProver state) (replRegistry state)
+        case verdict of
+            Sat _ -> do
+                note <- caveatLine state
+                return (state, "✅ SMT Satisfiable (SAT) — No contradictory axioms or unsat cores detected." ++ note)
+            Unknown out -> return (state, "⚠️  SMT Solver Result Inconclusive, so no unsat core can be explained: " ++ out)
+            SolverError err -> return (state, "❌ SMT Solver Error:\n" ++ err)
+            Unsat -> do
+                res <- explainUnsatWith (replProver state) (replRegistry state)
+                case res of
+                    Left err -> return (state, "❌ SMT Explanation Error:\n" ++ err)
+                    Right explanation ->
+                        if null (unsatCoreNames explanation)
+                        then return (state, "❌ SMT Unsatisfiable (UNSAT) — the solver returned an empty unsat core, so no single axiom is blamed.")
+                        else return (state, unlines
+                            [ "❌ SMT Unsatisfiable (UNSAT) — Minimal Unsat Core Identified:"
+                            , "  Core Assertions: " ++ unwords (unsatCoreNames explanation)
+                            , ""
+                            , "Conflicting Axioms Trace:"
+                            , unlines (unsatCoreDetails explanation)
+                            ])
 
     | input `elem` [":model", ":inspect-model"] = do
-        res <- checkConsistencyWith (replProver state) (replRegistry state)
+        skipped <- skippedAxioms state
+        res <- partialVerdict (length skipped) <$> checkConsistencyWith (replProver state) (replRegistry state)
         case res of
             Sat _ -> do
                 note <- caveatLine state
@@ -182,9 +201,13 @@ evalREPLCommand state input
         let args = words (trim (drop 7 input))
         case args of
             [child, parent] -> do
+                skippedN <- length <$> skippedAxioms state
                 res <- proveSubsumptionWith (replProver state) (replRegistry state) child parent
                 case res of
                     Subsumed -> return (state, "✅ Theorem Proved via " ++ proverName (replProver state) ++ ": '" ++ child ++ "' ⊑ '" ++ parent ++ "' (Every instance of " ++ child ++ " is necessarily a " ++ parent ++ ").")
+                    NotSubsumed _ | skippedN > 0 ->
+                        return (state, "⚠️  Theorem unknown via " ++ proverName (replProver state) ++ ": a counterexample exists for the axioms that were checked, but "
+                            ++ show skippedN ++ " axiom(s) could not be checked, so '" ++ child ++ "' ⊑ '" ++ parent ++ "' is neither proved nor disproved. Run :solve to list them.")
                     NotSubsumed model -> do
                         note <- caveatLine state
                         return (state, "❌ Theorem Disproved via " ++ proverName (replProver state) ++ ": '" ++ child ++ "' is NOT subsumed by '" ++ parent ++ "'. Counterexample model:\n" ++ model ++ note)
@@ -197,7 +220,9 @@ evalREPLCommand state input
             Left err -> return (state, "❌ SMT Solver Error:\n" ++ err)
             Right [] -> do
                 note <- caveatLine state
-                return (state, "✅ All concepts are satisfiable (0 empty concepts) via " ++ proverName (replProver state) ++ "." ++ note)
+                skipped <- skippedAxioms state
+                let partial = if null skipped then "" else "\n⚠️  " ++ show (length skipped) ++ " axiom(s) were not sent to the solver, so this covers the checked axioms only. Run :solve to list them."
+                return (state, "✅ All concepts are satisfiable (0 empty concepts) via " ++ proverName (replProver state) ++ "." ++ note ++ partial)
             Right unsatList -> return (state, "❌ Unsatisfiable / Contradictory Concepts Found via " ++ proverName (replProver state) ++ ":\n" ++ unlines (map ("  - " ++) unsatList))
 
     | input == ":clear" =
@@ -231,6 +256,9 @@ evalREPLCommand state input
             Nothing  -> return (state, "❌ Unknown emit target: " ++ target ++ ". Valid targets: " ++ intercalate ", " (map targetName targets))
             Just tgt -> return (state, concatMap snd (targetEmit tgt (replEmitOptions state) (replRegistry state)))
 
+    | ":" `isPrefixOf` input =
+        return (state, "❌ Unknown command: " ++ head (words input) ++ ". Type :help for commands.")
+
     | otherwise = do
         -- Try parsing as DSL S-expression
         case parse parseRegistry "<repl>" (T.pack input) of
@@ -240,6 +268,12 @@ evalREPLCommand state input
                     errs = lintRegistry merged
                     lintMsg = if null errs then "" else "\n⚠️  Lint warning: " ++ head errs
                 in return (state { replRegistry = merged }, "Added to registry." ++ lintMsg)
+
+-- | Axioms the current prover's theory leaves out (empty for backends that do not use SMT-LIB).
+skippedAxioms :: REPLState -> IO [(FOL, String)]
+skippedAxioms state = do
+    smtRoute <- usesSmtTheory (replProver state)
+    return (if smtRoute then untranslatedAxioms (replRegistry state) else [])
 
 -- | Extra line for an all-clear answer from a prover without arithmetic; empty when none applies.
 caveatLine :: REPLState -> IO String

@@ -1,0 +1,9 @@
+; Ground truth: UNSAT. alice is an Employee; every Employee has a badge; nothing has a badge.
+(def-concept Person)
+(def-concept Employee Person)
+(def-concept Badge)
+(def-relation has_badge Employee Badge)
+(def-individual alice Person)
+(Employee alice)
+(forall (x) (implies (Employee x) (exists (y) (has_badge x y))))
+(forall (x y) (not (has_badge x y)))

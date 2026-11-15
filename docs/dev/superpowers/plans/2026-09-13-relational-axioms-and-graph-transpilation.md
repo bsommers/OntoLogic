@@ -1,4 +1,5 @@
 # Milestone 5 Plan: Multi-Entity Relational Axioms & Graph Transpilation
+Status: historical plan. See CHANGELOG.md for what shipped.
 
 > **Context:** Expands OntoLogic's compiler and intermediate representation to support cross-entity relationships (`(def-relation ...)` and multi-variable First-Order Logic predicates), transpiling them into Neo4j graph relationships, OWL Object Properties, OOP association references, and visualizer relationship arrows.
 > **Tracking Document:** [`docs/dev/superpowers/REPLAY_PLAYBOOK.md`](../REPLAY_PLAYBOOK.md)

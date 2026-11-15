@@ -4,13 +4,13 @@ The REPL is an interactive session in which you load or type ontology forms, lin
 
 ```text
 ╔════════════════════════════════════════════════════════════╗
-║              OntoLogic Interactive REPL v1.0               ║
+║           OntoLogic Interactive REPL v1.8.4                ║
 ║   Type ':help' for commands or enter DSL expressions       ║
 ╚════════════════════════════════════════════════════════════╝
 ontologic>
 ```
 
-Input is read one line at a time, so each form or command must fit on one line. End the session with `:quit`, `:q`, `exit`, or end-of-input (Ctrl-D).
+The version in the banner is the same number `ontologic --version` prints. Input is read one line at a time, so each form or command must fit on one line. End the session with `:quit`, `:q`, `exit`, or end-of-input (Ctrl-D).
 
 ## Commands
 
@@ -34,7 +34,7 @@ Input is read one line at a time, so each form or command must fit on one line. 
 | `:clear` | Empty the session (the prover choice is kept) |
 | `:quit`, `:q`, `exit` | Leave |
 
-Anything that is not a command is parsed as DSL. A line may contain one or several top-level forms; they are merged into the session. The linter runs after each addition and, if it finds a problem, prints `⚠️ Lint warning: ...` for the first one; the forms stay in the session regardless.
+Anything that is not a command is parsed as DSL. A line that starts with `:` but is not a command prints an "unknown command" message (type `:help` for the list) instead of a parse error. A line may contain one or several top-level forms; they are merged into the session. The linter runs after each addition and, if it finds a problem, prints `⚠️ Lint warning: ...` for the first one; the forms stay in the session regardless.
 
 The `native` and `vampire` provers have no arithmetic. When one of them is active (or `auto` has no external solver to use) and the session uses `gt`, `gte`, `lt` or `lte`, an all-clear from `:solve`, `:model`, `:explain`, `:unsat` or `:prove` ends with `⚠️ ... checks this theory without arithmetic ...`. Confirm such an answer with `:prover z3` or `:prover cvc5`.
 
@@ -89,8 +89,9 @@ ontologic> :prove Vehicle Truck
 ## Differences from the CLI
 
 - `:load` does not take `--lib-path`; use `ONTOLOGIC_PATH`.
+- The time limit defaults to 60 seconds, as on the CLI, but there is no flag to change it here.
 - `:load` loads even when there are lint errors (it reports `Loaded ... with N lint warnings`); the CLI refuses to continue past lint errors.
-- There are no `-T`/`--solve-timeout` or `--solve-memory` controls; for bounded runs use the CLI.
+- There are no `-T`/`--solve-timeout` or `--solve-memory` controls; for other time limits use the CLI.
 - `:solve` always prints the model on SAT; the CLI needs `--inspect-model`.
 - `:prove` exists only here.
 - Malformed input prints a parse error with a caret and leaves the session unchanged:
@@ -104,5 +105,11 @@ ontologic> (oops
   |      ^
 unexpected end of input
 ```
+
+## Finding library names and scripting
+
+To see what a library module offers, load it and list it: `:load ontologic-lib/mitre_attack.logic` (or any file on the search path) and then `:show` lists the concepts, properties and relations, including their prefixes such as `bfo:MaterialEntity`.
+
+The REPL reads standard input, so you can script it: `printf ':load model.logic\n:solve\n:unsat\n' | ontologic-exe --repl`. Remember that `:prove` and `:unsat` exist only in the REPL, so a CI job that needs them has to pipe commands like this.
 
 Next: [Editor and LSP](editor-and-lsp.md)

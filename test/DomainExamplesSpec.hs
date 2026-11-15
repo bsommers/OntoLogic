@@ -95,7 +95,7 @@ spec = describe "Domain examples (data-driven fixtures)" $ do
 
     hasConflict <- runIO (doesFileExist conflict)
     if hasConflict
-      then it "conflict fixture is inconsistent (UNSAT)" $ do
+      then it "conflict fixture is flagged (UNSAT or an empty concept)" $ do
        mp <- pickSmtProver
        case mp of
         Nothing -> pendingWith "neither z3 nor cvc5 installed in PATH"
@@ -105,8 +105,13 @@ spec = describe "Domain examples (data-driven fixtures)" $ do
           Left err  -> expectationFailure (conflict ++ ": failed to load: " ++ err)
           Right reg -> do
             res <- checkConsistencyWithOptions domainOpts prover reg
-            case res of
-              Unsat -> return ()
-              _     -> expectationFailure (conflict ++ ": expected UNSAT but got " ++ show res)
-      else it "conflict fixture is inconsistent (UNSAT)" $
+            -- A bound that contradicts another for every instance of a concept makes that
+            -- concept empty; it is a contradiction of the whole theory only if an instance
+            -- is asserted. Either outcome flags the conflict; SAT with no empty concept does not.
+            coh <- findUnsatConceptsWithOptions domainOpts prover reg
+            case (res, coh) of
+              (Unsat, _)        -> return ()
+              (_, Right (_:_))  -> return ()
+              _ -> expectationFailure (conflict ++ ": expected UNSAT or an empty concept but got " ++ show (res, coh))
+      else it "conflict fixture is flagged (UNSAT or an empty concept)" $
         pendingWith ("no " ++ conflict)

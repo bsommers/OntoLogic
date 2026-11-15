@@ -389,8 +389,11 @@ MATCH (n:`QualifiedRecipe`) WHERE NOT (n.`is_released` = true) RETURN elementId(
 MATCH (n:`KillerDefect`) WHERE NOT (n.`is_killer` = true) RETURN elementId(n) AS invalid_node_id;
 
 // WARNING: The following axioms could not be mapped to field constraints:
+//   forall r (QualifiedRecipe(r) implies is_released = True)
+//   forall t (ProcessTool(t) implies is_qualified = True)
 //   forall s (ProcessStep(s) implies exists r (Recipe(r) and uses_recipe(s, r)))
 //   forall p (Photolithography(p) implies exists r (Reticle(r) and uses_reticle(p, r)))
+//   forall d (KillerDefect(d) implies is_killer = True)
 //   forall h (HoldOrder(h) implies exists l (Lot(l) and hold_for(h, l)))
 //   forall w (ProductWafer(w) implies not DummyWafer(w))
 //   forall t (ProcessTool(t) implies not MetrologyTool(t))

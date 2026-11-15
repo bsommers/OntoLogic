@@ -18,23 +18,29 @@ This page maps messages and surprising results to causes and fixes. Messages are
 | `Error: --output is required for target: ts` | Emitter without `-o` | Pass `-o DIR` |
 | `Unknown target: foo` | Misspelled target | See the list in `--help` or the [CLI reference](cli-reference.md#targets) |
 | `option -T: expected a positive integer, got '0'` | Zero or negative limit | Use a value of 1 or more |
+| An import path error mentioning `.logic` or `--allow-absolute-imports` | Import path does not end in `.logic`, or is absolute | Name a `.logic` file; use a relative path or pass `--allow-absolute-imports` |
+| An error about `--neo4j-edition` | Value other than `community` or `enterprise` | Use one of those two |
 
 ## Lint errors
 
-All have the form `file:line:col: error: message` and make the run exit 1.
+Errors have the form `file:line:col: error: message` and make the run exit 1. The one exception is `Axiom contradiction: bottom (false) asserted.`, which has no position. Warnings have the form `file:line:col: warning: message`; they are printed but the run still exits 0.
 
 | Message | Meaning and fix |
 |---------|-----------------|
 | `Undeclared parent concept: B referenced by A` | `A`'s parent is not declared. Declare it or fix the name. For library concepts include the prefix: `bfo:MaterialEntity` |
 | `Undeclared domain concept: X in property p` | The property's domain concept is missing |
-| `Undeclared domain/range concept: X in relation r` | A relation endpoint is missing |
+| `Undeclared range concept: X in ...` | The property's or relation's range concept is missing |
+| `Undeclared domain concept: X in relation r` | A relation endpoint is missing (the range side says `Undeclared range concept`) |
+| `Undeclared property type` | A property type such as `Int` or `DateTime` that is neither built in (`Integer`, `Float`, `Double`, `String`, `Boolean`) nor a declared concept. Use `Integer`, or declare the concept |
+| `Duplicate namespace prefix declaration: p` | Two `namespace` forms give the same prefix two different URIs. Keep one (repeating the same prefix and URI is fine) |
 | `Duplicate concept definition: A` | Two differing definitions of one concept (identical repeats are merged silently) |
 | `Circular inheritance: ["A","B","A"]` | The parent chain loops |
 | `Property contradiction on p: gt 5 and lt 3` | One axiom demands incompatible bounds |
 | `Cross-axiom contradiction on C.p: ...` | Axioms (including inherited ones) on a concept's property conflict |
-| `Semantic contradiction: Concept H implies both T and C, but T is disjoint with C.` | A subclass of two disjoint concepts. Remove one parent or the disjointness axiom |
+| `warning: Semantic contradiction: Concept H implies both T and C, but T is disjoint with C.` | A warning, not an error. A subclass of two disjoint concepts. Remove one parent or the disjointness axiom |
 | `Axiom contradiction: bottom (false) asserted.` | An axiom reduces to `bottom` |
-| `Semantic contradiction: Global axioms derive unsatisfiable conflict: A, B.` | The axioms force these concepts to be empty |
+| `warning: Semantic contradiction: Global axioms derive unsatisfiable conflict: A, B.` | A warning. The axioms force these concepts to be empty; `--solve` confirms |
+| `warning: ... undeclared predicate/property ...` | An axiom uses a name you did not declare. Check for a typo |
 
 Contradictions can be reported twice (once per operand order); fix the first and the pair disappears.
 
@@ -42,9 +48,10 @@ Contradictions can be reported twice (once per operand order); fix the first and
 
 | Output | Meaning |
 |--------|---------|
-| `⚠️ N axiom(s) were not sent to the solver` | Those axioms could not be translated (reason in parentheses). The verdict covers the rest. See [Axioms and reasoning](axioms-and-reasoning.md#axioms-that-are-not-sent) |
+| `⚠️ N axiom(s) were not sent to the solver` | Those axioms could not be translated (reason in parentheses). If the rest is satisfiable the verdict is unknown (exit 2), not consistent; an UNSAT verdict stands. See [Axioms and reasoning](axioms-and-reasoning.md#axioms-that-are-not-sent) |
 | `ℹ️ ... --free-constants` | You enabled free-constants mode; undeclared names are treated as constants |
-| `SMT Solver Result (unknown): ...` | Exit 2. Timeout or the solver gave up. Raise `-T`, try another `-p`, or simplify the ontology |
+| `SMT Solver Result (unknown): ...` | Exit 2. Timeout or the solver gave up (or the native prover met equality, which it does not reason about). Raise `-T` (default 60 seconds), try another `-p`, or simplify the ontology |
+| `SMT Solver Error: ...` with solver text | Exit 1. The solver printed an error, could not parse its input, or gave no single clear answer. This is never reported as satisfiable. Run the solver by hand on the `-t smt` or `-t tptp` output to see why |
 | `SMT Solver Error: Failed to execute Z3 solver: ... Ensure 'z3' is installed and available in PATH.` | You asked for a specific prover (`-p z3`) that is not installed. Install it, or use `-p auto`/`-p native` |
 | `Unknown prover 'x'. Valid options: z3, cvc5, vampire, native, auto` | Bad `-p` value |
 | `⚠️ --solve-memory is not supported by CVC5 and is ignored.` | Memory limits apply to Z3 only |
@@ -82,7 +89,7 @@ OntoLogic flags the answers this affects. When the ontology uses `gt`, `gte`, `l
 | REPL form spans several lines and fails | Each REPL line is parsed on its own; put the whole form on one line |
 | Editor shows no diagnostics | Check the "OntoLogic" output channel; run "OntoLogic: Restart Language Server"; make sure `ontologic-lsp` is found (set `ontologic.lsp.path`) |
 | Editor reports undeclared library concepts | `ONTOLOGIC_PATH` must be set in the environment the editor was launched from |
-| Snippet expands to code that does not parse | The concept and axiom snippets use an older syntax; see [Editor and LSP](editor-and-lsp.md) |
+| REPL says an unknown command | A line starting with `:` that is not a REPL command; `:help` lists them |
 
 ## Getting more detail
 

@@ -1,7 +1,8 @@
 # Milestone v1.8.0 Plan: CLIF Interop: Port `feature/upstream-extensions` onto `main`
+Status: SHIPPED in v1.8.0.
 
 > **Context:** [clif2OntoLogic](https://github.com/bsommers/clif2OntoLogic) translates COLORE / BFO-2020 Common Logic (CLIF) ontologies into `.logic` modules. Its Phase 08 work ("UP-01..UP-05") went onto branch `feature/upstream-extensions` (`b4376cf`), which forked from `064530a` (2026-09-17) and was **never merged**. Since then `main` has independently added equality (`Eq`), function terms (`Apply`), typed quantifiers, `Top`/`Bottom`, and a FOL→SMT theory (`FOLTheory.hs`). This milestone moves the parts of the branch that are still missing onto `main`, **without changing the `FOL` / `Term` data types**. Once it ships, clif2OntoLogic re-pins to the v1.8.0 tag.
-> **Tracking Document:** [`.planning/ROADMAP.md`](../../../.planning/ROADMAP.md)
+> **Tracking Document:** the project roadmap
 > **Sequencing:** Start after v1.7.0 (CNF + native prover) has merged. Branch: `feature/clif-interop-v1.8.0` off `main`.
 > **Status:** Plan only. No code has been written.
 

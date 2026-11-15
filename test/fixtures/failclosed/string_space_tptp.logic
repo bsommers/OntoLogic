@@ -1,0 +1,8 @@
+; Ground truth: UNSAT. Every Task has an owner; no Task has an owner. A string with a space is also used.
+(def-concept Task)
+(def-concept Person)
+(def-relation owner Task Person)
+(def-property status Task String)
+(exists (t) (and (Task t) (eq status "in progress")))
+(forall (t) (implies (Task t) (exists (p) (owner t p))))
+(forall (t p) (not (owner t p)))

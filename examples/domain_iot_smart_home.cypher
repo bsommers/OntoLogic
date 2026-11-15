@@ -325,8 +325,12 @@ MATCH (n:`PersonalData`) WHERE NOT (n.`retention_days` <= 365) RETURN elementId(
 MATCH (n:`VideoRecording`) WHERE NOT (n.`is_end_to_end_encrypted` = true) RETURN elementId(n) AS invalid_node_id;
 
 // WARNING: The following axioms could not be mapped to field constraints:
+//   forall i (FirmwareImage(i) implies is_signed = True)
+//   forall v (VideoRecording(v) implies is_end_to_end_encrypted = True)
 //   forall p (PersonalData(p) and is_shared_with_third_party = True implies exists c (Consent(c) and covers(c, p)))
 //   forall v (VideoRecording(v) implies exists c (ConsentGrant(c) and covers(c, v)))
 //   forall s (SmartSpeaker(s) and is_listening = True implies has_hardware_mute = True)
+//   forall a (Automation(a) implies runs_unattended = False)
+//   forall d (SmartDevice(d) implies default_password_changed = True)
 //   forall c (Camera(c) implies not SmartSpeaker(c))
 //   forall c (ConsentGrant(c) implies not ConsentWithdrawal(c))

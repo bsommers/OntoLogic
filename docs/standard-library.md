@@ -1,6 +1,6 @@
 # Standard Library
 
-`ontologic-lib/` ships 19 ready-made `.logic` modules, layered on a common
+`ontologic-lib/` ships 18 ready-made `.logic` modules, layered on a common
 upper ontology. Import what you need by bare file name; the transitive imports
 come with it.
 
@@ -44,7 +44,7 @@ Arrows point from an imported module to the module that imports it.
 ## Importing
 
 ```lisp
-(namespace "cco" "http://www.ontologyrepository.com/CommonCoreOntologies/")
+(namespace cco "http://www.ontologyrepository.com/CommonCoreOntologies/")
 
 (import "cco_core.logic")        ; also pulls in bfo_2020.logic
 (import "mitre_attack.logic")    ; also pulls in stix_cve, uco_observables, cco_core, bfo_2020
@@ -60,9 +60,10 @@ ontologic -i my_model.logic --solve
 ontologic -i my_model.logic -t sql -o out/
 ```
 
-Imports are searched in the importing file's directory, `$ONTOLOGIC_PATH`, the
-directory beside the binary, the package data directory, `./ontologic-lib`, and
-the current directory last. Add folders with `--lib-path DIR`. A module imported
+Imports are searched in the importing file's directory, then each `--lib-path DIR`
+(repeatable), `$ONTOLOGIC_PATH`, the directory beside the binary, the package data
+directory, `./ontologic-lib`, and the current directory last. An import must name
+a `.logic` file. A module imported
 by two paths is loaded once. See [architecture](architecture.md#frontend-and-loader).
 
 ## Upper ontologies
@@ -106,12 +107,16 @@ by two paths is loaded once. See [architecture](architecture.md#frontend-and-loa
 Concept counts for `ecosystem_unified.logic` are its own additions; the imports
 bring the rest.
 
+## Finding the names a library defines
+
+Library concepts carry their namespace prefix, so you write `bfo:MaterialEntity`, not `MaterialEntity`. To list what a module offers, open the file (the `def-concept` lines are the names), or load it in the REPL with `:load ontologic-lib/cco_core.logic` and type `:show`. The linter reports `Undeclared parent concept` when a name or prefix is wrong.
+
 ## Instance data
 
 `ontologic-lib/ecosystem.logic` is tested against a small synthetic Turtle sample,
 [`test/fixtures/ecosystem_symbols.ttl`](../test/fixtures/ecosystem_symbols.ttl).
 Individuals can also be declared directly with `def-individual` (see the
-[language reference](user-guide/language-reference.md)).
+[language reference](user-guide/language-reference.md)). Today `def-individual` only feeds the solver; no generated target (OWL, Neo4j, SQL, TypeScript and so on) emits individuals, and OntoLogic has no way yet to check a data file against the model.
 
 ## Domain examples
 

@@ -1,4 +1,5 @@
 # Review Remediation Implementation Plan
+Status: SHIPPED. All issues in this plan were fixed; the unticked boxes below are historical.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -542,7 +543,7 @@ The VS Code side of #16 (success only on an explicit result) is done in Task 0.2
 **Files:**
 - Modify: `src/Solver.hs` (new export)
 - Modify: `src/Main.hs` (`runSolverCheck`, as rewritten in Task 0.3)
-- Modify: `HOW_TO_USE.md` (the `solve` section around line 221)
+- Modify: `docs/using.md` (the `solve` section around line 221)
 - Test: `test/SolverSpec.hs`
 
 **Interfaces:**
@@ -597,7 +598,7 @@ Import `exitWith` from `System.Exit` and `solverExitCode` from `Solver`.
 
 - [ ] **Step 4: Document the codes**
 
-In `HOW_TO_USE.md`, after the `--solve -p cvc5` example (line 225), add:
+In `docs/using.md`, after the `--solve -p cvc5` example (line 225), add:
 
 ```markdown
 `--solve` exit codes: `0` = satisfiable (consistent), `1` = unsatisfiable or solver error, `2` = the solver answered `unknown`.
@@ -609,7 +610,7 @@ Run: `stack test --ghc-options="-Wall -Werror"`
 Expected: all pass.
 
 ```bash
-git add src/Solver.hs src/Main.hs HOW_TO_USE.md test/SolverSpec.hs
+git add src/Solver.hs src/Main.hs docs/using.md test/SolverSpec.hs
 git commit -m "fix(cli): exit 2 when the solver answers unknown (#31)"
 ```
 
@@ -695,7 +696,7 @@ The steps below assume option 1.
 **Files:**
 - Modify: `docs/capabilities.json`, `docs/CAPABILITIES.md`
 - Create: `ontology/README.md`, `ontologic-lib/factory_domain.logic` (vendored)
-- Modify: `.ontology/README.md`, `HOW_TO_USE.md`
+- Modify: `.ontology/README.md`, `docs/using.md`
 - Test: `test/MainSpec.hs`, `test/StandardLibrarySpec.hs`
 
 - [ ] **Step 1: Write the failing tests**
@@ -787,7 +788,7 @@ Append to `.ontology/README.md`:
 `ontology/` holds the component ontology written by the ecosystem spider. Different owners, so both are kept.
 ```
 
-Add a line to `HOW_TO_USE.md` pointing at both READMEs.
+Add a line to `docs/using.md` pointing at both READMEs.
 
 - [ ] **Step 5: Run the tests and commit**
 
@@ -795,7 +796,7 @@ Run: `stack test --ghc-options="-Wall -Werror"`
 Expected: all pass.
 
 ```bash
-git add docs/capabilities.json docs/CAPABILITIES.md ontology/README.md .ontology/README.md ontologic-lib/factory_domain.logic HOW_TO_USE.md test/MainSpec.hs test/StandardLibrarySpec.hs
+git add docs/capabilities.json docs/CAPABILITIES.md ontology/README.md .ontology/README.md ontologic-lib/factory_domain.logic docs/using.md test/MainSpec.hs test/StandardLibrarySpec.hs
 git commit -m "fix(capabilities): real entrypoints and test command; vendor factory_domain; document ontology dirs (#30)"
 ```
 
@@ -1440,7 +1441,7 @@ git add package.yaml ontologic.cabal src/Loader.hs src/Main.hs test/ImportSpec.h
 git commit -m "fix(loader): find the standard library from any directory; add --lib-path (#29)"
 ```
 
-Also add a sentence about `ONTOLOGIC_PATH` and `--lib-path` to the stdlib section of `HOW_TO_USE.md`.
+Also add a sentence about `ONTOLOGIC_PATH` and `--lib-path` to the stdlib section of `docs/using.md`.
 
 **Wave 1 gate:** all Wave 1 PRs merged, CI green on `main`, milestone `Wave 1: Foundations` shows 0 open issues.
 
@@ -2049,7 +2050,7 @@ Asserting non-emptiness inside the consistency check would have made both questi
 **Files:**
 - Modify: `src/Solver.hs` (`proveSubsumptionWith`, `findUnsatConceptsWith`, `emitSMTForConsistency`; delete `checkSingleClassSatisfiability`; new export `untranslatedAxioms`)
 - Modify: `src/Main.hs` (`runSolverCheck`), `src/REPL.hs` (`:solve` branch)
-- Modify: `HOW_TO_USE.md` (solver section)
+- Modify: `docs/using.md` (solver section)
 - Test: `test/SolverSpec.hs`, `test/MainSpec.hs`
 
 **Interfaces:**
@@ -2209,7 +2210,7 @@ Apply the same warning block to the REPL `:solve` output, prepended to the retur
 
 - [ ] **Step 5: Document**
 
-In `HOW_TO_USE.md`'s solver section, add: "`--solve` reports two things. **Consistency**: whether the axioms can be satisfied at all. **Coherence**: which concepts can have no instance, given the axioms, bounds and hierarchy (the same check as the REPL's `:unsat`). It exits non-zero if either fails, `2` if the solver could not decide. Axioms the SMT encoding cannot express are listed first."
+In `docs/using.md`'s solver section, add: "`--solve` reports two things. **Consistency**: whether the axioms can be satisfied at all. **Coherence**: which concepts can have no instance, given the axioms, bounds and hierarchy (the same check as the REPL's `:unsat`). It exits non-zero if either fails, `2` if the solver could not decide. Axioms the SMT encoding cannot express are listed first."
 
 - [ ] **Step 6: Run the tests and commit**
 
@@ -2217,7 +2218,7 @@ Run: `stack test --ghc-options="-Wall -Werror"`
 Expected: all pass, including the older solver tests (Car ⊑ Vehicle, the CVC5 cases, and `ContradictoryNode`). If the bfo_2020 timing test is close to 60 s, record the measured time in the PR.
 
 ```bash
-git add src/Solver.hs src/Main.hs src/REPL.hs HOW_TO_USE.md test/SolverSpec.hs test/MainSpec.hs
+git add src/Solver.hs src/Main.hs src/REPL.hs docs/using.md test/SolverSpec.hs test/MainSpec.hs
 git commit -m "fix(solver): send FOL axioms to the solver; one-process :unsat; report untranslated axioms (#18)"
 ```
 

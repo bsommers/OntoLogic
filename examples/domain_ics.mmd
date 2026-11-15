@@ -189,6 +189,9 @@ classDiagram
 
 %% WARNING: The following axioms could not be mapped to field constraints:
 %%   forall c (SafetyController(c) implies not Plc(c))
+%%   forall a (CriticalAlarm(a) implies requires_acknowledgement = True)
+%%   forall c (Controller(c) implies is_internet_facing = False)
 %%   forall b (Bypass(b) implies exists r (SafetyAuthorityRole(r) and authorised_by(b, r)))
 %%   forall t (ProcessTrip(t) and is_tripped = True implies exists i (Interlock(i) and initiates(i, t)))
+%%   forall f (FirmwareChange(f) implies firmware_signed = True)
 %%   forall x (Alarm(x) implies not Interlock(x))

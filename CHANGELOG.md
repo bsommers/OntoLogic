@@ -7,6 +7,87 @@ All notable changes to OntoLogic are recorded here. The format follows
 Entries before 1.5.1 were back-filled from git history. v1.4.0 and v1.5.0 were
 tagged after the fact, on their version-bump commits.
 
+## [1.8.4] - Unreleased
+
+"Honest surface": the solver no longer reports a theory as consistent when it failed, the
+linter stops rejecting satisfiable theories, and the emitters stop dropping rules silently.
+
+### Behaviour changes you will notice
+- **Errors that used to print "consistent" now fail.** A Z3 or CVC5 `(error ...)` line, a
+  Vampire parse failure, or any output that is not exactly one verdict line is reported as a
+  solver error with a non-zero exit. Scripts that relied on exit 0 in those cases will now see
+  a failure. That is the intended fix.
+- **Some lint findings are now warnings.** Findings from the propositional (SAT) pass are
+  printed as `warning:` and do not stop the run (exit 0); the language server publishes them
+  with warning severity. Structural findings, bound contradictions and cross-axiom concept
+  contradictions stay errors.
+
+### Fixed
+- Fail closed on every backend (Z3, CVC5, Vampire, native). Vampire is given `--input_syntax
+  tptp`; GaveUp, ResourceOut and Timeout are "unknown". `unsat` is never read as `sat`.
+- The native prover answers "unknown" (exit 2) when the theory uses equality, instead of a
+  verdict it cannot support.
+- An empty concept is reported as such and no longer as a global contradiction (bounds are no
+  longer asserted on a fictitious concept constant). `:explain` checks consistency first.
+- The `--solve-memory` warning is accurate and the "not sent" notice appears only on the SMT
+  route; very large `-T` values are clamped instead of overflowing.
+- Linter: a fact about one individual is no longer read as universal; `(implies ... false)`
+  and `(not false)` are accepted; bounds are read only under their binder guard. `--cnf` no
+  longer hangs on `(not top)`.
+- Conditionals written with `eq` or `ne` (string, Boolean, numeric) are enforced in Python,
+  Java, Rust, Go and TypeScript and carry a real premise in SHACL. No translator falls back
+  to `true`; what cannot be expressed is emitted as an "unmapped" comment. Conditionals on
+  inherited properties compile in Rust, Java and Go. A declared relation named gt, gte, lt or
+  lte is no longer treated as arithmetic.
+- `Int` in `ontologic-lib/factory_domain.logic` and undeclared symbols in two examples.
+- **A partial check is no longer reported as consistent.** When any axiom is not sent to the
+  solver and the rest is satisfiable, the answer is "unknown" (exit 2) with the count and the
+  list of axioms, in the CLI, the REPL (`:solve`, `:model`, `:explain`; a `:prove` that would
+  say Disproved says unknown) and the language server. UNSAT and Proved are unchanged.
+  `examples/security_policy.logic` now declares `AdminPanel`, which its axiom referred to.
+- **The native prover now stays within `-T`.** The limit was applied afresh to the consistency
+  check and to every concept of the coherence sweep, so `-T 20` on a theory it cannot saturate
+  ran for 60 s. The limit is now one budget for the whole `--solve` run, and the prover and
+  clausifier modules are compiled with `-fno-omit-yields` so that a non-allocating loop
+  cannot defeat the timeout.
+
+### Changed
+- Default solver time limit is 60 s when `-T` is not given (CLI, REPL, language server).
+- Imports must name a `.logic` file; absolute import paths are refused unless
+  `--allow-absolute-imports` is given (relative `../` imports still work).
+- `--version` prints `ontologic 1.8.4` and the REPL banner shows the same version;
+  `--neo4j-edition` rejects unknown values; an unknown REPL `:command` says so.
+- Namespace rule: two different URIs for one prefix is an error; repeating the same prefix and
+  URI is fine.
+- User guide and README corrected against behaviour; "zero schema drift" is now stated as an
+  aim with a link to the limitations. VS Code extension grammar and snippets rewritten.
+
+### Added
+- New lint errors: undeclared property range or type (for example `Int`, `DateTime`) and a
+  namespace prefix with conflicting URIs. New warning: undeclared predicate or property inside
+  an axiom.
+- Tests: fail-closed solver spec and fixtures, lint-soundness spec, emitter-parity spec, and a
+  documentation-sample spec that parses every sample in the README and user guide.
+- `scripts/check_links.py` (non-zero exit on broken relative links).
+- GitHub Actions: the full build-and-test workflow (`ci.yml`) is now manual-only
+  (`workflow_dispatch`), and the full gate stays local. A light `docs` workflow
+  (`docs.yml`, link check) runs on pull requests, including from forks, and on pushes to
+  `main`; the Pages deployment is unchanged. The manual run uses the coverage script, fails
+  when Vampire is missing and fails on unexpected pending examples. Adds CODEOWNERS, issue and
+  PR templates, dependabot.
+
+### Security
+- Imports of non-`.logic` files are refused without echoing file contents, and absolute
+  import paths need an explicit flag.
+- `SECURITY.md` (GitHub private vulnerability reporting), `CONTRIBUTING.md` and a code of
+  conduct added. The unused Dockerfile.python and requirements.txt were removed.
+
+### Known limitations
+- Some wrong verdicts remain until the typed theory in v1.9.0 (see the soundness defects
+  deferred to that milestone).
+- `--warn-unmapped` is not yet per target.
+- SQL keeps its own comparison inversion and reports string and Boolean equality as unmapped.
+
 ## [1.8.3] - 2026-11-11
 
 Emitter, REPL and prover fixes found while writing the user guide, and a warning for answers
@@ -168,7 +249,7 @@ Automated Theorem Prover (ATP) expansion via Vampire & TPTP FOF, PostgreSQL / AN
   - Hover documentation tooltips (`textDocument/hover`) showing concept parentage, attached properties, and comments.
   - Symbol rename refactoring (`textDocument/rename` and `prepareRename`) with workspace-wide text edits.
   - On-demand code formatting provider (`textDocument/formatting`).
-- **Architectural Rationale Manifesto (`docs/WHY_ONTOLOGIC.md`):**
+- **Architectural Rationale Manifesto (`docs/purpose.md`):**
   - Comprehensive manifesto detailing the 5 fatal anti-patterns in modern systems (Distributed Logic Drift, Sloppiness Tax, LLM Hallucinations, Academic OWL Trap, Data vs. Logic Contracts).
   - Root `README.md` and `docs/README.md` links updated.
 

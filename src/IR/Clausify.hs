@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-omit-yields #-}
 module IR.Clausify
     ( clausify
     , clausifyTheory
@@ -83,6 +84,8 @@ desugarFOL other        = other
 -- | Step 2: Push negations inward to form Negation Normal Form (NNF)
 toNNF :: FOL -> FOL
 toNNF (Not (Not p))       = toNNF p
+toNNF (Not Top)           = Bottom
+toNNF (Not Bottom)        = Top
 toNNF (Not (And p q))     = Or (toNNF (Not p)) (toNNF (Not q))
 toNNF (Not (Or p q))      = And (toNNF (Not p)) (toNNF (Not q))
 toNNF (Not (ForAll v p))  = Exists v (toNNF (Not p))
@@ -235,7 +238,7 @@ clausifyTheory reg = runClausifyM $ do
     --    numeric bounds exclude each other (see 'disjointBoundPairs').
     let arithAxioms =
           [ ForAll "t" (Not (And (Predicate op1 [Var "t", Constant a]) (Predicate op2 [Var "t", Constant b])))
-          | ((op1, a), (op2, b)) <- disjointBoundPairs (axioms reg)
+          | ((op1, a), (op2, b)) <- disjointBoundPairs reg
           ]
     let allAxioms = taxonomyAxioms ++ relationDomainAxioms ++ relationRangeAxioms ++ regAxioms ++ arithAxioms
     clauseLists <- mapM clausifyFOL allAxioms

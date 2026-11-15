@@ -178,7 +178,7 @@ spec = do
       case files of
         [("Controller", code)] -> do
           code `shouldContain` "@AssertTrue"
-          code `shouldContain` "public boolean isValidConstraint1()"
+          code `shouldContain` "public boolean isValidConstraint_Controller_1()"
           let tmpDir = "/tmp/javac_assert_test"
           createDirectoryIfMissing True tmpDir
           writeFile (tmpDir </> "Controller.java") code
@@ -209,9 +209,9 @@ spec = do
           files = emitJava reg
       case files of
         [("Device", code)] -> do
-          code `shouldContain` "(this.power != null && this.power < 10)"
-          code `shouldContain` "!Objects.equals(this.mode, \"standby\")"
-          code `shouldContain` "(!\"False\".equalsIgnoreCase(String.valueOf(this.active)) && !Boolean.FALSE.equals(this.active))"
+          code `shouldContain` "(this.getPower() != null && this.getPower() < 10)"
+          code `shouldContain` "!Objects.equals(this.getMode(), \"standby\")"
+          code `shouldContain` "(!\"False\".equalsIgnoreCase(String.valueOf(this.getActive())) && !Boolean.FALSE.equals(this.getActive()))"
         _ -> expectationFailure "Expected single Device file"
 
     it "emits collection cardinalities and exclusive decimal bounds" $ do

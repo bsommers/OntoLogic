@@ -57,7 +57,7 @@
   },
   "Import File": {
     "prefix": "import",
-    "body": ["(import \"${1:ontologic-lib/bfo_2020.logic}\")$0"],
+    "body": ["(import \"${1:bfo_2020.logic}\")$0"],
     "description": "Import an external ontology definition file"
   }
 }

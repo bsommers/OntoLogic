@@ -1,7 +1,8 @@
 # Milestone v1.7.0 Plan: Canonical Clausal Normal Form (CNF) IR & Native First-Order Prover Engine
+Status: SHIPPED in v1.7.0.
 
 > **Context:** Evolution from relying exclusively on external automated theorem provers (Z3, CVC5, Vampire) over process stdio to providing a native, zero-dependency First-Order Logic (FOL) reasoning engine. Incorporates a formal Canonical Clausal Normal Form (CNF) intermediate representation and a built-in resolution/tableau prover directly in Haskell.
-> **Tracking Document:** [`.planning/ROADMAP.md`](../../../../.planning/ROADMAP.md)
+> **Tracking Document:** the project roadmap
 
 ---
 

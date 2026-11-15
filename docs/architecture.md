@@ -71,7 +71,9 @@ emitter or solver runs.
 ## Frontend and loader
 
 - **Grammar.** Top-level forms are `def-concept`, `def-property`, `def-relation`,
-  `def-axiom` (and bare `forall` / `exists` axioms), `namespace` and `import`.
+  `def-individual`, `def-axiom` (and bare `forall` / `exists` axioms), `namespace`
+  and `import`. Typed binders `((x Concept))`, `if` (a synonym of `implies`) and
+  `!=` are also accepted.
   Formulas use `forall`, `exists`, `implies`, `iff`, `and`, `or`, `not`, equality,
   comparison operators (`gt`, `gte`, `lt`, `lte`) over signed numeric literals,
   and strings. See the [language reference](user-guide/language-reference.md).
@@ -82,11 +84,12 @@ emitter or solver runs.
   chain of files being visited (a repeat is reported as a circular import with
   the cycle spelled out) and a finished set (a diamond import is loaded once).
   Search order for a relative import: the importing file's directory first, then
-  `$ONTOLOGIC_PATH` (`:`-separated), the directory beside the binary, the package
-  data directory, `./ontologic-lib`, and the current directory last. Extra
-  directories come from the repeatable `--lib-path DIR`. Searching the current
+  each repeatable `--lib-path DIR`, then `$ONTOLOGIC_PATH` (`:`-separated), the
+  directory beside the binary, the package data directory, `./ontologic-lib`, and
+  the current directory last. Searching the current
   directory last means a stray local file cannot shadow a standard-library
-  module. Absolute paths bypass the search.
+  module. Imports must name a `.logic` file, and absolute paths are refused unless
+  `--allow-absolute-imports` is given.
 
 ## Core data model
 

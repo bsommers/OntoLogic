@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-omit-yields #-}
 {-# LANGUAGE DeriveGeneric #-}
 module Prover.Resolution
     ( ClauseId(..)

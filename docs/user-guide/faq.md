@@ -3,13 +3,13 @@
 Short answers to common questions, with links to the pages that go deeper.
 
 **What is OntoLogic for?**
-Writing a domain model once as first-order logic, proving it is consistent, and generating the code, schemas, and diagrams from it so they cannot drift apart. See the [Quickstart](quickstart.md).
+Writing a domain model once as first-order logic, proving it is consistent, and generating the code, schemas, and diagrams from it so that they stay aligned. The aim is that the generated artifacts do not drift from the model, but that is not fully achieved yet: some axioms are not enforced by every target and a few outputs are lossy. See [what is and is not enforced](targets-and-emitters.md#what-is-and-is-not-enforced-or-exported). See the [Quickstart](quickstart.md).
 
 **Is the language Prolog or Datalog?**
 No. Axioms are full first-order logic (disjunction, negation, existentials), not restricted to Horn clauses. See [Axioms and reasoning](axioms-and-reasoning.md) and [../dev/design/constraint_considerations.md](../dev/design/constraint_considerations.md).
 
 **Do I need Z3, CVC5, or Vampire?**
-No. Without any of them `--prover auto` uses a built-in native prover. But the native prover does not reason about numeric bounds like `(gt level 10)`, so install Z3 or CVC5 if your properties have numeric constraints. See [Installation](installation.md).
+No. Without any of them `--prover auto` uses a built-in native prover. The native prover catches clashing numeric bounds (such as `(gte level 100)` with `(lt level 50)`), but integer gaps, and anything involving equality (it answers unknown), need Z3 or CVC5, so install one of them if your properties have numeric constraints. See [Installation](installation.md).
 
 **Which prover should I use?**
 Z3 for most ontologies; CVC5 as a second opinion; Vampire for heavy first-order reasoning without arithmetic; native when nothing is installed. If provers disagree, trust UNSAT from an SMT solver.
@@ -72,7 +72,7 @@ In the REPL, `:prove Truck Vehicle`. See [REPL](repl.md).
 Diagnostics carry the file and line of the declaration (`examples/domain_mining.logic:49:15: error: ...`), even when the root file is a different one.
 
 **Which version am I running?**
-The package version is in `package.yaml` and [../../CHANGELOG.md](../../CHANGELOG.md). The CLI has no `--version` flag.
+Run `ontologic --version`; it prints `ontologic 1.8.4`. The REPL banner shows the same number. The history is in [../../CHANGELOG.md](../../CHANGELOG.md).
 
 **Where do I report problems or contribute?**
 See the contributor workflow in the repository's `AGENTS.md`; the pre-push gate is `stack test --ghc-options="-Wall -Werror"`.

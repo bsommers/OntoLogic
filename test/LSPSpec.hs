@@ -7,7 +7,7 @@ import Parser (parseRegistry)
 import Text.Megaparsec (parse)
 import System.Timeout (timeout)
 import Control.Exception (evaluate)
-import Data.Maybe (isJust)
+import Data.Maybe (isJust, isNothing)
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BC
 import qualified Data.Text as T
@@ -15,7 +15,7 @@ import qualified Data.Text.Encoding as TE
 import qualified Data.Map.Strict as Map
 import Data.List (isInfixOf)
 import System.IO (openBinaryFile, hClose, IOMode(ReadMode))
-import System.Directory (getTemporaryDirectory, createDirectoryIfMissing)
+import System.Directory (getTemporaryDirectory, createDirectoryIfMissing, findExecutable)
 import System.FilePath ((</>))
 
 spec :: Spec
@@ -191,6 +191,21 @@ spec = describe "Language Server Protocol (LSP) Engine" $ do
         case respOpt of
             Nothing -> expectationFailure "Expected executeCommand response"
             Just resp -> resp `shouldContain` "\"status\":\"sat\""
+
+      it "ontologic.solve answers unknown when an axiom could not be sent to the solver" $ do
+        z3 <- findExecutable "z3"
+        cvc5 <- findExecutable "cvc5"
+        if isNothing z3 && isNothing cvc5 then pendingWith "z3/cvc5 not installed" else do
+          let docText = "(def-concept A)\\n(definedIn \\\"a\\\" \\\"b\\\")\\n"
+              openReq = "{\"jsonrpc\":\"2.0\",\"method\":\"textDocument/didOpen\",\"params\":{\"uri\":\"file:///partial.logic\",\"text\":\"" ++ docText ++ "\"}}"
+          (st, _, _) <- handleLSPRequestIO initialLSPState openReq
+          let cmdReq = "{\"jsonrpc\":\"2.0\",\"id\":132,\"method\":\"workspace/executeCommand\",\"params\":{\"command\":\"ontologic.solve\",\"uri\":\"file:///partial.logic\"}}"
+          (_, respOpt, _) <- handleLSPRequestIO st cmdReq
+          case respOpt of
+              Nothing -> expectationFailure "Expected executeCommand response"
+              Just resp -> do
+                  resp `shouldContain` "\"status\":\"unknown\""
+                  resp `shouldContain` "could not be checked"
 
       it "executes ontologic.solve via workspace/executeCommand with standard arguments array" $ do
         let docText = "(def-concept Widget)\\n(def-property weight Widget Float)\\n"

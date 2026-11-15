@@ -45,4 +45,5 @@ MATCH (n:`SecurityCamera`) WHERE NOT (n.`is_recording` = true) RETURN elementId(
 
 // WARNING: The following axioms could not be mapped to field constraints:
 //   forall o (Oven(o) and is_active() implies gt(temperature, 100))
+//   forall c (SecurityCamera(c) implies is_recording = True)
 //   forall m (Mixer(m) and is_active() implies gt(rpm, 0))

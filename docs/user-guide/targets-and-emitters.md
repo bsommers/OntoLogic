@@ -14,6 +14,8 @@ Each `-t <target>` compiles the checked ontology into one or more files in the `
 
 Type mapping: `Integer` becomes the target's 64-bit integer (`int`, `i64`, `int64_t`, `Int` or `integer`); `Float`/`Double` become floating point; `Boolean`, `String` map to the native types; a custom type is a reference to a concept.
 
+Conditional axioms of the form `(forall (x) (implies (and (C x) (eq prop value)) (gt other n)))` are enforced as real `if` checks in the Python, Java, Rust, Go and TypeScript output, and carry a real premise in SHACL. Anything a target cannot express is never silently turned into `true`: it becomes an "unmapped" comment in the output and is listed by `--warn-unmapped`. A relation you declare with the name `gt`, `gte`, `lt` or `lte` is treated as a relation, not as arithmetic.
+
 Constraints are only *enforced* by targets that have a validation notion (Java Jakarta Validation, Pydantic, Zod, Rust/Go/C++ `validate()`, SQL `CHECK`, JSON Schema, OpenAPI, SHACL). The `smt`, `tptp`, `owl`, and diagram targets describe the model rather than enforce it. Background: [../dev/design/constraints_and_patterned.md](../dev/design/constraints_and_patterned.md).
 
 ## Application code
@@ -113,7 +115,7 @@ message Driver {
 
 ### `sql` (aliases `postgres`, `postgresql`, `ddl`)
 
-`schema.sql`: PostgreSQL DDL. One table per concept with a `TEXT` primary key `id`; subclass tables reference the parent with `ON DELETE CASCADE`; bounds become named `CHECK` constraints; relations become junction tables `rel_<name>`.
+`schema.sql`: PostgreSQL DDL. One table per concept with a `TEXT` primary key `id`; subclass tables reference the parent with `ON DELETE CASCADE`; bounds become named `CHECK` constraints; relations become junction tables `rel_<name>`. Today a relation is also written as a `TEXT[]` column on its domain table (for example `"drives" TEXT[]` on `Driver`), so the same relation is represented twice. Treat the junction table as the one to use; cleaning this up is planned for v1.10.0.
 
 ```sql
 CREATE TABLE IF NOT EXISTS "Truck" (
@@ -171,6 +173,33 @@ fof(subclass_Truck_Vehicle, axiom, (! [X] : (is_Truck(X) => is_Vehicle(X)))).
 ## Diagrams
 
 `mermaid` writes `class_diagram.mmd`; `d2` writes `diagram.d2`. Both accept `--render`. See [Visualization](visualization.md).
+
+## What generated code needs at runtime
+
+| Target | Needs |
+|--------|-------|
+| `python` | Python 3 and Pydantic v2 (`pip install pydantic`) |
+| `ts` | Zod (`npm install zod`) |
+| `java` | Jakarta Validation API (`jakarta.validation`) and a validator implementation such as Hibernate Validator. Annotations do nothing until you call a `Validator` |
+| `rust` | Nothing beyond the standard library. Call `validate()` on a value to run the checks |
+| `go` | Nothing beyond the standard library. Call `Validate()` |
+| `cpp` | A C++20 compiler. Call `validate()` |
+| `sql` | PostgreSQL (uses `TEXT[]`, named `CHECK` constraints) |
+| `openapi`, `jsonschema`, `graphql`, `protobuf` | A tool from your own stack that reads the schema |
+| `neo4j` | A Neo4j server. Constraints need Enterprise Edition |
+
+Generated models check field values only when you call the validator; construction alone does not run every check in every language.
+
+## What is and is not enforced or exported
+
+| Axiom kind | Solver (`--solve`) | Generated code |
+|------------|--------------------|----------------|
+| Bounds on a property (`gte`, `lte`, ...) for a concept | checked | enforced where the target has validation |
+| Conditional bounds (`eq prop value` premise) | checked | enforced in Python, Java, Rust, Go, TypeScript, SHACL |
+| Disjointness | checked | not enforced; no `owl:disjointWith` in OWL output; listed as unmapped |
+| Existential ("every Truck has a Site") | checked | not enforced; listed as unmapped |
+| Cardinality, `:optional`, `:default` | not sent to the solver | shapes fields and schemas |
+| `def-individual` | used by the solver | no target emits it |
 
 ## Unmapped axioms
 

@@ -14,7 +14,7 @@ Axioms are full first-order logic, not Horn clauses (see [Language reference](la
 | Subsumption | `(forall (x) (implies (Hybrid x) (Truck x)))` (also implied by `(def-concept Hybrid Truck)`) |
 | Rule | `(forall (o) (implies (and (Oven o) (eq is_active True)) (gt temperature 100)))` |
 
-Cardinality (`:cardinality`), `:optional`, and `:default` on properties and relations shape generated code and schemas but are not part of the solver's logical theory. If you need a cardinality to take part in reasoning, state it as an axiom.
+Cardinality (`:cardinality`), `:optional`, and `:default` on properties and relations shape generated code and schemas but are not part of the solver's logical theory. Disjointness and existential axioms are checked by the solver but are not enforced by generated code and are not exported to OWL (there is no `owl:disjointWith` in the output). If you need a cardinality to take part in reasoning, state it as an axiom.
 
 Disjointness is not a separate keyword; write it as an implication to a negation, as above. The linter recognizes that pattern.
 
@@ -22,11 +22,11 @@ Disjointness is not a separate keyword; write it as an implication to a negation
 
 `-t lint` (or any run, since the linter always goes first) checks:
 
-- Undeclared parents, property domains, and relation endpoints; duplicate concepts, properties, relations, and namespace prefixes.
+- Undeclared parents, property domains and ranges, property types (a type such as `Int` or `DateTime` that is neither built in nor a declared concept), and relation endpoints; duplicate concepts, properties and relations; and a namespace prefix declared with two different URIs (repeating the same prefix and URI is fine).
 - Circular inheritance.
 - Direct contradictions inside one axiom (`P and not P`, asserted `bottom`).
 - Impossible numeric ranges on one property (`gt 5` with `lt 3`), within one axiom and across axioms for a concept and its ancestors.
-- A propositional/Horn pass over the hierarchy and disjointness axioms that finds concepts forced to be empty, for example a subclass of two disjoint concepts.
+- A propositional/Horn pass over the hierarchy and disjointness axioms that finds concepts forced to be empty, for example a subclass of two disjoint concepts. These findings are **warnings** (`warning:`, exit code 0), because the solver is the real judge of consistency. An axiom that mentions a predicate or property name you never declared also gets a warning.
 
 ```bash
 ontologic-exe -i test/fixtures/domains/domain_mining_conflict.logic -t lint
@@ -38,7 +38,7 @@ examples/domain_mining.logic:27:14: error: Cross-axiom contradiction on GasSenso
 examples/domain_mining.logic:27:14: error: Cross-axiom contradiction on GasSensor.methane_level: lt 3 and gt 5
 ```
 
-(Paths are printed in full in real output; they are shortened here.) Any lint error stops the run with exit code 1. Because the linter runs first, `--solve` on an ontology with lint errors prints those errors and does not reach the solver.
+(Paths are printed in full in real output; they are shortened here.) Any lint error (not a warning) stops the run with exit code 1. Every error line carries `file:line:col`, except `Axiom contradiction: bottom (false) asserted.`, which has no position. Because the linter runs first, `--solve` on an ontology with lint errors prints those errors and does not reach the solver.
 
 Add `--warn-unmapped` to also report axioms that the field-constraint emitters cannot express (see below).
 
@@ -52,7 +52,7 @@ How the translation works (`src/FOLTheory.hs`):
 |--------|-----------------|
 | concept `C` | predicate `is_C(x)` |
 | `(def-concept C P)` | `is_C(x) => is_P(x)` |
-| relation `r` | predicate `rel_r(x, y)`, with domain and range implications |
+| relation `r` | predicate `rel_r(x, y)`. The declared domain and range are **not** asserted as axioms on the Z3 and CVC5 route today, so `r(a, b)` does not by itself make `a` a domain instance. If you need that, state it as an axiom. Planned for v1.9.0 |
 | data property `p : T` | function `prop_p(x) -> T` (`Int`, `Real`, `Bool`, `String`) |
 | entity-valued property | treated as a relation |
 | comparison `(gt p v)` in a quantifier | `prop_p(<innermost bound variable>) > v` |
@@ -64,15 +64,17 @@ How the translation works (`src/FOLTheory.hs`):
 
 ### Axioms that are not sent
 
-Some axioms cannot be translated. They are listed before the verdict, and the verdict says how many were checked:
+Some axioms cannot be translated. A check that leaves any axiom out is a partial check, and a partial check can never report "consistent": the axiom that was dropped may be the one that contradicts the rest. If the axioms that were sent are satisfiable, the verdict is **unknown** (exit 2). The message comes first, followed by the list of axioms that were not sent:
 
 ```text
+⚠️  SMT Solver Result (unknown): The axioms that were checked are consistent, but 1 axiom(s) could not be checked, so consistency of the whole ontology is unknown.
 ⚠️  1 axiom(s) were not sent to the solver:
    - ForAll "c" (Implies (And (Predicate "Controller" [Var "c"]) (Eq (Var "safety_status") (Constant "False"))) (Eq (Var "active") (Constant "False"))) (unbound variable active)
-✅ SMT Satisfiable (SAT) — Ontology is logically consistent for the 1 axioms checked.
 ```
 
-Common reasons: an unbound variable, a comparison outside any quantifier, an ordering comparison on a non-numeric property, a property used with conflicting types, a predicate used with different arities. A SAT verdict only covers the axioms actually sent. Fix the axiom or use `--free-constants`.
+UNSAT stands: if the axioms that were sent already contradict each other, the whole ontology is contradictory. The same rule applies in the REPL (`:solve`, `:model`, `:explain`; a `:prove` that would say "Disproved" says unknown, while "Proved" stands) and in the language server's `ontologic.solve` command.
+
+Common reasons: an unbound variable, a comparison outside any quantifier, an ordering comparison on a non-numeric property, a property used with conflicting types, a predicate used with different arities. Fix the axiom (declare the missing name or correct the arity) or use `--free-constants`.
 
 ### `--free-constants`
 
@@ -84,9 +86,9 @@ ontologic-exe -i free.logic --solve --free-constants
 ```
 
 ```text
+⚠️  SMT Solver Result (unknown): The axioms that were checked are consistent, but 1 axiom(s) could not be checked, so consistency of the whole ontology is unknown.
 ⚠️  1 axiom(s) were not sent to the solver:
-   - ForAll "x" (Implies (Predicate "A" [Var "x"]) (Predicate "Open" [Var "y"])) (unbound variable in predicate Open)
-✅ SMT Satisfiable (SAT) — Ontology is logically consistent for the 0 axioms checked.
+   - ForAll "x" (Implies (Predicate "A" [Var "x"]) (Predicate "Open" [Var "y"])) (unsupported predicate Open/1)
 ...
 ℹ️  Free constants mode enabled (--free-constants): undeclared free variables are treated as Entity constants.
 ✅ SMT Satisfiable (SAT) — Ontology is logically consistent.
@@ -99,11 +101,13 @@ ontologic-exe -i free.logic --solve --free-constants
 | `✅ SMT Satisfiable (SAT)` and `✅ All concepts are satisfiable` | Consistent and coherent | 0 |
 | `❌ SMT Unsatisfiable (UNSAT)` | The axioms contradict each other | 1 |
 | `❌ Unsatisfiable / empty concept(s): A B` | Those concepts cannot have instances | 1 |
-| `⚠️ SMT Solver Result (unknown): ...` | Timeout, limit, or solver gave up; not a proof either way | 2 |
-| `❌ SMT Solver Error: ...` | The solver ran and failed | 1 |
+| `⚠️ SMT Solver Result (unknown): ...` | Timeout, limit, or solver gave up; or the checked axioms are satisfiable but some axioms were not sent (see above). Not a proof either way | 2 |
+| `❌ SMT Solver Error: ...` | The solver ran and failed, printed an error message, could not parse the input, or gave no single clear verdict | 1 |
 | `⚠️ Concept coherence check could not run` | Coherence step failed | 2 |
 
 When several checks run, the worst code wins: 1 beats 2 beats 0.
+
+The solver bridge fails closed. A Z3 `(error ...)` line, a Vampire parse failure, or output without exactly one verdict is a solver error (exit 1), never SAT. A Vampire `GaveUp` or `ResourceOut` result is reported as unknown. The word `unsat` is never read as `sat`. For the TPTP route OntoLogic calls Vampire with `--input_syntax tptp`.
 
 ### `--explain-unsat`
 
@@ -154,7 +158,7 @@ A model is one possible world, usually a tiny one. Concepts that are empty in th
 | `z3` | External. Handles integer and real bounds well; supports `-T` and `--solve-memory`. Good default |
 | `cvc5` | External. Run with finite-model finding and unsat-core support; supports `-T` |
 | `vampire` | External. First-order specialist; given SMT-LIB or TPTP input; supports `-T` |
-| `native` | Built into the binary (tableau and resolution). No install needed; honours `-T`; reports unknown on step or clause limits |
+| `native` | Built into the binary (tableau and resolution). No install needed; honours `-T`; reports unknown on step or clause limits, and always answers unknown (exit 2) when the theory uses equality, because it does not reason about equality |
 | `auto` | Tries `z3`, `cvc5`, `vampire` in order, skipping any that is not installed; if none is installed, falls back to `native`. A solver that is installed but fails is reported, not skipped |
 
 Practical guidance: use `z3` or `cvc5` for ontologies with numeric property bounds. `native` and `vampire` have no arithmetic. OntoLogic gives them one background axiom for each pair of numeric bounds in the file that no number can meet together (such as `gte 100` and `lt 50`), so they catch contradictions like the balance example above. They still miss contradictions that need real arithmetic, such as integer gaps (`gt 5` and `lt 6` on an `Integer`) or bounds derived from sums. When one of them gives an all-clear on an ontology that uses `gt`, `gte`, `lt` or `lte`, OntoLogic prints a warning that the answer was reached without arithmetic and should be confirmed with `z3` or `cvc5`. The domain fixtures in `test/fixtures/domains/` are checked with Z3 (then CVC5) for this reason. For purely taxonomic and relational reasoning, all backends agree. If two provers disagree, trust UNSAT from an SMT solver and treat the other's SAT as incomplete.
@@ -167,7 +171,7 @@ ontologic-exe -i big.logic --solve -p z3 -T 60 --solve-memory 2048
 
 | Flag | Applies to | Behaviour |
 |------|-----------|-----------|
-| `-T/--solve-timeout SECONDS` | z3, cvc5, vampire, native | Positive integer. Each backend gets its own limit flag; external solvers are also killed after the limit plus a 2 second grace period. A timeout is reported as unknown (exit 2), never as an error |
+| `-T/--solve-timeout SECONDS` | z3, cvc5, vampire, native | Positive integer. If you do not give `-T`, the limit is 60 seconds (CLI, REPL and language server). Very large values are clamped rather than overflowing. Each backend gets its own limit flag; external solvers are also killed after the limit plus a 2 second grace period. A timeout is reported as unknown (exit 2), never as an error |
 | `--solve-memory MB` | z3 only | Positive integer. With `-p cvc5|vampire|native` it prints `⚠️ --solve-memory is not supported by CVC5 and is ignored.`; with `auto` it warns it applies only if Z3 is the selected prover |
 
 Zero and negative values are rejected: `option -T: expected a positive integer, got '0'`. For Z3 and CVC5 the coherence check runs all concepts in one solver process, so `-T` is a single budget for that whole batch; Vampire and native get the budget once per concept.
@@ -192,9 +196,9 @@ ontologic-exe -i fleet.logic --cnf
 ~Car(X1) | ~Truck(X1)
 ~Car(X1) | Vehicle(X1)
 ~Truck(X1) | Vehicle(X1)
-~Truck(X1) | gte(X2, 0)
-~Vehicle(X1) | gte(X2, 0)
-~Vehicle(X1) | lte(X2, 130)
+~Truck(X1) | gte(prop_max_load(X1), 0)
+~Vehicle(X1) | gte(prop_speed(X1), 0)
+~Vehicle(X1) | lte(prop_speed(X1), 130)
 ~drives(X1, X2) | Driver(X1)
 ~drives(X1, X2) | Vehicle(X2)
 ```

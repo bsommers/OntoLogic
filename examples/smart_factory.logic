@@ -7,6 +7,7 @@
 ; --- Properties ---
 (def-property safety_status IndustrialEntity Boolean)
 (def-property axis_count RobotArm Integer)
+(def-property active Controller Boolean)
 
 ; --- Axioms ---
 ; All RobotArms must have exactly 6 axes for this specific factory line

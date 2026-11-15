@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -fno-omit-yields #-}
 module Prover.Unification
     ( Subst
     , emptySubst

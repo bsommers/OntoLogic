@@ -1,0 +1,7 @@
+; Ground truth: A ⊑ B (declared axiom); B ⋢ A.  One ground fact about an individual is present.
+(def-concept A)
+(def-concept B)
+(def-concept C)
+(def-individual c1 C)
+(C c1)
+(forall (x) (implies (A x) (B x)))

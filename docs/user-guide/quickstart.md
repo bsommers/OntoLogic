@@ -44,7 +44,7 @@ stack exec ontologic-exe -- -i fleet.logic -t lint
 ✅ Logic Validated successfully.
 ```
 
-The linter checks symbols, duplicates, inheritance cycles, and obvious contradictions. Try breaking it: make `Hybrid` a subclass of `Truck` that is also a `Car`.
+The linter checks symbols, duplicates, inheritance cycles, and obvious contradictions. Structural problems are errors; findings from the logical (propositional) pass are warnings. Try breaking it: make `Hybrid` a subclass of `Truck` that is also a `Car`.
 
 ```lisp
 (def-concept Hybrid Truck)
@@ -52,10 +52,10 @@ The linter checks symbols, duplicates, inheritance cycles, and obvious contradic
 ```
 
 ```text
-bad.logic:4:14: error: Semantic contradiction: Concept Hybrid implies both Truck and Car, but Truck is disjoint with Car.
+bad.logic:4:14: warning: Semantic contradiction: Concept Hybrid implies both Truck and Car, but Truck is disjoint with Car.
 ```
 
-The message has `file:line:col: error:` format, the exit code is 1, and (because the linter runs first) nothing else is attempted. In the real output the file path is printed in full.
+The message has `file:line:col: warning:` format. It is a warning, so the exit code stays 0 and the run continues; `--solve` is the check that decides whether `Hybrid` can have instances. Structural mistakes, such as a misspelled parent concept, are `error:` lines with exit code 1, and nothing else is attempted. In the real output the file path is printed in full.
 
 ## 3. Solve
 
@@ -108,7 +108,7 @@ fleet.logic:17:2: warning: [WUnmappedAxiom] forall v (Truck(v) implies not Car(v
 Generated TypeScript/Zod models in out/ts
 ```
 
-The warning is expected: the disjointness axiom is logic, not a field bound, so no field constraint can express it. It is recorded as a comment at the end of the generated file. Field bounds were mapped:
+The warning is expected: the disjointness axiom is logic, not a field bound, so no field constraint can express it. It is recorded as a comment at the end of the generated file. Field bounds were mapped (the file also holds `CarSchema` and `DriverSchema`, omitted here):
 
 ```ts
 // out/ts/models.ts
@@ -117,9 +117,11 @@ export const VehicleSchema = z.object({
   speed: z.number().int().gte(0).lte(130),
 });
 export const TruckSchema = VehicleSchema.extend({
-  max_load: z.number().int().optional(),
+  max_load: z.number().int().gte(0).optional(),
 });
 ```
+
+The generated TypeScript needs the `zod` package. Other targets have their own runtime needs; see [what generated code needs](targets-and-emitters.md#what-generated-code-needs-at-runtime).
 
 ```sql
 -- out/sql/schema.sql
@@ -158,7 +160,7 @@ stack exec ontologic-exe -- --repl
 ontologic> :load fleet.logic
 ✅ Loaded fleet.logic (4 concepts, 0 lint errors).
 ontologic> :prove Truck Vehicle
-✅ Theorem Proved via Z3: 'Truck' ⊑ 'Vehicle' (Every instance of Truck is necessarily a Vehicle).
+✅ Theorem Proved via Auto (Z3/CVC5/Vampire/Native): 'Truck' ⊑ 'Vehicle' (Every instance of Truck is necessarily a Vehicle).
 ```
 
 See [REPL](repl.md).

@@ -13,7 +13,7 @@ Some documents are snapshots. Check the current code and
 | Area | Document | What it is |
 | :--- | :--- | :--- |
 | Roadmap input | [Suggested Improvements](SUGGESTED_IMPROVEMENTS.md) | Architectural review, bug audit, semantic gaps and a prioritized modernization list |
-| Quality | [Test Coverage](TEST_COVERAGE.md) | Test-suite coverage audit and gap list |
+| Quality | [Test Coverage](TEST_COVERAGE.md) | Test-suite coverage audit (last measured 2026-10-18) and remaining gaps |
 | Design notes | [Constraint considerations](design/constraint_considerations.md) | Whether to constrain FOL to Horn clauses; the profile-based architecture |
 | | [Constraints and patterns](design/constraints_and_patterned.md) | Logical expressiveness compared with Horn clauses, and how formulas are parsed and linted |
 | Reviews | [Gemini review](reviews/GEMINI_3_7_REVIEW.md) | AI-generated codebase, security and semantic-gap review with a phased roadmap |
@@ -32,6 +32,7 @@ Some documents are snapshots. Check the current code and
 
 ## Before you push
 
-The required verification gates and architecture map for contributors are in
-[`AGENTS.md`](../../AGENTS.md). In short, run
-`stack test --ghc-options="-Wall -Werror"` locally first.
+The required verification gates (there are several, not one) and the architecture
+pointer for contributors are in [`AGENTS.md`](../../AGENTS.md). Run all of them
+locally first. GitHub automatically runs only the docs link check and the Pages
+deployment; the full workflow (`.github/workflows/ci.yml`) is manual-only.

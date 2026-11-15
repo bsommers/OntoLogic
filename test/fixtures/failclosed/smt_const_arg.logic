@@ -1,0 +1,4 @@
+; Ground truth: UNSAT. 7 is Prime; nothing is Prime.
+(def-concept Prime)
+(Prime 7)
+(forall (x) (not (Prime x)))

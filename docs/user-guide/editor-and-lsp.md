@@ -11,19 +11,19 @@ Capabilities reported by `initialize`:
 | Diagnostics | Published on open and on every change. Parse errors, plus all linter findings with line and column (`source: ontologic-linter`). Imports are resolved first, so a concept defined in an imported file is not reported as undeclared; problems that belong to the imported files are not shown on yours |
 | Completion | Triggered on `(`, space, and `"`. Offers keywords, primitive types, and the concepts, properties, and relations of the document and its imports |
 | Hover | Concepts (parent, properties), properties (domain, type, cardinality, default), relations, and keywords (syntax summary). Comment lines directly above a `def-concept` or `def-property` appear as documentation |
-| Go to definition | Jumps to the `def-concept`, `def-property`, or `def-relation` line for the symbol under the cursor, in the open document (not into imported files) |
+| Go to definition | Jumps to the `def-concept`, `def-property`, or `def-relation` line for the symbol under the cursor, in the open document or, when the symbol comes from an import, in the imported file |
 | Rename | `prepareRename` and `rename` of concepts, properties, and relations across the document; rejects keywords and invalid names |
 | Formatting | Re-indents the whole document (honours the editor's tab size) |
 | Semantic tokens | Keyword, type, class, property, function, variable, string, number, comment, operator |
 | Code actions | Quick-fix entries "Verify SMT Consistency", "Explain SMT Unsatisfiable Core", "Inspect SMT Satisfying Model" |
 | Execute command | `ontologic.solve`, `ontologic.explainUnsat`, `ontologic.inspectModel`. They run asynchronously with progress notifications and can be cancelled; they always use the `auto` prover. When `auto` falls back to the native prover on an ontology with numeric comparisons, the `ontologic.solve` SAT `details` end with a warning that the theory was checked without arithmetic |
 
-Imports use the same search path as the CLI, including `$ONTOLOGIC_PATH` (set it in the environment the editor is launched from). The server has no `--lib-path` option.
+Imports use the same search path as the CLI, including `$ONTOLOGIC_PATH` (set it in the environment the editor is launched from). The server has no `--lib-path` option. Solver commands use the same 60 second default limit as the CLI.
 
-A diagnostic exchange, abbreviated:
+The completion keyword list does not yet include `def-individual`, `def-axiom`, `if` or the comparison operators, and the server does not answer `textDocument/references` or `documentSymbol` requests. A diagnostic exchange, abbreviated:
 
 ```json
-{"method":"textDocument/publishDiagnostics","params":{"uri":"file:///tmp/bad.logic","diagnostics":[{"range":{"start":{"line":3,"character":13},"end":{"line":3,"character":100}},"severity":1,"source":"ontologic-linter","message":"Semantic contradiction: Concept Hybrid implies both Truck and Car, but Truck is disjoint with Car."}]}}
+{"method":"textDocument/publishDiagnostics","params":{"uri":"file:///tmp/bad.logic","diagnostics":[{"range":{"start":{"line":3,"character":13},"end":{"line":3,"character":100}},"severity":1,"source":"ontologic-linter","message":"Undeclared parent concept: Vehcle referenced by Truck"}]}}
 ```
 
 ## VS Code extension
